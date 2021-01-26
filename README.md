@@ -67,10 +67,10 @@ resource_denied {
 Basically a policy as we define it, is composed by:
 - *Who*: Information on the user: any user / a specific user / a user in a group / a user in a role /
   a combination of previous ones.
-- *whom*: Information on the resource, which is composed by:
+- *Which*: Information on the resource, which is composed by:
   - resource identifier: any, entity_id, entity_id and attribute_id, attribute_id
   - resource service: fiware_servicepath
-- *what*: the action (scope) that gets translated in to method,
+- *What*: the action (scope) that gets translated in to method,
   e.g. entity:read
 
 The example policy covers quite some examples.
@@ -80,8 +80,8 @@ that allows to manage simply these policies in the context of NGSIv2
 and NGSI-LD.
 
 - Design an API that allow to record policies for tenant.
-  - Ideally based on the above, a policy is a tuple: who / whom / 
-    what (eventually in future also when and how)
+  - Ideally based on the above, a policy is a tuple: *who* can access *which* resource to do
+    *what* (eventually in future also when and how)
   - Allow to create and manage "service_paths" for tenants
   - Have way to define who can define policy for which resource
     (it could be based on the same approach)
@@ -92,9 +92,10 @@ and NGSI-LD.
   tenant. The translator may be different for different API. Policies could be
   stored using a package that define api and tenant so that envoy can
   be configure to load only a specific set of packages. (This has to be
-  done understanding how the `path`configuration works. [see](config/opa-service/opa.yaml)).
+  done understanding how the `path` configuration works. [see](config/opa-service/opa.yaml)).
   Surely the split by api is needed, and that is clearly easy. Having a hierarchy
   with tenant, would simplify the update of the policies from api to OPA, given
-  that you would update only a tenant and not the all apis.
+  that you would update only a tenant and not the all apis. (it seems so looking
+  here: https://github.com/open-policy-agent/opa-envoy-plugin)
   - record data in the OPA data API as needed (may not be required)
 

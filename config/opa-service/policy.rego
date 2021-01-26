@@ -1,4 +1,4 @@
-package envoy.authz
+package envoy.authz.tenant1
 
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
