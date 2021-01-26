@@ -1,0 +1,64 @@
+version: "3.7"
+services:
+
+  front-envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontenvoy
+    environment:
+      - FRONT_ENVOY_YAML
+    networks:
+      - envoymesh
+    ports:
+      - "8000:8000"
+
+  ext_authz-opa-service:
+    image: openpolicyagent/opa:0.25.1-istio
+    ports:
+      - "9191:9191"
+      - "8282:8282"
+    volumes:
+      - ./config/opa-service/policy.rego:/etc/policy.rego
+      - ./config/opa-service/opa.yaml:/opa.yaml
+    command:
+      - run
+      - --log-level=debug
+      - --server
+      - --config-file=/opa.yaml
+      - --log-format=json-pretty
+      - --diagnostic-addr=0.0.0.0:8282
+      - --set=plugins.envoy_ext_authz_grpc.addr=:9002
+      - --set=decision_logs.console=true
+      - /etc/policy.rego
+    networks:
+      - envoymesh
+
+  mongo:
+    image: mongo:3.2.19
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+    networks:
+      - envoymesh
+
+  upstream-service:
+    image: fiware/orion:${ORION_VERSION:-2.0.0}
+    ports:
+      - "1026:1026"
+    command: -logLevel DEBUG -noCache -dbhost mongo
+    depends_on:
+      - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:1026/version"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+    networks:
+      - envoymesh
+
+volumes:
+  mongodata:
+
+networks:
+  envoymesh: {}
