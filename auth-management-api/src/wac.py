@@ -17,7 +17,7 @@ def serialize(db: Session, policies: [Policy]):
     g.bind("foaf", FOAF)
     g.bind("example", n)
     g.bind("acl", acl)
-    
+
     for policy in policies:
         policy_node = URIRef(policy.id, acl)
 
@@ -31,9 +31,8 @@ def serialize(db: Session, policies: [Policy]):
         for index, agent in enumerate(policy.agent):
             agent = URIRef(agent.iri, acl)
             g.add((policy_node, agent_class_property, agent))
-            
+
         access_to_property = acl.accessTo
         access_to_iri = URIRef(policy.access_to, n)
         g.add((policy_node, access_to_property, access_to_iri))
     return g.serialize()
-

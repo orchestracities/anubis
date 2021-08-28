@@ -14,10 +14,12 @@ class ServicePathBase(BaseModel):
         p = re.compile("^[a-zA-Z0-9_/]*$")
         scopes = v.split("/")
         for scope in scopes:
-            if not p.match( scope ):
-                raise ValueError('each scope in a service path must include only alphanumeric or _ characters')
+            if not p.match(scope):
+                raise ValueError(
+                    'each scope in a service path must include only alphanumeric or _ characters')
             if len(scope) > 50:
-                raise ValueError('each scope in a service path max lenght is 50 characters')
+                raise ValueError(
+                    'each scope in a service path max lenght is 50 characters')
         return v
 
 
@@ -32,11 +34,12 @@ class ServicePath(ServicePathBase):
     scope: str = None
     children: List['ServicePath'] = []
 
-
     class Config:
         orm_mode = True
 
+
 ServicePath.update_forward_refs()
+
 
 class TenantBase(BaseModel):
     name: str
@@ -44,8 +47,9 @@ class TenantBase(BaseModel):
     @validator('name')
     def valid_tenant_name(cls, v):
         p = re.compile("^[a-zA-Z0-9_]*$")
-        if not p.match( v ):
-            raise ValueError('name must include only alphanumeric or _ characters')
+        if not p.match(v):
+            raise ValueError(
+                'name must include only alphanumeric or _ characters')
         if len(v) > 50:
             raise ValueError('name max lenght is 50 characters')
         return v
@@ -61,4 +65,3 @@ class Tenant(TenantBase):
 
     class Config:
         orm_mode = True
-

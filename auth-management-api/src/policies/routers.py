@@ -12,18 +12,20 @@ from rego import serialize as r_serialize
 models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/v1/policies",
-    tags=["policies"],
-    responses={404: {"description": "Not found"}},)
+                   tags=["policies"],
+                   responses={404: {"description": "Not found"}},)
 
 
 def get_db_service_path(db: Session, tenant: str, service_path: str):
     db_tenant = so.get_tenant_by_name(db, name=tenant)
     if not db_tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
-    db_service_path = so.get_tenant_service_path_by_path(db, tenant_id=db_tenant.id, path=service_path)
+    db_service_path = so.get_tenant_service_path_by_path(
+        db, tenant_id=db_tenant.id, path=service_path)
     if not db_service_path:
         raise HTTPException(status_code=404, detail="Service Path not found")
     return db_service_path
+
 
 def serialize_policy(policy: models.Policy):
     modes = []
@@ -32,7 +34,12 @@ def serialize_policy(policy: models.Policy):
         modes.append(mode.iri)
     for index, agent in enumerate(policy.agent):
         agents.append(agent.iri)
-    return schemas.Policy(id = policy.id, access_to = policy.access_to, mode = modes, agent = agents)
+    return schemas.Policy(
+        id=policy.id,
+        access_to=policy.access_to,
+        mode=modes,
+        agent=agents)
+
 
 @router.get("/access-modes", response_model=List[schemas.Mode])
 def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -88,23 +95,46 @@ policies_not_json_responses = {
     },
 }
 
-@router.get("/", response_model=List[schemas.Policy], responses=policies_not_json_responses)
+
+@router.get("/",
+            response_model=List[schemas.Policy],
+            responses=policies_not_json_responses)
 def read_policies(
-        fiware_service: Optional[str] = Header(None, convert_underscores=False),
-        fiware_service_path: Optional[str] = Header(None, convert_underscores=False),
-        mode: Optional[str] = None, 
-        agent: Optional[str] = None, 
-        accept: Optional[str] = Header(None, convert_underscores=False),
+        fiware_service: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+    fiware_service_path: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+        mode: Optional[str] = None,
+        agent: Optional[str] = None,
+        accept: Optional[str] = Header(
+            None,
+            convert_underscores=False),
         skip: int = 0,
         limit: int = 100,
-        db: Session = Depends(get_db)
-    ):
-    db_service_path = get_db_service_path(db, fiware_service, fiware_service_path)
-    db_policies = operations.get_policies_by_service_path(db, service_path_id = db_service_path.id, mode=mode, agent=agent, skip=skip, limit=limit)
+        db: Session = Depends(get_db)):
+    db_service_path = get_db_service_path(
+        db, fiware_service, fiware_service_path)
+    db_policies = operations.get_policies_by_service_path(
+        db,
+        service_path_id=db_service_path.id,
+        mode=mode,
+        agent=agent,
+        skip=skip,
+        limit=limit)
     if accept == 'text/turtle':
-        return Response(content=w_serialize(db, db_policies), media_type="text/turtle")
+        return Response(
+            content=w_serialize(
+                db,
+                db_policies),
+            media_type="text/turtle")
     elif accept == 'text/rego':
-        return Response(content=r_serialize(db, db_policies), media_type="text/rego")
+        return Response(
+            content=r_serialize(
+                db,
+                db_policies),
+            media_type="text/rego")
     else:
         policies = []
         for db_policy in db_policies:
@@ -112,54 +142,89 @@ def read_policies(
         return policies
 
 
-@router.get("/{policy_id}", response_model=schemas.Policy, responses=policies_not_json_responses)
-def read_policy(policy_id: str,
-    fiware_service: Optional[str] = Header(None, convert_underscores=False),
-    fiware_service_path: Optional[str] = Header(None, convert_underscores=False),
-    accept: Optional[str] = Header(None, convert_underscores=False),
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_service_path = get_db_service_path(db, fiware_service, fiware_service_path)
-    db_policy = operations.get_policy(db, policy_id = policy_id)
+@router.get("/{policy_id}", response_model=schemas.Policy,
+            responses=policies_not_json_responses)
+def read_policy(
+        policy_id: str,
+        fiware_service: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+    fiware_service_path: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+        accept: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+        skip: int = 0,
+        limit: int = 100,
+        db: Session = Depends(get_db)):
+    db_service_path = get_db_service_path(
+        db, fiware_service, fiware_service_path)
+    db_policy = operations.get_policy(db, policy_id=policy_id)
     if db_service_path.id != db_policy.service_path_id:
         raise HTTPException(status_code=404, detail="Policy not found")
     if not db_policy:
         raise HTTPException(status_code=404, detail="Policy not found")
     if accept == 'text/turtle':
-        return Response(content=w_serialize(db, [db_policy]), media_type="text/turtle")
+        return Response(
+            content=w_serialize(
+                db,
+                [db_policy]),
+            media_type="text/turtle")
     elif accept == 'text/rego':
-        return Response(content=r_serialize(db, [db_policy]), media_type="text/rego")
+        return Response(
+            content=r_serialize(
+                db,
+                [db_policy]),
+            media_type="text/rego")
     else:
         return serialize_policy(db_policy)
 
 
-@router.post("/", response_class = Response, status_code = status.HTTP_201_CREATED)
-def create_policy(response: Response,
-    policy: schemas.PolicyCreate,
-    fiware_service: Optional[str] = Header(None, convert_underscores=False),
-    fiware_service_path: Optional[str] = Header(None, convert_underscores=False),
-    db: Session = Depends(get_db)):
-    db_service_path = get_db_service_path(db, fiware_service, fiware_service_path)
-    
-    policy_id = operations.create_policy(db=db, service_path_id=db_service_path.id, policy=policy).id
+@router.post("/", response_class=Response, status_code=status.HTTP_201_CREATED)
+def create_policy(
+        response: Response,
+        policy: schemas.PolicyCreate,
+        fiware_service: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+    fiware_service_path: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+        db: Session = Depends(get_db)):
+    db_service_path = get_db_service_path(
+        db, fiware_service, fiware_service_path)
+
+    policy_id = operations.create_policy(
+        db=db, service_path_id=db_service_path.id, policy=policy).id
     response.headers["Policy-ID"] = policy_id
     response.status_code = status.HTTP_201_CREATED
     return response
 
-#TODO update policy
+# TODO update policy
 # @router.put("/{policy_id}")
 
-@router.delete("/{policy_id}", response_class = Response, status_code = status.HTTP_204_NO_CONTENT)
-def delete_policy(response: Response, policy_id: str,
-    fiware_service: Optional[str] = Header(None, convert_underscores=False),
-    fiware_service_path: Optional[str] = Header(None, convert_underscores=False), 
-    db: Session = Depends(get_db)):
-    db_service_path = get_db_service_path(db, fiware_service, fiware_service_path)
-    db_policy = operations.get_policy(db, policy_id = policy_id)
+
+@router.delete("/{policy_id}", response_class=Response,
+               status_code=status.HTTP_204_NO_CONTENT)
+def delete_policy(
+        response: Response,
+        policy_id: str,
+        fiware_service: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+    fiware_service_path: Optional[str] = Header(
+            None,
+            convert_underscores=False),
+        db: Session = Depends(get_db)):
+    db_service_path = get_db_service_path(
+        db, fiware_service, fiware_service_path)
+    db_policy = operations.get_policy(db, policy_id=policy_id)
     if db_service_path.id != db_policy.service_path_id:
         raise HTTPException(status_code=404, detail="Policy not found")
     if not db_policy:
         raise HTTPException(status_code=404, detail="Policy not found")
-    operations.delete_policy(db=db, policy = db_policy)
+    operations.delete_policy(db=db, policy=db_policy)
     response.headers["Policy-ID"] = policy_id
     response.status_code = status.HTTP_204_NO_CONTENT
     return response

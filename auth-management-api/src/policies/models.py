@@ -8,19 +8,19 @@ from uuid import uuid4
 
 import default
 
-#see https://github.com/solid/web-access-control-spec
+# see https://github.com/solid/web-access-control-spec
 
 
 policy_to_mode = Table('policy_to_mode', Base.metadata,
-    Column('policy_id', Integer, ForeignKey('policies.id')),
-    Column('mode_iri', Integer, ForeignKey('modes.iri'))
-)
+                       Column('policy_id', Integer, ForeignKey('policies.id')),
+                       Column('mode_iri', Integer, ForeignKey('modes.iri'))
+                       )
 
 
-policy_to_agent = Table('policy_to_agent', Base.metadata,
-    Column('policy_id', Integer, ForeignKey('policies.id')),
-    Column('agent_iri', Integer, ForeignKey('agents.iri'))
-)
+policy_to_agent = Table(
+    'policy_to_agent', Base.metadata, Column(
+        'policy_id', Integer, ForeignKey('policies.id')), Column(
+            'agent_iri', Integer, ForeignKey('agents.iri')))
 
 
 class Policy(Base):
@@ -30,7 +30,11 @@ class Policy(Base):
     agent = relationship("Agent", secondary=policy_to_agent)
     access_to = Column(String, index=True)
     mode = relationship("Mode", secondary=policy_to_mode)
-    service_path_id = Column(Integer, ForeignKey('service_paths.id', ondelete="CASCADE"))
+    service_path_id = Column(
+        Integer,
+        ForeignKey(
+            'service_paths.id',
+            ondelete="CASCADE"))
 
 
 class Agent(Base):
@@ -67,8 +71,14 @@ def insert_initial_agent_type_values(*args, **kwargs):
 @event.listens_for(Agent.__table__, 'after_create')
 def insert_initial_agent_type_values(*args, **kwargs):
     db = SessionLocal()
-    db.add(Agent(iri=default.AUTHENTICATED_AGENT_ID, type=default.AGENT_CLASS_IRI))
-    db.add(Agent(iri=default.UNAUTHENTICATED_AGENT_IRI, type=default.AGENT_CLASS_IRI))
+    db.add(
+        Agent(
+            iri=default.AUTHENTICATED_AGENT_ID,
+            type=default.AGENT_CLASS_IRI))
+    db.add(
+        Agent(
+            iri=default.UNAUTHENTICATED_AGENT_IRI,
+            type=default.AGENT_CLASS_IRI))
     db.commit()
     db.close()
 
