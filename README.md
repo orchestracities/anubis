@@ -79,23 +79,44 @@ What's next? Ideally from here it is possible to design a prototype,
 that allows to manage simply these policies in the context of NGSIv2
 and NGSI-LD.
 
-- Design an API that allow to record policies for tenant.
-  - Ideally based on the above, a policy is a tuple: *who* can access *which* resource to do
-    *what* (eventually in future also when and how)
-  - Allow to create and manage "service_paths" for tenants
-  - Have way to define who can define policy for which resource
-    (it could be based on the same approach)
-  - Allows to test policies calling OPA validator
-- Design a translator that
-  - coverts the abstract policy who / whom / what
-  into an OPA policy and records it under a specific context for the given
-  tenant. The translator may be different for different API. Policies could be
-  stored using a package that define api and tenant so that envoy can
-  be configure to load only a specific set of packages. (This has to be
-  done understanding how the `path` configuration works. [see](config/opa-service/opa.yaml)).
-  Surely the split by api is needed, and that is clearly easy. Having a hierarchy
-  with tenant, would simplify the update of the policies from api to OPA, given
-  that you would update only a tenant and not the all apis. (it seems so looking
-  here: https://github.com/open-policy-agent/opa-envoy-plugin)
-  - record data in the OPA data API as needed (may not be required)
 
+- [ ] Design an API that allow to record policies for tenant.
+  - [x] Store a policy as a tuple: *who* can access *which* resource to do
+    *what* (eventually in future also when and how).
+    A prototype is available, see [auth-management-api](auth-management-api).
+  - [x] Allow to create and manage "service_paths" for tenants.
+    A prototype is available, see [auth-management-api](auth-management-api).
+  - [ ] Have way to define who can define policy for which resource
+    (it could be based on the same approach)
+  - [ ] Allows to test policies calling OPA validator
+- [ ] Design a translator that
+  - [x] coverts the abstract policy who / whom / what
+  into an OPA policy and records it under a specific context for the given
+  tenant. The translator may be different for different API.
+  A prototype is available, see [auth-management-api](auth-management-api),
+  translator is only for Orion-like API at the time being.
+  - [x] Define a package for api and tenant so that envoy can
+   be configured to load only a specific set of packages. (This has to be
+   done understanding how the `path` configuration works. [see](config/opa-service/opa.yaml)).
+   Surely the split by api is needed, and that is clearly easy. Having a hierarchy
+   with tenant, would simplify the update of the policies from api to OPA, given
+   that you would update only a tenant and not the all apis. (it seems so looking
+   here: https://github.com/open-policy-agent/opa-envoy-plugin).
+   A prototype is available, see [auth-management-api](auth-management-api),
+   the package is only by tenant, since no translation for different API is
+   supported.
+  - [ ] Store policies in OPA.
+  - [ ] Record additional data in the OPA data API as needed
+    (may not be required)
+
+
+To adhere to [W3C web access control spec](https://github.com/solid/web-access-control-spec)
+the API management prototype available at [auth-management-api](auth-management-api)
+uses acl defined access modes, e.g. `acl:Write`, `acl:Read`, which are different
+from the ones in [config/opa-service/policy.rego](config/opa-service/policy.rego)
+example (e.g. `entity:read`). Either we align to `acl` standard, or we define
+an extension of `acl` with modes needed in our APIs.
+
+The [auth-management-api](auth-management-api) is a prototype, it needs some
+work to be more configurable, e.g. in term of db. Also, integration with OPA
+has not been tested at all.
