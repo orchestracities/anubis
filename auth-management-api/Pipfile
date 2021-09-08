@@ -13,6 +13,7 @@ aiosqlite = "*"
 uuid = "*"
 rfc3987 = "*"
 rdflib = "*"
+opa-python-client = "*"
 
 [dev-packages]
 

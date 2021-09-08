@@ -17,8 +17,9 @@ services:
     ports:
       - "9191:9191"
       - "8282:8282"
+      - "8181:8181"
     volumes:
-      - ./config/opa-service/policy.rego:/etc/policy.rego
+    #  - ./config/opa-service/policy.rego:/etc/policy.rego
       - ./config/opa-service/opa.yaml:/opa.yaml
     command:
       - run
@@ -29,7 +30,7 @@ services:
       - --diagnostic-addr=0.0.0.0:8282
       - --set=plugins.envoy_ext_authz_grpc.addr=:9002
       - --set=decision_logs.console=true
-      - /etc/policy.rego
+      # - /etc/policy.rego
     networks:
       - envoymesh
 

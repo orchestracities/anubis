@@ -128,6 +128,7 @@ def serialize(db: Session, policies: [Policy]):
         rego += imports()
         rego += scope_method()
         rego += token()
+        rego += defaults()
         rego += functions()
         for policy in policies:
             rego += serialize_policy(db, policy)
