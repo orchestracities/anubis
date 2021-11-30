@@ -1,2 +1,2 @@
 
-OPA_ENDPOINT: localhost:8181
+OPA_ENDPOINT: localhost: 8181
