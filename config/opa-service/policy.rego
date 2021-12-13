@@ -4,137 +4,49 @@ import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
 
-scope_method = {"entity:read": "GET", "entity:create": "POST", "entity:delete": "DELETE"}
+# Auth defaults to false
+default authz = false
 
-# Helper to get the token payload.
+# Action to method mappings
+scope_method = {"acl:Read": "GET", "acl:Write": "POST", "entity:Control": "PUT", "entity:Control": "DELETE"}
+
+# Helper to get the token payload
 token = {"payload": payload} {
   [header, payload, signature] := io.jwt.decode(bearer_token)
 }
 
-
-roles = { "631a780d-c7a2-4b6a-acd8-e856348bcb2e" : ["admin", "super_hero"]}
-
-groups = { "631a780d-c7a2-4b6a-acd8-e856348bcb2e" : ["/EKZ/admin", "/EKZ/super_hero"]}
-
-default authz = false
-
+# Auth main rule
 authz {
-    allow
-    not deny
+  is_token_valid
+  user_permitted
 }
 
-default resource_allowed = false
-
-allow {
-    is_token_valid
-    resource_allowed
-}
-
-deny {
-    resource_denied
-}
-
+# Check for token validity
 is_token_valid {
   now := time.now_ns() / 1000000000
   token.payload.nbf <= now
-  #now < token.payload.exp
 }
 
-bearer_token := t {
-	# Bearer tokens are contained inside of the HTTP Authorization header. This rule
-	# parses the header and extracts the Bearer token value. If no Bearer token is
-	# provided, the `bearer_token` value is undefined.
-	v := authorization
-	startswith(v, "Bearer ")
-	t := substring(v, count("Bearer "), -1)
+# User permissions
+user_permitted {
+  scope_method[data.user_permissions[token.payload.sub][_].action] == input.action
+  data.user_permissions[token.payload.sub][_].resource == input.resource
+  data.user_permissions[token.payload.sub][_].tenant == input.tenant
+  data.user_permissions[token.payload.sub][_].servicePath == input.servicePath
 }
 
-contains_element(arr, elem) = true {
-    arr[_] = elem
-} else = false { true }
-
-subject := p {
-	p := token.payload.sub
+# Group permissions
+user_permitted {
+  scope_method[data.group_permissions[token.payload.tenants[_].groups[_].name][_].action] == input.action
+  data.group_permissions[token.payload.tenants[_].groups[_].name][_].resource == input.resource
+  data.group_permissions[token.payload.tenants[_].groups[_].name][_].tenant == input.tenant
+  data.group_permissions[token.payload.tenants[_].groups[_].name][_].servicePath == input.servicePath
 }
 
-fiware_service := p {
-	p := input.attributes.request.http.headers["fiware-service"]
-}
-
-fiware_servicepath := p {
-	p := input.attributes.request.http.headers["fiware-servicepath"]
-}
-
-#list all entities
-resource_allowed {
-    #role based policy
-    roles[subject][i] = "admin"
-    #is the resource allowed?
-    glob.match("/v2/entities", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
-}
-
-#create entities
-resource_allowed {
-    #group based policy
-    groups[subject][i] == "/EKZ/admin"
-   	#is the resource allowed?
-    glob.match("/v2/entities", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:create"] = method
-    fiware_service = "EKZ"
-    glob.match("/Path1/Path2", ["/"], fiware_servicepath)
-}
-
-#read entities
-resource_allowed {
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/*", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
-}
-
-
-#read entities attributes
-resource_allowed {
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/*/attrs", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
-}
-
-#read all entities attributes
-resource_allowed { 
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/*/attrs/*", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
-}
-
-#read is public!
-resource_allowed {
-    glob.match("/v2/entities/ent1", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/Path1/Path2", ["/"], fiware_servicepath)
-}
-
-#deny read entities
-resource_denied {
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/ent2", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/Path1/Path2", ["/"], fiware_servicepath)
+# Role permissions
+user_permitted {
+  scope_method[data.role_permissions[token.payload.tenant_roles[_].roles[_]][_].action] == input.action
+  data.role_permissions[token.payload.tenant_roles[_].roles[_]][_].resource == input.resource
+  data.role_permissions[token.payload.tenant_roles[_].roles[_]][_].tenant == input.tenant
+  data.role_permissions[token.payload.tenant_roles[_].roles[_]][_].servicePath == input.servicePath
 }
