@@ -29,6 +29,7 @@ class Policy(Base):
     id = Column(String, primary_key=True, default=uuid4, index=True)
     agent = relationship("Agent", secondary=policy_to_agent)
     access_to = Column(String, index=True)
+    resource_type = Column(String, index=True)
     mode = relationship("Mode", secondary=policy_to_mode)
     service_path_id = Column(
         Integer,

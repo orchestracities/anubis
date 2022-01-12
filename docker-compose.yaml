@@ -12,6 +12,17 @@ services:
     ports:
       - "8000:8000"
 
+  policy-api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    networks:
+      - envoymesh
+    ports:
+      - "8080:8000"
+    # depends_on:
+    #   - postgresserver
+
   ext_authz-opa-service:
     image: openpolicyagent/opa:0.25.1-istio
     ports:
@@ -19,7 +30,7 @@ services:
       - "8282:8282"
       - "8181:8181"
     volumes:
-    #  - ./config/opa-service/policy.rego:/etc/policy.rego
+      - ./config/opa-service/policy.rego:/etc/policy.rego
       - ./config/opa-service/opa.yaml:/opa.yaml
     command:
       - run
@@ -30,7 +41,7 @@ services:
       - --diagnostic-addr=0.0.0.0:8282
       - --set=plugins.envoy_ext_authz_grpc.addr=:9002
       - --set=decision_logs.console=true
-      # - /etc/policy.rego
+      - /etc/policy.rego
     networks:
       - envoymesh
 
@@ -42,6 +53,17 @@ services:
       - mongodata:/data/db
     networks:
       - envoymesh
+
+  # postgresserver:
+  #   image: postgres:14
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     - POSTGRES_USER=api
+  #     - POSTGRES_PASSWORD=password
+  #     - POSTGRES_DB=policyapi
+  #   networks:
+  #     - envoymesh
 
   upstream-service:
     image: fiware/orion:${ORION_VERSION:-2.0.0}

@@ -24,6 +24,7 @@ class Mode(ModeBase):
 
 class PolicyBase(BaseModel):
     access_to: str
+    resource_type: str
     mode: List[str] = []
     agent: List[str] = []
     # agent iri (unless pre-defined) are agent_type_iri:id
@@ -57,6 +58,11 @@ class PolicyBase(BaseModel):
     def valid_iri(cls, access_to):
         parse(access_to, rule='relative_part')
         return access_to
+
+    @validator('resource_type')
+    def valid_resource_type(cls, resource_type):
+        parse(resource_type, rule='relative_part')
+        return resource_type
 
 
 class PolicyCreate(PolicyBase):
