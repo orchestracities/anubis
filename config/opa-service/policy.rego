@@ -59,13 +59,68 @@ is_token_valid {
   token.payload.nbf <= now
 }
 
+# Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
+path_matches_policy(resource, resource_type, path) {
+  resource = "*"
+  resource_type = "entity"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "entities"
+}
+
+# Checks if the entity in the policy matches the path
+path_matches_policy(resource, resource_type, path) {
+  resource_type = "entity"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "entities"
+  current_path[3] == resource
+}
+
+# Checks if the policy has the wildcard asterisks, thus matching paths to any entity types or all
+path_matches_policy(resource, resource_type, path) {
+  resource = "*"
+  resource_type = "entity_type"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "types"
+}
+
+# Checks if the entity type in the policy matches the path
+path_matches_policy(resource, resource_type, path) {
+  resource_type = "entity_type"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "types"
+  current_path[3] == resource
+}
+
+# Checks if the policy has the wildcard asterisks, thus matching paths to any subscription or all
+path_matches_policy(resource, resource_type, path) {
+  resource = "*"
+  resource_type = "subscription"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "subscriptions"
+}
+
+# Checks if the subscription in the policy matches the path
+path_matches_policy(resource, resource_type, path) {
+  resource_type = "subscription"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "subscriptions"
+  current_path[3] == resource
+}
+
 # User permissions
 user_permitted {
   is_token_valid
-  scope_method[data.user_permissions[token.payload.sub][_].action][_] == request.action
-  data.user_permissions[token.payload.sub][_].resource == request.resource
-  data.user_permissions[token.payload.sub][_].tenant == request.tenant
-  data.user_permissions[token.payload.sub][_].service_path == request.service_path
+  entry := data.user_permissions[token.payload.sub][_]
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
 }
 
 # Group permissions
@@ -73,10 +128,11 @@ user_permitted {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
-  scope_method[data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_].action][_] == request.action
-  data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_].resource == request.resource
-  data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_].tenant == request.tenant
-  data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_].service_path == request.service_path
+  entry := data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
 }
 
 # Role permissions
@@ -84,29 +140,32 @@ user_permitted {
   is_token_valid
   some tenant_i
   token.payload.tenant_roles[tenant_i].name == request.tenant
-  scope_method[data.role_permissions[token.payload.tenant_roles[_].roles[_]][_].action][_] == request.action
-  data.role_permissions[token.payload.tenant_roles[tenant_i].roles[_]][_].resource == request.resource
-  data.role_permissions[token.payload.tenant_roles[tenant_i].roles[_]][_].tenant == request.tenant
-  data.role_permissions[token.payload.tenant_roles[tenant_i].roles[_]][_].service_path == request.service_path
+  entry := data.role_permissions[token.payload.tenant_roles[_].roles[_]][_]
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
 }
 
 # AuthenticatedAgent special permission
 user_permitted {
   is_token_valid
   some role
+  entry := data.role_permissions[role][_]
   role == "AuthenticatedAgent"
-  scope_method[data.role_permissions[role][_].action][_] == request.action
-  data.role_permissions[role][_].resource == request.resource
-  data.role_permissions[role][_].tenant == request.tenant
-  data.role_permissions[role][_].service_path == request.service_path
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
 }
 
 # Agent special permission
 user_permitted {
   some role
+  entry := data.role_permissions[role][_]
   role == "Agent"
-  scope_method[data.role_permissions[role][_].action][_] == request.action
-  data.role_permissions[role][_].resource == request.resource
-  data.role_permissions[role][_].tenant == request.tenant
-  data.role_permissions[role][_].service_path == request.service_path
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
 }
