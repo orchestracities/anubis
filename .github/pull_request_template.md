@@ -39,7 +39,7 @@ you considered, etc...
 
 
 
-[cla]: https://raw.githubusercontent.com/orchestracities/opa-authz/master/individual-cla.pdf
+[cla]: https://raw.githubusercontent.com/orchestracities/opa-authz/master/individual_cla.pdf
     "Martel Open Source Software Individual Contributor License Agreement"
 [contrib]: https://github.com/orchestracities/opa-authz/blob/master/CONTRIBUTING.md
     "Contributing to OPA-authz"
