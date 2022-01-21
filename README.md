@@ -10,6 +10,19 @@ that verifies the policies stored in our [policies api](auth-management-api)
 specifically for the NGSIv2 Context Broker, as well as checking the JWT token
 included in the request.
 
+Group, Role and User-based resource access policies are defined within a generic
+[policy management api](auth-management-api) and applied to single resources via
+a [rego](config/opa-service/policy.rego) api specific set of rules. Current rego
+expression is designed specifically for the
+[NGSIv2 Context Broker](https://fiware-orion.readthedocs.io/en/master/) and
+JWT token authentication.
+
+The token, when decoded, will contain:
+
+* The ID of the user making the request
+* The groups the user belongs to and their respective tenants
+* The roles the user has under their respective tenants
+
 To run the demo:
 
 ```bash
@@ -18,9 +31,11 @@ $ docker-compose up -d
 $ sh test_rego.sh
 ```
 
-Demo token is an examples OC token (as it is today).
+Demo token is an example OC token (as it is today).
 
-The policy include mappings from resource scope to http method:
+Resource access scopes are defined using
+[Web Access control](https://solid.github.io/web-access-control-spec/) and
+mapped to http methods based on the API to be protected:
 
 ```json
 scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
@@ -76,7 +91,7 @@ a good example of this approach with OPA.
     A prototype is available, see [auth-management-api](auth-management-api).
   * [x] Allow to create and manage "service_paths" for tenants.
     A prototype is available, see [auth-management-api](auth-management-api).
-  * [x] Have way to define who can define policy for which resource
+  * [ ] Have way to define who can define policy for which resource
     (it could be based on the same approach)
   * [ ] Allows to test policies calling OPA validator
 * [ ] Design a translator that
