@@ -13,6 +13,8 @@ aiosqlite = "*"
 uuid = "*"
 rfc3987 = "*"
 rdflib = "*"
+opa-python-client = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

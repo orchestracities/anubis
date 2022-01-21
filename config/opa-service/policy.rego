@@ -1,140 +1,171 @@
-package envoy.authz.tenant1
+package envoy.authz
 
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
 
-scope_method = {"entity:read": "GET", "entity:create": "POST", "entity:delete": "DELETE"}
+# Auth defaults to false
+default authz = false
 
-# Helper to get the token payload.
+# Action to method mappings
+scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
+
+# Helper to get the token payload
 token = {"payload": payload} {
   [header, payload, signature] := io.jwt.decode(bearer_token)
 }
 
-
-roles = { "631a780d-c7a2-4b6a-acd8-e856348bcb2e" : ["admin", "super_hero"]}
-
-groups = { "631a780d-c7a2-4b6a-acd8-e856348bcb2e" : ["/EKZ/admin", "/EKZ/super_hero"]}
-
-default authz = false
-
-authz {
-    allow
-    not deny
-}
-
-default resource_allowed = false
-
-allow {
-    is_token_valid
-    resource_allowed
-}
-
-deny {
-    resource_denied
-}
-
-is_token_valid {
-  now := time.now_ns() / 1000000000
-  token.payload.nbf <= now
-  #now < token.payload.exp
-}
-
-bearer_token := t {
-	# Bearer tokens are contained inside of the HTTP Authorization header. This rule
-	# parses the header and extracts the Bearer token value. If no Bearer token is
-	# provided, the `bearer_token` value is undefined.
+# Extract Bearer Token
+bearer_token = t {
 	v := authorization
 	startswith(v, "Bearer ")
 	t := substring(v, count("Bearer "), -1)
 }
 
-contains_element(arr, elem) = true {
-    arr[_] = elem
-} else = false { true }
+# API URI
+api_uri = "http://policy-api:8000/v1/policies/"
 
+# Grab data from API
+data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}}).body
+
+# The user/subject
 subject := p {
 	p := token.payload.sub
 }
 
+# Fiware service
 fiware_service := p {
 	p := input.attributes.request.http.headers["fiware-service"]
 }
 
+# Fiware servicepath
 fiware_servicepath := p {
 	p := input.attributes.request.http.headers["fiware-servicepath"]
 }
 
-#list all entities
-resource_allowed {
-    #role based policy
-    roles[subject][i] = "admin"
-    #is the resource allowed?
-    glob.match("/v2/entities", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
+# Request data
+request = {"user":subject, "action": method, "resource":path, "tenant":fiware_service, "service_path":fiware_servicepath}
+
+# Auth main rule
+authz {
+  user_permitted
 }
 
-#create entities
-resource_allowed {
-    #group based policy
-    groups[subject][i] == "/EKZ/admin"
-   	#is the resource allowed?
-    glob.match("/v2/entities", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:create"] = method
-    fiware_service = "EKZ"
-    glob.match("/Path1/Path2", ["/"], fiware_servicepath)
+default user_permitted = false
+
+# Check for token validity
+is_token_valid {
+  now := time.now_ns() / 1000000000
+  token.payload.nbf <= now
 }
 
-#read entities
-resource_allowed {
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/*", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
+# Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
+path_matches_policy(resource, resource_type, path) {
+  resource = "*"
+  resource_type = "entity"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "entities"
 }
 
-
-#read entities attributes
-resource_allowed {
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/*/attrs", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
+# Checks if the entity in the policy matches the path
+path_matches_policy(resource, resource_type, path) {
+  resource_type = "entity"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "entities"
+  current_path[3] == resource
 }
 
-#read all entities attributes
-resource_allowed { 
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/*/attrs/*", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
+# Checks if the policy has the wildcard asterisks, thus matching paths to any entity types or all
+path_matches_policy(resource, resource_type, path) {
+  resource = "*"
+  resource_type = "entity_type"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "types"
 }
 
-#read is public!
-resource_allowed {
-    glob.match("/v2/entities/ent1", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/Path1/Path2", ["/"], fiware_servicepath)
+# Checks if the entity type in the policy matches the path
+path_matches_policy(resource, resource_type, path) {
+  resource_type = "entity_type"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "types"
+  current_path[3] == resource
 }
 
-#deny read entities
-resource_denied {
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/ent2", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/Path1/Path2", ["/"], fiware_servicepath)
+# Checks if the policy has the wildcard asterisks, thus matching paths to any subscription or all
+path_matches_policy(resource, resource_type, path) {
+  resource = "*"
+  resource_type = "subscription"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "subscriptions"
+}
+
+# Checks if the subscription in the policy matches the path
+path_matches_policy(resource, resource_type, path) {
+  resource_type = "subscription"
+  current_path := split(path, "/")
+  current_path[1] == "v2"
+  current_path[2] == "subscriptions"
+  current_path[3] == resource
+}
+
+# User permissions
+user_permitted {
+  is_token_valid
+  entry := data.user_permissions[token.payload.sub][_]
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
+}
+
+# Group permissions
+user_permitted {
+  is_token_valid
+  some tenant_i
+  token.payload.tenants[tenant_i].name == request.tenant
+  entry := data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
+}
+
+# Role permissions
+user_permitted {
+  is_token_valid
+  some tenant_i
+  token.payload.tenant_roles[tenant_i].name == request.tenant
+  entry := data.role_permissions[token.payload.tenant_roles[_].roles[_]][_]
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
+}
+
+# AuthenticatedAgent special permission
+user_permitted {
+  is_token_valid
+  some role
+  entry := data.role_permissions[role][_]
+  role == "AuthenticatedAgent"
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
+}
+
+# Agent special permission
+user_permitted {
+  some role
+  entry := data.role_permissions[role][_]
+  role == "Agent"
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
 }

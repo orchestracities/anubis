@@ -97,6 +97,7 @@ def create_policy(
         id=str(
             uuid.uuid4()),
         access_to=policy.access_to,
+        resource_type=policy.resource_type,
         service_path_id=service_path_id)
     db.add(db_policy)
     for mode in policy.mode:
@@ -142,8 +143,8 @@ def get_agents_by_type(
 
 def create_agent(db: Session, agent_iri: str):
     # default agent are created on db instantiation
-    agent_type = agent_iri[agent_iri.index(4, ":"):]
-    db_agent = models.Agent(iri=agent.iri, type=agent_type)
+    agent_type = agent_iri[:agent_iri.index(":", 4)]
+    db_agent = models.Agent(iri=agent_iri, type=agent_type)
     db.add(db_agent)
     db.commit()
     db.refresh(db_agent)

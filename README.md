@@ -5,83 +5,85 @@ This POC is based on [envoy ext_authz sandbox](https://www.envoyproxy.io/docs/en
 Scope of the PoC is to test usage of [OPA](https://www.openpolicyagent.org/)
 to protect NGSIv2 APIs.
 
-At the time being there is a set of [policies](config/opa-service/policy.rego)
-that are checked against the JWT token included in the request.
+At the time being we have a [rego file](config/opa-service/policy.rego)
+that verifies the policies stored in our [policies api](auth-management-api)
+specifically for the NGSIv2 Context Broker, as well as checking the JWT token
+included in the request.
+
+Group, Role and User-based resource access policies are defined within a generic
+[policy management api](auth-management-api) and applied to single resources via
+a [rego](config/opa-service/policy.rego) api specific set of rules. Current rego
+expression is designed specifically for the
+[NGSIv2 Context Broker](https://fiware-orion.readthedocs.io/en/master/) and
+JWT token authentication.
+
+The token, when decoded, will contain:
+
+* The ID of the user making the request
+* The groups the user belongs to and their respective tenants
+* The roles the user has under their respective tenants
 
 To run the demo:
 
 ```bash
 $ source .env
 $ docker-compose up -d
-$ sh token.sh
+$ sh test_rego.sh
 ```
 
-Demo token is an examples OC token (as it is today), and should be restructured
-to better allow to check:
+Demo token is an example OC token (as it is today).
 
-* User groups as apart of a tenant (where tenant is still a root group)
-* User roles as part of a tenant (or global).
-
-Currently in the demo this information is stored in the policy:
+Resource access scopes are defined using
+[Web Access control](https://solid.github.io/web-access-control-spec/) and
+mapped to http methods based on the API to be protected:
 
 ```json
-roles = { "631a780d-c7a2-4b6a-acd8-e856348bcb2e" : ["admin", "super_hero"]}
-groups = { "631a780d-c7a2-4b6a-acd8-e856348bcb2e" : ["/EKZ/admin", "/EKZ/super_hero"]}
+scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
 ```
 
-The policy also include mappings from resource scope to http method:
+PoC by default will not allow any request, unless the user has permissions to
+access a given resource, either because of a permission set specifically for it
+(user_permissions), belonging to a group that has such permissions (group_permissions)
+or having a role that grants such permissions (role_permissions).
+
+A policy for a given tenant is stored in the API as such:
 
 ```json
-scope_method = {"entity:read": "GET", "entity:create": "POST", "entity:delete": "DELETE"}
-```
-
-PoC policy are now computed based on the fact that `deny` has priority
-over `allow` and by default users are not authorised to access anything.
-
-Single policies in OPA are then stored as follow:
-
-```json
-resource_allowed {
-    #role based policy
-    roles[subject][i] = "admin"
-    #is the resource allowed?
-    glob.match("/v2/entities", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/**", ["/"], fiware_servicepath)
+{
+"user_permissions": {
+    "1c4f9f82-e5a7-4b32-84ea-a1774531f1d2": [
+      {
+        "action": "acl:Read",
+        "resource": "*",
+        "resource_type": "entity",
+        "tenant": "Tenant",
+        "service_path": "/"
+      },
+      {
+        "action": "acl:Write",
+        "resource": "foo",
+        "resource_type": "entity",
+        "tenant": "Tenant",
+        "service_path": "/"
+      }
+    ]
+  }
 }
 ```
 
-or
+Where each individual permission is defined by:
 
-```json
-resource_denied {
-    "631a780d-c7a2-4b6a-acd8-e856348bcb2e" = subject
-    glob.match("/v2/entities/ent2", ["/"], path)
-    #is the action allowed?
-    scope_method["entity:read"] = method
-    fiware_service = "EKZ"
-    glob.match("/Path1/Path2", ["/"], fiware_servicepath)
-}
-```
+* *action*: The action allowed on this resource (e.g. acl:Read for GET requests)
+* *resource*: The resource being targetted (e.g. entity_x)
+* *resource_type*: The type of the resource (e.g. entity, entity_type,
+  subscription, ...)
+* *tenant*: The tenant this permission falls under
+* *service_path*: The service path this permission falls under
 
-Basically a policy as we define it, is composed by:
+See the test files for more examples as well.
 
-* *Who*: Information on the user: any user / a specific user /
-  a user in a group / a user in a role /
-  a combination of previous ones.
-* *Which*: Information on the resource, which is composed by:
-  * resource identifier: any, entity_id, entity_id and attribute_id, attribute_id
-  * resource service: fiware_servicepath
-* *What*: the action (scope) that gets translated in to method,
-  e.g. entity:read
-
-The example policy covers quite some examples.
-
-What's next? Ideally from here it is possible to design a prototype,
-that allows to manage simply these policies in the context of NGSIv2
-and NGSI-LD.
+What's next? The API prototype and the Context Broker policy already provide
+a good example of this approach with OPA.
 
 * [ ] Design an API that allow to record policies for tenant.
   * [x] Store a policy as a tuple: *who* can access *which* resource to do
@@ -120,5 +122,4 @@ example (e.g. `entity:read`). Either we align to `acl` standard, or we define
 an extension of `acl` with modes needed in our APIs.
 
 The [auth-management-api](auth-management-api) is a prototype, it needs some
-work to be more configurable, e.g. in term of db. Also, integration with OPA
-has not been tested at all.
+work to be more configurable, e.g. in term of db.

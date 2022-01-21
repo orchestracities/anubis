@@ -24,6 +24,14 @@ This feature could leverage a json query languages such as:
 * [pyjq](https://pypi.org/project/pyjq/)
 * [JMESPath](https://github.com/jmespath/jmespath.py)
 
+## Refactor
+
+* > use resource id and not path. this allows to work by id and support
+    multiples APIs
+* > add "type" to resource, so that we can tell if the resource is an entity
+    or a device, for example in this case the issue requires to understand
+    if there is a way to cover this in wac
+
 ## Current status
 
 As of today this is a *proof of concept* build during free time.

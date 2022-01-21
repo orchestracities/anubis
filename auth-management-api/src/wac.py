@@ -4,7 +4,7 @@ from rdflib.namespace import FOAF, RDF
 from policies.models import Policy
 from sqlalchemy.orm import Session
 
-n = Namespace("http://example.org/entities/")
+n = Namespace("http://example.org/")
 acl = Namespace("http://www.w3.org/ns/auth/acl#")
 
 
@@ -19,7 +19,8 @@ def serialize(db: Session, policies: [Policy]):
     g.bind("acl", acl)
 
     for policy in policies:
-        policy_node = URIRef(policy.id, acl)
+        policy_node = URIRef(policy.id, n.policy)
+        g.add((policy_node, RDF.type, acl.Authorization))
 
         mode_property = acl.mode
         for index, mode in enumerate(policy.mode):

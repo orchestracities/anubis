@@ -37,6 +37,7 @@ def serialize_policy(policy: models.Policy):
     return schemas.Policy(
         id=policy.id,
         access_to=policy.access_to,
+        resource_type=policy.resource_type,
         mode=modes,
         agent=agents)
 
@@ -134,7 +135,7 @@ def read_policies(
             content=r_serialize(
                 db,
                 db_policies),
-            media_type="text/rego")
+            media_type="application/json")
     else:
         policies = []
         for db_policy in db_policies:
@@ -176,7 +177,7 @@ def read_policy(
             content=r_serialize(
                 db,
                 [db_policy]),
-            media_type="text/rego")
+            media_type="application/json")
     else:
         return serialize_policy(db_policy)
 
