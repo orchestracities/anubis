@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: ''
 labels: bug or fix
-assignees: c0c0n3
+assignees: Cerfoglg
 
 ---
 
