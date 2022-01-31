@@ -6,6 +6,7 @@ from database import test_db as test_db
 
 client = TestClient(app)
 
+
 def test_tenants(test_db):
     response = client.post(
         "/v1/tenants/",
@@ -20,23 +21,23 @@ def test_tenants(test_db):
     assert response.status_code == 200
     assert len(body) == 1
 
-    response = client.get("/v1/tenants/"+tenant_id)
+    response = client.get("/v1/tenants/" + tenant_id)
     body = response.json()
     assert response.status_code == 200
     assert body["name"] == "test"
 
-    response = client.get("/v1/tenants/"+tenant_id+"/service_paths/")
+    response = client.get("/v1/tenants/" + tenant_id + "/service_paths/")
     body = response.json()
     assert response.status_code == 200
     assert body[0]["path"] == "/"
 
     response = client.post(
-        "/v1/tenants/"+tenant_id+"/service_paths",
+        "/v1/tenants/" + tenant_id + "/service_paths",
         json={"path": "/foobar"}
     )
     assert response.status_code == 201
 
-    response = client.get("/v1/tenants/"+tenant_id+"/service_paths/")
+    response = client.get("/v1/tenants/" + tenant_id + "/service_paths/")
     body = response.json()
     assert response.status_code == 200
     assert len(body) == 2
