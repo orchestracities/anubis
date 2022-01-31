@@ -15,7 +15,7 @@ rfc3987 = "*"
 rdflib = "*"
 opa-python-client = "*"
 psycopg2-binary = "*"
-urllib3 = ">=1.26.5"
+urllib3 = ">=1.26.9"
 
 [dev-packages]
 
