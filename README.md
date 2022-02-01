@@ -27,10 +27,10 @@ on the portability of security & privacy data policies.
 Enabling security and privacy data policy portability is clearly
 a step forward in enabling data sovereignty across different services.
 
-This project aims at enabling data sovereignty by introducing data privacy and 
+This project aims at enabling data sovereignty by introducing data privacy and
 security policy portability and prototyping distributed data privacy
 and security policy management, thus contributing to increase
-trust toward data sharing APIs and platforms. 
+trust toward data sharing APIs and platforms.
 
 Approaches as the one proposed, increasing control by owners over their data and
 portability of data assets, are key to boost the establishment of
@@ -60,7 +60,7 @@ In our scenario, a client request for a resource to an API, and based on the
 defined policies, the client is able or not to access the resource.
 The figure below shows the current architecture.
 
-
+```ascii
                            ┌─────────────┐
                            │     API     │
                            │  Specific   │
@@ -83,9 +83,10 @@ The figure below shows the current architecture.
                            │     API     │
                            └─────────────┘
 
+```
 
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
-    implemented using a authz envoy 
+    implemented using a authz envoy
 [authz filter](https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/ext_authz).
 1. The PEP evaluates a set of rules that apply the abstract policies to the
     specific API to be protected
