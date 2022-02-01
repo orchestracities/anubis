@@ -1,4 +1,4 @@
-name: Python application
+name: Policy API Tests
 
 on: [push]
 
