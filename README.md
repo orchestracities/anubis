@@ -1,6 +1,6 @@
-# OPA-autz
+# OPA-authz
 
-Welcome to OPA-autz (we are looking for a better name, if you have ideas
+Welcome to OPA-authz (we are looking for a better name, if you have ideas
 please share :-) )!
 
 ## What is the project about?
@@ -85,6 +85,8 @@ The figure below shows the current architecture.
 
 ```
 
+<!-- editable at https://asciiflow.com/#/share/eJyrVspLzE1VssorzcnRUcpJrEwtUrJSqo5RqohRsrI0N9aJUaoEsozMLYCsktSKEiAnRkkBO3g0ZQ%2FxKCYmD7cxYNoxwBPGJ6Q4uCA1OTMtM5koxQpBpTmpxcSYTA3fwEybtomwGmLMAashyW1keYjcUEDSCtMPJA0RzID8nMzkSgRfAY2J6ksQxzknMzWvBJ9bpu0CKXXNS8svSk7NBSkmoBQEUJMXdncjMQPyM8GOIM7dgzR2cCYrJNdTQc002mcrLImJqiUKCp9avlGqVaoFAKtNRnk%3D) -->
+
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
     implemented using a authz envoy
 [authz filter](https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/ext_authz).
@@ -117,7 +119,7 @@ In general, a policy is defined by:
 
 - *actor*: The user, group or role, that is linked to the policy
 - *action*: The action allowed on this resource (e.g. acl:Read for GET requests)
-- *resource*: The urn of the resource being targetted (e.g. urn:entity:x)
+- *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
 - *resource_type*: The type of the resource (e.g. entity, entity_type,
   subscription,  device, ...)
   

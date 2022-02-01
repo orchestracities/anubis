@@ -23,7 +23,8 @@ ask. We're here to help! This is simply a reminder of what we are going
 to look for before merging your code._
 
 - [ ] I have read the [CONTRIBUTING][contrib] doc
-- [ ] I have signed the [CLA][cla]
+- [ ] I have signed the [Contributor License Agreement][cla]
+- [ ] I have updated the [RELEASE NOTES][release]
 - [ ] I have added tests that prove my fix is effective or that my
       feature works
 - [ ] I have added necessary documentation (if appropriate)
@@ -43,3 +44,5 @@ you considered, etc...
     "Martel Open Source Software Individual Contributor License Agreement"
 [contrib]: https://github.com/orchestracities/opa-authz/blob/master/CONTRIBUTING.md
     "Contributing to OPA-authz"
+[release]: https://github.com/orchestracities/opa-authz/blob/master/RELEASE_NOTES.md
+    "OPA-authz Release Notes"
