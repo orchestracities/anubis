@@ -10,4 +10,6 @@
 
 ### Documentation
 
+- Improve documentation
+
 ### Technical debt
