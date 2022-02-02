@@ -65,6 +65,19 @@ services:
   #   networks:
   #     - envoymesh
 
+  keycloak:
+    image: jboss/keycloak:${KEYCLOAK_VERSION:-5.0.0}
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./realm-export.json:/tmp/realm-export.json
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+      - KEYCLOAK_IMPORT=/tmp/realm-export.json
+    networks:
+      - envoymesh
+
   upstream-service:
     image: fiware/orion:${ORION_VERSION:-2.0.0}
     ports:
