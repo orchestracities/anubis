@@ -66,15 +66,16 @@ services:
   #     - envoymesh
 
   keycloak:
-    image: jboss/keycloak:${KEYCLOAK_VERSION:-5.0.0}
+    image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
     ports:
       - "8085:8080"
     volumes:
-      - ./realm-export.json:/tmp/realm-export.json
+      - ./keycloak/oc-custom.jar:/opt/jboss/keycloak/standalone/deployments/oc-custom.jar
+      - ./keycloak/realm-export.json:/opt/jboss/realm-export.json
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=password
-      - KEYCLOAK_IMPORT=/tmp/realm-export.json
+      - JAVA_TOOL_OPTIONS=-Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/jboss/realm-export.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
     networks:
       - envoymesh
 
