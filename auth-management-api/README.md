@@ -111,6 +111,12 @@ $ cd src
 $ uvicorn main:app --reload
 ```
 
+## Test the API
+
+```bash
+$ opa test . -v
+```
+
 ## API documentation
 
 Once the API is running, you can check it at: `http://127.0.0.1:8000/docs`
@@ -178,7 +184,8 @@ Here are few curl calls that exemplify how the API works:
     -H 'fiware_service_path: /' \
     -H 'Content-Type: application/json' \
     -d '{
-    "access_to": "/v2/entities/urn:myentity",
+    "access_to": "urn:myentity",
+    "resource_type": "entity",
     "mode": ["acl:Read"],
     "agent": ["acl:AuthenticatedAgent"]
     }'
@@ -208,7 +215,8 @@ Here are few curl calls that exemplify how the API works:
     content-type: application/json
 
     {
-      "access_to":"/v2/entities/urn:myentity",
+      "access_to":"urn:myentity",
+      "resource_type":"entity",
       "mode":["acl:Read"],
       "agent":["acl:AuthenticatedAgent"],
       "id":"5c3ac3b2-ad98-4358-8525-a3f7947170af"
@@ -252,53 +260,17 @@ Here are few curl calls that exemplify how the API works:
     content-length: 1289
     content-type: text/rego; charset=utf-8
 
-    package enyoy.authz.4385a69f-6d3d-49ed-b342-848f30297a05
-
-    tenant = "EKZ"
-
-    import input.attributes.request.http.method as method
-    import input.attributes.request.http.path as path
-    import input.attributes.request.http.headers.authorization as authorization
-
-    scope_method = {"wac:Read": ["GET"], "wac:Write": ["POST","PUT","PATCH"], "wac:Control": ["GET","POST","PUT","DELETE","PATCH"], "wac:Append": ["POST","PATCH"]}
-
-    token = {"payload": payload} {
-        [header, payload, signature] := io.jwt.decode(bearer_token)
-    }
-
-    is_token_valid {
-        now := time.now_ns() / 1000000000
-        token.payload.nbf <= now
-        now < token.payload.exp
-    }
-
-    bearer_token := t {
-        v := authorization
-        startswith(v, "Bearer ")
-        t := substring(v, count("Bearer "), -1)
-    }
-
-    contains_element(arr, elem) = true {
-        arr[_] = elem
-    } else = false { true }
-
-    subject := p {
-        p := token.payload.sub
-    }
-
-    fiware_service := p {
-        p := input.attributes.request.http.headers["fiware-service"]
-    }
-
-    fiware_servicepath := p {
-        p := input.attributes.request.http.headers["fiware-servicepath"]
-    }
-
-    resource_allowed {
-        fiware_service = tenant
-        is_token_valid
-        glob.match("/v2/entities/urn:myentity", ["/"], path)
-        contains_element(scope_method["acl:Read"], method)
-        glob.match("/", ["/"], fiware_servicepath)
+    {
+    "role_permissions": {
+        "AuthenticatedAgent": [
+          {
+            "action": "acl:Read",
+            "resource": "urn:myentity",
+            "resource_type": "entity",
+            "tenant": "EKZ",
+            "service_path": "/"
+          }
+        ]
+      }
     }
     ```

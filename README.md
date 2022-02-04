@@ -122,7 +122,7 @@ In general, a policy is defined by:
 - *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
 - *resource_type*: The type of the resource (e.g. entity, entity_type,
   subscription,  device, ...)
-  
+
 Additionally, in relation to FIWARE APIs, a policy may include also:
 
 - *tenant*: The tenant this permission falls under
@@ -216,13 +216,21 @@ Currently, the token, when decoded, should contain:
 
 ## Demo
 
-To run the demo:
+To run the full setup:
 
   ```bash
   $ source .env
-  $ docker-compose up -d
-  $ sh test_rego.sh
+  $ run_all.sh
   ```
+
+## Test rego
+
+To test the rego policy run:
+
+```bash
+$ source .env
+$ test_rego.sh
+```
 
 ## Status and Roadmap
 
