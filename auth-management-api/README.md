@@ -85,8 +85,9 @@ The following activities need to be implemented as next steps:
 * Decide wether using only acl defined access modes, e.g. `acl:Write`,
     `acl:Read`, or allowing also custom ones, e.g. `entity:read`.
 
-* Support `PATCH` for the policy management API (may be complicate for the service paths,
-  in case you change the `path` since this affects all `children` path).
+* Support `PATCH` for the policy management API (may be complicate for the
+  service paths, in case you change the `path` since this affects all
+  `children` path).
 
 * Allow configuration of db, OPA endpoint, ect.
 
