@@ -1,5 +1,19 @@
 # OPA-authz Release Notes
 
+## 0.0.2
+
+### New features
+
+- Testing and full setup
+
+### Bug fixes
+
+### Documentation
+
+- Improved documentation
+
+### Technical debt
+
 ## 0.0.1
 
 ### New features
@@ -10,6 +24,6 @@
 
 ### Documentation
 
-- Improve documentation
+- Improved documentation
 
 ### Technical debt
