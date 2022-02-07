@@ -195,12 +195,13 @@ access policies, the request is allowed.
 The authentication per se is not covered by the PEP, the assumption is that
 the client authenticates before issuing and obtains a valid JWT token.
 
-Currently the PEP only verifies that the token is valid:
+Currently the PEP only verifies that the token is valid by checking against its
+expiration:
 
   ```javascript
   is_token_valid {
     now := time.now_ns() / 1000000000
-    token.payload.nbf <= now
+    token.payload.exp >= now
   }
   ```
 
