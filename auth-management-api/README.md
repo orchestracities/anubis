@@ -113,7 +113,7 @@ $ uvicorn main:app --reload
 ## Test the API
 
 ```bash
-$ opa test . -v
+$ pytest -rP
 ```
 
 ## API documentation

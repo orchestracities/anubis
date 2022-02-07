@@ -216,12 +216,28 @@ Currently, the token, when decoded, should contain:
 
 ## Demo
 
-To run an end-to-end demo:
+To deploy a demo that includes the Auth API, OPA, Keycloak, and a Context
+Broker, run the following script:
 
-  ```bash
-  $ source .env
-  $ demo.sh
-  ```
+```bash
+$ source .env
+$ cd scripts
+$ ./run_demo.sh
+```
+
+To run a few test API calls to the context broker, run:
+
+```bash
+$ cd scripts
+$ ./test_context_broker.sh
+```
+
+To clean up the deployment after you're done, run:
+
+```bash
+$ cd scripts
+$ ./clean.sh
+```
 
 ## Test rego
 
