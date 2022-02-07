@@ -216,11 +216,11 @@ Currently, the token, when decoded, should contain:
 
 ## Demo
 
-To run the full setup:
+To run an end-to-end demo:
 
   ```bash
   $ source .env
-  $ run_all.sh
+  $ demo.sh
   ```
 
 ## Test rego
