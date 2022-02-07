@@ -55,8 +55,9 @@ default user_permitted = false
 
 # Check for token validity
 is_token_valid {
-  now := time.now_ns() / 1000000000
-  token.payload.nbf <= now
+  # now := time.now_ns() / 1000000000
+  # token.payload.nbf <= now
+  true
 }
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
@@ -140,7 +141,7 @@ user_permitted {
   is_token_valid
   some tenant_i
   token.payload.tenant_roles[tenant_i].name == request.tenant
-  entry := data.role_permissions[token.payload.tenant_roles[_].roles[_]][_]
+  entry := data.role_permissions[token.payload.tenants[_].groups[_].clientRoles[_]][_]
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
