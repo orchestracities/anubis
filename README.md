@@ -225,7 +225,11 @@ $ cd scripts
 $ ./run_demo.sh
 ```
 
-To run a few test API calls to the context broker, run:
+You can run a script to make a few test API calls. Make sure first to have jq
+installed for parsing the Keycloak token. See
+[how to install it here.](https://stedolan.github.io/jq/download/).
+
+Then run the test script with:
 
 ```bash
 $ cd scripts

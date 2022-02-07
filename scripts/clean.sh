@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
 docker-compose down
-docker-compose rm -f
+docker-compose rm -fv
