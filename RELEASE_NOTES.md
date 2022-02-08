@@ -12,6 +12,7 @@
 ### Documentation
 
 - Improved documentation
+- Fix credits text
 
 ### Continous Integration
 
