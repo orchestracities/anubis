@@ -4,7 +4,8 @@
 
 ### New features
 
-- Testing and full setup
+- Support for orion subscriptions in rego file
+- Separate api rules from policy data
 - Refactor dependencies
 
 ### Bug fixes
@@ -14,9 +15,11 @@
 - Improved documentation
 - Fix credits text
 
-### Continous Integration
+### Continuous Integration
 
 - Add caching and multiple python version testing
+- Add docker build workflow
+- Testing and full setup
 
 ### Technical debt
 
