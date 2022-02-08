@@ -14,12 +14,9 @@
 - Improved documentation
 - Fix credits text
 
-### Continous Integration
-
-- Add caching and multiple python version testing
-
 ### Continuous Integration
 
+- Add caching and multiple python version testing
 - Add docker build workflow
 
 ### Technical debt
