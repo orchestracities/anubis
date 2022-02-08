@@ -13,6 +13,7 @@
 - Improved documentation
 
 ### Continous Integration
+
 - Add caching and multiple python version testing
 
 ### Technical debt
