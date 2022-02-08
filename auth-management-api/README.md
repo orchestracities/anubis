@@ -104,8 +104,8 @@ The following activities need to be implemented as next steps:
 ## Starts the API (dev mode)
 
 ```bash
+$ pipenv install --dev
 $ pipenv shell
-$ pipenv install
 $ cd src
 $ uvicorn main:app --reload
 ```
