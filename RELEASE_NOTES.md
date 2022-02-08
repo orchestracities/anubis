@@ -5,6 +5,7 @@
 ### New features
 
 - Testing and full setup
+- Refactor dependencies
 
 ### Bug fixes
 
