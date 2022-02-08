@@ -12,6 +12,10 @@
 
 - Improved documentation
 
+### Continuous Integration
+
+- Add docker build workflow
+
 ### Technical debt
 
 ## 0.0.1
