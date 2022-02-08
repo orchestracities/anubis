@@ -5,12 +5,18 @@
 ### New features
 
 - Testing and full setup
+- Refactor dependencies
 
 ### Bug fixes
 
 ### Documentation
 
 - Improved documentation
+- Fix credits text
+
+### Continous Integration
+
+- Add caching and multiple python version testing
 
 ### Continuous Integration
 
