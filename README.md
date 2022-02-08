@@ -217,6 +217,16 @@ Currently, the token, when decoded, should contain:
 
 ## Demo
 
+### Requirements
+
+For running this demo you'll need to have the follwing installed:
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [curl](https://www.cyberciti.biz/faq/how-to-install-curl-command-on-a-ubuntu-linux/)
+- [jq](https://stedolan.github.io/jq/download/)
+
+### Deploying the demo
+
 To deploy a demo that includes the Auth API, OPA, Keycloak, and a Context
 Broker, run the following script:
 
@@ -226,11 +236,8 @@ $ cd scripts
 $ ./run_demo.sh
 ```
 
-You can run a script to make a few test API calls. Make sure first to have jq
-installed for parsing the Keycloak token. See
-[how to install it here.](https://stedolan.github.io/jq/download/).
-
-Then run the test script with:
+You can run a script to make a few test API calls. You can run the test
+script with:
 
 ```bash
 $ cd scripts
