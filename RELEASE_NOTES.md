@@ -11,6 +11,7 @@
 ### Documentation
 
 - Improved documentation
+- Fix credits text
 
 ### Technical debt
 
