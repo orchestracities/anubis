@@ -4,7 +4,7 @@
 
 ### New features
 
-- Support for subscriptions in rego 
+- Support for orion subscriptions in rego file
 - Separate api rules from policy data
 - Refactor dependencies
 
