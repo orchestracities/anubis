@@ -4,7 +4,8 @@
 
 ### New features
 
-- Testing and full setup
+- Support for subscriptions in rego 
+- Separate api rules from policy data
 - Refactor dependencies
 
 ### Bug fixes
@@ -18,6 +19,7 @@
 
 - Add caching and multiple python version testing
 - Add docker build workflow
+- Testing and full setup
 
 ### Technical debt
 
