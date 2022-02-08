@@ -65,6 +65,20 @@ services:
   #   networks:
   #     - envoymesh
 
+  keycloak:
+    image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./keycloak/oc-custom.jar:/opt/jboss/keycloak/standalone/deployments/oc-custom.jar
+      - ./keycloak/realm-export.json:/opt/jboss/realm-export.json
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+      - JAVA_TOOL_OPTIONS=-Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/jboss/realm-export.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+    networks:
+      - envoymesh
+
   upstream-service:
     image: fiware/orion:${ORION_VERSION:-2.0.0}
     ports:

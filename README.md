@@ -122,7 +122,7 @@ In general, a policy is defined by:
 - *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
 - *resource_type*: The type of the resource (e.g. entity, entity_type,
   subscription,  device, ...)
-  
+
 Additionally, in relation to FIWARE APIs, a policy may include also:
 
 - *tenant*: The tenant this permission falls under
@@ -195,12 +195,13 @@ access policies, the request is allowed.
 The authentication per se is not covered by the PEP, the assumption is that
 the client authenticates before issuing and obtains a valid JWT token.
 
-Currently the PEP only verifies that the token is valid:
+Currently the PEP only verifies that the token is valid by checking against its
+expiration:
 
   ```javascript
   is_token_valid {
     now := time.now_ns() / 1000000000
-    token.payload.nbf <= now
+    token.payload.exp >= now
   }
   ```
 
@@ -216,13 +217,48 @@ Currently, the token, when decoded, should contain:
 
 ## Demo
 
-To run the demo:
+### Requirements
 
-  ```bash
-  $ source .env
-  $ docker-compose up -d
-  $ sh test_rego.sh
-  ```
+For running this demo you'll need to have the follwing installed:
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [curl](https://www.cyberciti.biz/faq/how-to-install-curl-command-on-a-ubuntu-linux/)
+- [jq](https://stedolan.github.io/jq/download/)
+
+### Deploying the demo
+
+To deploy a demo that includes the Auth API, OPA, Keycloak, and a Context
+Broker, run the following script:
+
+```bash
+$ source .env
+$ cd scripts
+$ ./run_demo.sh
+```
+
+You can run a script to make a few test API calls. You can run the test
+script with:
+
+```bash
+$ cd scripts
+$ ./test_context_broker.sh
+```
+
+To clean up the deployment after you're done, run:
+
+```bash
+$ cd scripts
+$ ./clean.sh
+```
+
+## Test rego
+
+To test the rego policy run:
+
+```bash
+$ source .env
+$ test_rego.sh
+```
 
 ## Status and Roadmap
 

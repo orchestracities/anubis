@@ -1,15 +1,26 @@
-# NGSI APIs Access Control Policy Management
+# Access Control Policy Management
 
-This API provides functionalities to manage access control policies for NGSI
-APIs. While policies are expressed in a generic way, and as such this means
-that policies are not linked to NGSI APIs, Orion and other implementations
-introduced a specific way to support multi-tenancy, and this API complies with
-that. This API in short provides a PAP (Policy Administration Point),
+This API provides functionalities to manage Role Base Access Control policies.
+THe policy management part is complemented by Tenant and Service management
+as supported by FIWARE APIs.
+
+While policies are expressed in a generic way, and as such this means
+that policies works also for other APIs beyond FIWARE, FIWARE
+introduced a specific way to support multi-tenancy, and this API
+complies with FIWARE multi-tenancy model.
+
+A tenant, also named as `Fiware-Service`, is further segmented into
+`ServicePath`s, i.e. hierarchical scoping of the resources part
+of a given tenant. For a more detailed discussion, you can
+read the related discussion in FIWARE Orion Context Broker
+[documentation](https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html).
+
+This API in short provides a PAP (Policy Administration Point),
 it does not provide PEP or PDP, it only stores the policies.
 PEP is provided by [Envoy](https://www.envoyproxy.io) and PDP is provided by
 [OPA](https://www.openpolicyagent.org/).
 
-The definition of policies is based on
+Currently the policy models is based on
 [W3C web access control spec](https://github.com/solid/web-access-control-spec).
 
 Obviously, compared to other languages, expressive power may be quite limited.
@@ -24,36 +35,37 @@ This feature could leverage a json query languages such as:
 * [pyjq](https://pypi.org/project/pyjq/)
 * [JMESPath](https://github.com/jmespath/jmespath.py)
 
-## Refactor
+## Short overview
 
-* > use resource id and not path. this allows to work by id and support
-    multiples APIs
-* > add "type" to resource, so that we can tell if the resource is an entity
-    or a device, for example in this case the issue requires to understand
-    if there is a way to cover this in wac
+The API is composed by two main paths:
+
+* `/v1/tenants` supporting definition of tenants (FIWARE Services) and paths
+    (FIWARE Service Paths).
+    *NOTE:* FIWARE Service Paths may be gone with NGSI-LD.
+
+* `/v1/policies` supporting definition of web access policies (linked to tenants
+    and service paths). Under the hood, this path also creates and stores
+    information linked to policies:
+
+  * Agents (i.e. user or user groups definitions);
 
 ## Current status
 
-As of today this is a *proof of concept* build during free time.
+Supported features:
 
 * The codebase allows the creation of tenants (related service paths) and
   policies.
 
 * The codebase allows to generate a base translation of policies in `acl`
-  and `rego`.
+  and `rego` compatible format (i.e. a data structure that is used as input
+  data for policy evaluation by OPA).
+
+## Next steps
 
 The following activities need to be implemented as next steps:
 
-* Finalise translation of policies into [rego](https://www.openpolicyagent.org/docs/latest/policy-language/)
-  for OPA. Different
-  translators may be needed for different FIWARE services (e.g. a translator
-  for Orion Context Broker, and a Translator for IoT Agents). This has to
-  be studied a bit. A driver mechanism probably would be the best solution.
-  Also, rego policies at the moment are verbose and redundant, part of this
-  redundancy may be avoided creating a default `package` and importing it
-  in all generated policies.
-
-* Register translated policies into OPA. This client could help:
+* Push data for policy evaluation into OPA when a policy is updated
+  (rather that OPA pulling them as it happens now). This client could help:
   [https://pypi.org/project/OPA-python-client/](https://pypi.org/project/OPA-python-client/)
 
 * Investigate if we need to provide to OPA access to knowledge available in the
@@ -73,28 +85,15 @@ The following activities need to be implemented as next steps:
 * Decide wether using only acl defined access modes, e.g. `acl:Write`,
     `acl:Read`, or allowing also custom ones, e.g. `entity:read`.
 
-* Support `PATCH` for the API (may be complicate for the service paths,
-  in case you change the `path` since this affects all `children` path).
+* Support `PATCH` for the policy management API (may be complicate for the
+  service paths, in case you change the `path` since this affects all
+  `children` path).
 
 * Allow configuration of db, OPA endpoint, ect.
 
 * Handle ownership.
 
-* Handle entity `type`.
-
-## Short overview
-
-The API is composed by two main paths:
-
-* `/v1/tenants` supporting definition of tenants (FIWARE Services) and paths
-    (FIWARE Service Paths).
-    *NOTE:* FIWARE Service Paths may be gone with NGSI-LD.
-
-* `/v1/policies` supporting definition of web access policies (linked to tenants
-    and service paths). Under the hood, this path also creates and stores
-    information linked to policies:
-
-  * Agents (i.e. user or user groups definitions);
+* Support disabling multi-tenancy.
 
 ## Requirements
 
@@ -109,6 +108,12 @@ $ pipenv shell
 $ pipenv install
 $ cd src
 $ uvicorn main:app --reload
+```
+
+## Test the API
+
+```bash
+$ pytest -rP
 ```
 
 ## API documentation
@@ -178,7 +183,8 @@ Here are few curl calls that exemplify how the API works:
     -H 'fiware_service_path: /' \
     -H 'Content-Type: application/json' \
     -d '{
-    "access_to": "/v2/entities/urn:myentity",
+    "access_to": "urn:myentity",
+    "resource_type": "entity",
     "mode": ["acl:Read"],
     "agent": ["acl:AuthenticatedAgent"]
     }'
@@ -208,7 +214,8 @@ Here are few curl calls that exemplify how the API works:
     content-type: application/json
 
     {
-      "access_to":"/v2/entities/urn:myentity",
+      "access_to":"urn:myentity",
+      "resource_type":"entity",
       "mode":["acl:Read"],
       "agent":["acl:AuthenticatedAgent"],
       "id":"5c3ac3b2-ad98-4358-8525-a3f7947170af"
@@ -237,7 +244,7 @@ Here are few curl calls that exemplify how the API works:
         acl:mode <acl:Read> .
     ```
 
-1. Let's retrieve the policy as rego:
+1. Let's retrieve the policy as rego data:
 
     ```bash
     $curl -i -X 'GET' \
@@ -252,53 +259,17 @@ Here are few curl calls that exemplify how the API works:
     content-length: 1289
     content-type: text/rego; charset=utf-8
 
-    package enyoy.authz.4385a69f-6d3d-49ed-b342-848f30297a05
-
-    tenant = "EKZ"
-
-    import input.attributes.request.http.method as method
-    import input.attributes.request.http.path as path
-    import input.attributes.request.http.headers.authorization as authorization
-
-    scope_method = {"wac:Read": ["GET"], "wac:Write": ["POST","PUT","PATCH"], "wac:Control": ["GET","POST","PUT","DELETE","PATCH"], "wac:Append": ["POST","PATCH"]}
-
-    token = {"payload": payload} {
-        [header, payload, signature] := io.jwt.decode(bearer_token)
-    }
-
-    is_token_valid {
-        now := time.now_ns() / 1000000000
-        token.payload.nbf <= now
-        now < token.payload.exp
-    }
-
-    bearer_token := t {
-        v := authorization
-        startswith(v, "Bearer ")
-        t := substring(v, count("Bearer "), -1)
-    }
-
-    contains_element(arr, elem) = true {
-        arr[_] = elem
-    } else = false { true }
-
-    subject := p {
-        p := token.payload.sub
-    }
-
-    fiware_service := p {
-        p := input.attributes.request.http.headers["fiware-service"]
-    }
-
-    fiware_servicepath := p {
-        p := input.attributes.request.http.headers["fiware-servicepath"]
-    }
-
-    resource_allowed {
-        fiware_service = tenant
-        is_token_valid
-        glob.match("/v2/entities/urn:myentity", ["/"], path)
-        contains_element(scope_method["acl:Read"], method)
-        glob.match("/", ["/"], fiware_servicepath)
+    {
+    "role_permissions": {
+        "AuthenticatedAgent": [
+          {
+            "action": "acl:Read",
+            "resource": "urn:myentity",
+            "resource_type": "entity",
+            "tenant": "EKZ",
+            "service_path": "/"
+          }
+        ]
+      }
     }
     ```
