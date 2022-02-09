@@ -10,17 +10,40 @@ default authz = false
 # Action to method mappings
 scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
 
-# Helper to get the token payload
-token = {"payload": payload} {
-  [header, payload, signature] := io.jwt.decode(bearer_token)
-}
-
 # Extract Bearer Token
 bearer_token = t {
 	v := authorization
 	startswith(v, "Bearer ")
 	t := substring(v, count("Bearer "), -1)
 }
+
+# Helper to get the token payload
+token = {"payload": payload, "header": header} {
+  [header, payload, signature] := io.jwt.decode(bearer_token)
+}
+
+# Token issuer
+issuer = token.payload.iss
+
+# Get token metadata
+metadata = http.send({
+    "url": concat("", [issuer, "/.well-known/openid-configuration"]),
+    "method": "GET",
+    "force_cache": true,
+    "force_cache_duration_seconds": 86400
+}).body
+
+# Get endpoints for jws and the token
+jwks_endpoint := metadata.jwks_uri
+token_endpoint := metadata.token_endpoint
+
+# jwks_request for validation
+jwks_request(url) = http.send({
+    "url": url,
+    "method": "GET",
+    "force_cache": true,
+    "force_cache_duration_seconds": 3600
+})
 
 # API URI
 api_uri = "http://policy-api:8000/v1/policies/"
@@ -57,6 +80,8 @@ default user_permitted = false
 is_token_valid {
   now := time.now_ns() / 1000000000
   token.payload.exp >= now
+  jwks := json.marshal(jwks_request(jwks_endpoint).body.keys[_])
+  io.jwt.verify_rs256(bearer_token, jwks)
 }
 
 # Token valid when testing (default is false)
