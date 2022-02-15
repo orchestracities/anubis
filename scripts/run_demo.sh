@@ -1,5 +1,13 @@
 #!/bin/bash -e
 
+rep=$(curl -s --unix-socket /var/run/docker.sock http://ping > /dev/null)
+status=$?
+
+if [ $status -eq 7 ]; then
+    echo 'docker is not running - test will not be executed'
+    exit 1
+fi
+
 echo "Downloading Keycloak scripts..."
 cd ../keycloak
 wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.4/oc-custom.jar -O oc-custom.jar
@@ -8,10 +16,21 @@ cd ..
 echo "Deploying services via Docker Compose..."
 docker-compose up -d
 
-until curl -s -f -LI -o /dev/null 'http://localhost:8085'; do
+wait=0
+HOST="http://localhost:8085"
+while [ "$(curl -s -o /dev/null -L -w ''%{http_code}'' $HOST)" != "200" ] && [ $wait -le 60 ]
+do
   echo "Waiting for Keycloak..."
   sleep 5
+  wait=$((wait+5))
+  echo "Elapsed time: $wait"
 done
+
+if [ $wait -gt 60 ]; then
+  echo "timeout while waiting services to be ready"
+  docker-compose down -v
+  exit -1
+fi
 
 echo "Setting up tenant Tenant1..."
 curl -s -i -X 'POST' \
