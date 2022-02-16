@@ -25,3 +25,15 @@ jobs:
         run: |
           pipenv install --dev
           pipenv run pytest
+      - name: Test Rego
+        working-directory: ./scripts
+        run: |
+          ./test_rego.sh
+      - name: Setup demo
+        working-directory: ./scripts
+        run: |
+          ./run_demo.sh
+      - name: Test demo
+        working-directory: ./scripts
+        run: |
+          ./test_context_broker.sh
