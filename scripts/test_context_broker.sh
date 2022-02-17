@@ -2,11 +2,11 @@
 
 echo "Obtaining token from Keycloak..."
 
-token=`curl -d "client_id=client1&grant_type=password&username=admin&password=admin" -X POST 'http://localhost:8085/auth/realms/master/protocol/openid-connect/token' | \
+export token=`curl -d "client_id=client1&grant_type=password&username=admin&password=admin" -X POST 'http://localhost:8085/auth/realms/master/protocol/openid-connect/token' | \
 jq '.access_token'`
 
-token="${token%\"}"
-token="${token#\"}"
+export token="${token%\"}"
+export token="${token#\"}"
 
 echo "\n\ncan i read entities?"
 curl -i -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" 'http://localhost:8000/v2/entities'

@@ -21,9 +21,9 @@ ENV PATH="/.venv/bin:$PATH"
 
 RUN useradd --create-home apiuser && usermod -aG sudo apiuser
 WORKDIR /home/apiuser
-USER apiuser
-
 COPY ./auth-management-api ./auth-management-api
+RUN chown -R apiuser:apiuser /home/apiuser
+USER apiuser
 
 WORKDIR ./auth-management-api/src
 

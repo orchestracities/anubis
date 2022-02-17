@@ -46,7 +46,7 @@ services:
       - envoymesh
 
   mongo:
-    image: mongo:3.2.19
+    image: mongo:4.4
     ports:
       - "27017:27017"
     volumes:
@@ -80,7 +80,7 @@ services:
       - envoymesh
 
   upstream-service:
-    image: fiware/orion:${ORION_VERSION:-2.0.0}
+    image: fiware/orion:${ORION_VERSION:-3.3.1}
     ports:
       - "1026:1026"
     command: -logLevel DEBUG -noCache -dbhost mongo
