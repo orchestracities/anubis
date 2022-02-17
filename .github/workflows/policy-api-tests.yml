@@ -28,6 +28,7 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
       - name: Setup demo
         working-directory: ./scripts
         run: |
@@ -39,7 +40,8 @@ jobs:
   opa:
     runs-on: ubuntu-latest
     steps:
-      - name: Intall opa
+      - uses: actions/checkout@v1
+      - name: Install opa
         working-directory: ./scripts
         run: |
           curl -L -o opa https://openpolicyagent.org/downloads/v0.37.2/opa_linux_amd64_static
