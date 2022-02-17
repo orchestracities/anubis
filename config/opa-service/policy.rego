@@ -22,12 +22,15 @@ token = {"payload": payload, "header": header} {
   [header, payload, signature] := io.jwt.decode(bearer_token)
 }
 
+# Valid Issuers
+valid_iss = {"http://localhost:8085/auth/realms/master"}
+
 # Token issuer
 issuer = token.payload.iss
 
 # Get token metadata
 metadata = http.send({
-    "url": concat("", [issuer, "/.well-known/openid-configuration"]),
+    "url": concat("", [valid_iss[issuer], "/.well-known/openid-configuration"]),
     "method": "GET",
     "force_cache": true,
     "force_cache_duration_seconds": 86400
