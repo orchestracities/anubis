@@ -3,7 +3,7 @@ name: Policy API Tests
 on: [push]
 
 jobs:
-  build:
+  python:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,15 +20,14 @@ jobs:
       - name: Install pipenv
         working-directory: ./auth-management-api
         run: pip install pipenv
-      - name: Run tests
+      - name: Run python tests
         working-directory: ./auth-management-api
         run: |
           pipenv install --dev
           pipenv run pytest
-      - name: Test Rego
-        working-directory: ./scripts
-        run: |
-          ./test_rego.sh
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
       - name: Setup demo
         working-directory: ./scripts
         run: |
@@ -37,3 +36,15 @@ jobs:
         working-directory: ./scripts
         run: |
           ./test_context_broker.sh
+  opa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Intall opa
+        working-directory: ./scripts
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/v0.37.2/opa_linux_amd64_static
+          chmod 755 ./opa
+      - name: Test Rego
+        working-directory: ./scripts
+        run: |
+          ./test_rego.sh

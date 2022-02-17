@@ -253,7 +253,16 @@ $ ./clean.sh
 
 ## Test rego
 
-To test the rego policy run:
+To test the rego policy locally:
+
+1. Install the opa client, e.g.:
+
+```bash 
+cd scripts
+curl -L -o opa https://openpolicyagent.org/downloads/v0.37.2/opa_linux_amd64_static
+chmod 755 ./opa
+```
+1. Run:
 
 ```bash
 $ source .env

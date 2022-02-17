@@ -10,16 +10,20 @@
 
 ### Bug fixes
 
+- Fix filesystem ownership in the docker image
+
 ### Documentation
 
 - Improved documentation
 - Fix credits text
+- Document opa cli installation
 
 ### Continuous Integration
 
 - Add caching and multiple python version testing
 - Add docker build workflow
 - Testing and full setup
+- Add opa and e2e tests to ci
 
 ### Technical debt
 
