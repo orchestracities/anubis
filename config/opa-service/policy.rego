@@ -23,14 +23,20 @@ token = {"payload": payload, "header": header} {
 }
 
 # Valid Issuers
-valid_iss = {"http://localhost:8085/auth/realms/master"}
+valid_iss = "http://localhost:8085/auth/realms/master"
+
+# API URI
+api_uri = "http://policy-api:8000/v1/policies/"
+
+# Audience
+aud = "client1"
 
 # Token issuer
 issuer = token.payload.iss
 
 # Get token metadata
 metadata = http.send({
-    "url": concat("", [valid_iss[issuer], "/.well-known/openid-configuration"]),
+    "url": concat("", [issuer, "/.well-known/openid-configuration"]),
     "method": "GET",
     "force_cache": true,
     "force_cache_duration_seconds": 86400
@@ -47,9 +53,6 @@ jwks_request(url) = http.send({
     "force_cache": true,
     "force_cache_duration_seconds": 3600
 })
-
-# API URI
-api_uri = "http://policy-api:8000/v1/policies/"
 
 # Grab data from API
 data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}}).body
@@ -85,6 +88,8 @@ is_token_valid {
   token.payload.exp >= now
   jwks := json.marshal(jwks_request(jwks_endpoint).body.keys[_])
   io.jwt.verify_rs256(bearer_token, jwks)
+	token.payload.azp = aud
+	issuer = valid_iss
 }
 
 # Token valid when testing (default is false)
