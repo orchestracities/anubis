@@ -17,7 +17,7 @@ echo "Deploying services via Docker Compose..."
 docker-compose up -d
 
 wait=0
-HOST="http://localhost:8085"
+HOST="http://keycloak:8080"
 while [ "$(curl -s -o /dev/null -L -w ''%{http_code}'' $HOST)" != "200" ] && [ $wait -le 60 ]
 do
   echo "Waiting for Keycloak..."
@@ -34,7 +34,7 @@ fi
 
 echo "Setting up tenant Tenant1..."
 curl -s -i -X 'POST' \
-  'http://127.0.0.1:8080/v1/tenants/' \
+  'http://127.0.0.1:8085/v1/tenants/' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -43,7 +43,7 @@ curl -s -i -X 'POST' \
 
 echo "Setting up policy that allows reading and creating entities under tenant Tenant1 and path / ..."
 curl -s -i -X 'POST' \
-'http://127.0.0.1:8080/v1/policies/' \
+'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
 -H 'fiware_service: Tenant1' \
 -H 'fiware_service_path: /' \
@@ -56,7 +56,7 @@ curl -s -i -X 'POST' \
 }'
 
 curl -s -i -X 'POST' \
-'http://127.0.0.1:8080/v1/policies/' \
+'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
 -H 'fiware_service: Tenant1' \
 -H 'fiware_service_path: /' \

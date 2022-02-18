@@ -23,7 +23,7 @@ token = {"payload": payload, "header": header} {
 }
 
 # Valid Issuers
-valid_iss = "http://localhost:8085/auth/realms/master"
+valid_iss = ["http://keycloak:8080/auth/realms/master"]
 
 # API URI
 api_uri = "http://policy-api:8000/v1/policies/"
@@ -84,12 +84,12 @@ default user_permitted = false
 
 # Check for token validity
 is_token_valid {
-  now := time.now_ns() / 1000000000
+  now = time.now_ns() / 1000000000
   token.payload.exp >= now
-  jwks := json.marshal(jwks_request(jwks_endpoint).body.keys[_])
+  jwks = json.marshal(jwks_request(jwks_endpoint).body.keys[_])
   io.jwt.verify_rs256(bearer_token, jwks)
 	token.payload.azp = aud
-	issuer = valid_iss
+	issuer = valid_iss[_]
 }
 
 # Token valid when testing (default is false)

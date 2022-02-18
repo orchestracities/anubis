@@ -235,7 +235,14 @@ For running this demo you'll need to have the follwing installed:
 
 ### Deploying the demo
 
-To deploy a demo that includes the Auth API, OPA, Keycloak, and a Context
+Before running the demo, add these lines to your `/etc/hosts` file:
+
+```
+0.0.0.0    keycloak
+0.0.0.0    policy-api
+```
+
+To deploy the demo that includes the Auth API, OPA, Keycloak, and a Context
 Broker, run the following script:
 
 ```bash
