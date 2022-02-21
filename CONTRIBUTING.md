@@ -1,6 +1,6 @@
-# Contributing to OPA-authz
+# Contributing to Anubis
 
-Thanks for checking out the OPA-authz Project. We're excited to hear
+Thanks for checking out the Anubis project. We're excited to hear
 and learn from you. We've put together the following guidelines to help
 you figure out where you can best be helpful.
 
@@ -52,11 +52,11 @@ including contacting the maintainers directly.
 Keeping communication public means everybody can benefit and learn from
 the conversation.
 
-[cla]: https://raw.githubusercontent.com/orchestracities/opa-authz/master/individual_cla.pdf
+[cla]: https://raw.githubusercontent.com/orchestracities/anubis/master/individual_cla.pdf
     "Martel Open Source Software Individual Contributor License Agreement"
 [conduct]: ./CODE_OF_CONDUCT.md
     "Contributor Covenant Code of Conduct"
-[gi]: https://github.com/orchestracities/opa-authz/issues
+[gi]: https://github.com/orchestracities/anubis/issues
     "GitHub Issues"
-[pr]: https://github.com/orchestracities/opa-authz/pulls
+[pr]: https://github.com/orchestracities/anubis/pulls
     "GitHub Pull Requests"

@@ -1,11 +1,10 @@
-# OPA-authz
+# Anubis
 
-Welcome to OPA-authz (we are looking for a better name, if you have ideas
-please share :-) )!
+Welcome to Anubis!
 
 ## What is the project about?
 
-This project explores the development of a flexible Policy Enforcement Proxy
+This project explores the development of a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
 In short we are dealing with policy portability :) What do you mean by policy
@@ -46,6 +45,15 @@ The project is looking into
     data policies by data owners (in the context of RESTful APIs).
 - Translation from the security & privacy data policies vocabulary to other
     policy languages or APIs that are actually used for PEP.
+
+## Why Anubis?
+
+[Anubis](https://en.wikipedia.org/wiki/Anubis) is an ancient Egyptian god,
+that has multiple roles in the mithology of ancient Egypt. In particular,
+we opted for this name, because he decides the fate of souls:
+based on their weights he allows the soults to ascend to a heavenly existence,
+or condamn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
+system for souls :)
 
 ## Status
 
