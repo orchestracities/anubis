@@ -107,7 +107,7 @@ The figure below shows the current architecture.
 ## Policy management
 
 The POCs currently supports only Role Based Access Control policies. Policies
-are stored in the [policy management api](auth-management-api), that supports
+are stored in the [policy management api](anubis-management-api), that supports
 the translation to WAC and to a data input format supported by
 [OPA](https://www.openpolicyagent.org/), the engine that performs
 the policy evaluation.
@@ -121,7 +121,7 @@ and JWT-based authentication. You can see these rule in this
 
 The policy internal data format is inspired by
 [Web Access control](https://solid.github.io/web-access-control-spec/).
-See [policy management api](auth-management-api) for details.
+See [policy management api](anubis-management-api) for details.
 
 In general, a policy is defined by:
 
@@ -287,16 +287,16 @@ check either the text below, or the pending [issues](issues).
 - [ ] Design an API that allow to record policies for tenant.
   - [x] Store a policy as a tuple: *who* can access *which* resource to do
     *what* (eventually in future also when and how).
-    A prototype is available, see [auth-management-api](auth-management-api).
+    A prototype is available, see [anubis-management-api](anubis-management-api).
   - [x] Allow to create and manage "service_paths" for tenants.
-    A prototype is available, see [auth-management-api](auth-management-api).
+    A prototype is available, see [anubis-management-api](anubis-management-api).
   - [ ] Have way to define who can define policy for which resource
     (it could be based on the same approach)
   - [ ] Allows to test policies calling OPA validator
 - [ ] Design a translator that
   - [x] Coverts the abstract policy who / whom / what
   into a OPA compatible format.
-  A prototype is available, see [auth-management-api](auth-management-api).
+  A prototype is available, see [anubis-management-api](anubis-management-api).
   - [x] Define a set of rules that enforce policies on a specific API.
      A prototype is available, see [policy.rego](config/opa-service/policy.rego).
   - [ ] Store policies in OPA, instead of retrieve them.
@@ -304,11 +304,11 @@ check either the text below, or the pending [issues](issues).
     (may not be required)
 
 To adhere to [W3C web access control spec](https://github.com/solid/web-access-control-spec)
-the API management prototype available at [auth-management-api](auth-management-api)
+the API management prototype available at [anubis-management-api](anubis-management-api)
 uses acl defined access modes, e.g. `acl:Write`, `acl:Read`, which are different
 from the ones in [config/opa-service/policy.rego](config/opa-service/policy.rego)
 example (e.g. `entity:read`). In many use cases, this modes are not enough, and
 we may need to define an extension of `acl` with modes needed in our APIs.
 
-The [auth-management-api](auth-management-api) is a prototype, it needs some
+The [anubis-management-api](anubis-management-api) is a prototype, it needs some
 work to be more configurable, e.g. in term of db.
