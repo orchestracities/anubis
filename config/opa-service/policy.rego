@@ -23,7 +23,7 @@ token = {"payload": payload, "header": header} {
 }
 
 # Valid Issuers
-valid_iss = [opa.runtime()["env"]["VALID_ISSUERS"]]
+valid_iss = split(opa.runtime()["env"]["VALID_ISSUERS"], ";")
 
 # API URI
 api_uri = opa.runtime()["env"]["AUTH_API_URI"]
@@ -100,6 +100,7 @@ is_token_valid {
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
 path_matches_policy(resource, resource_type, path) {
+	print(valid_iss)
   resource = "*"
   resource_type = "entity"
   current_path := split(path, "/")
