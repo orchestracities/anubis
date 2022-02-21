@@ -12,7 +12,7 @@ on:
       - 'master'
 
 jobs:
-  auth-management-api:
+  anubis-management-api:
     runs-on: ubuntu-latest
     steps:
       -
@@ -25,7 +25,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            orchestracities/auth-management-api
+            orchestracities/anubis-management-api
           # generate Docker tags based on the following events/attributes
           tags: |
             type=edge,branch=master

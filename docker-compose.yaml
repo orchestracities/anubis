@@ -19,12 +19,16 @@ services:
     networks:
       - envoymesh
     ports:
-      - "8080:8000"
+      - "8085:8000"
     # depends_on:
     #   - postgresserver
 
   ext_authz-opa-service:
     image: openpolicyagent/opa:0.25.1-istio
+    environment:
+      - AUTH_API_URI=http://policy-api:8000/v1/policies/
+      - VALID_ISSUERS=http://keycloak:8080/auth/realms/master
+      - VALID_AUDIENCE=client1
     ports:
       - "9191:9191"
       - "8282:8282"
@@ -68,7 +72,7 @@ services:
   keycloak:
     image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
     ports:
-      - "8085:8080"
+      - "8080:8080"
     volumes:
       - ./keycloak/oc-custom.jar:/opt/jboss/keycloak/standalone/deployments/oc-custom.jar
       - ./keycloak/realm-export.json:/opt/jboss/realm-export.json

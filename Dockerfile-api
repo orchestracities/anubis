@@ -10,8 +10,8 @@ FROM base AS python-deps
 RUN pip install pipenv
 RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
-COPY auth-management-api/Pipfile .
-COPY auth-management-api/Pipfile.lock .
+COPY anubis-management-api/Pipfile .
+COPY anubis-management-api/Pipfile.lock .
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
 FROM base AS runtime
@@ -21,11 +21,11 @@ ENV PATH="/.venv/bin:$PATH"
 
 RUN useradd --create-home apiuser && usermod -aG sudo apiuser
 WORKDIR /home/apiuser
-COPY ./auth-management-api ./auth-management-api
+COPY ./anubis-management-api ./anubis-management-api
 RUN chown -R apiuser:apiuser /home/apiuser
 USER apiuser
 
-WORKDIR ./auth-management-api/src
+WORKDIR ./anubis-management-api/src
 
 EXPOSE 8000
 
