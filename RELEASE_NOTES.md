@@ -1,4 +1,4 @@
-# OPA-authz Release Notes
+# Anubis Release Notes
 
 ## 0.0.2
 
@@ -17,6 +17,7 @@
 - Improved documentation
 - Fix credits text
 - Document opa cli installation
+- Rename project
 
 ### Continuous Integration
 

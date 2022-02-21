@@ -16,12 +16,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pipenv'
           cache-dependency-path: |
-            auth-management-api/Pipfile.lock
+            anubis-management-api/Pipfile.lock
       - name: Install pipenv
-        working-directory: ./auth-management-api
+        working-directory: ./anubis-management-api
         run: pip install pipenv
       - name: Run python tests
-        working-directory: ./auth-management-api
+        working-directory: ./anubis-management-api
         run: |
           pipenv install --dev
           pipenv run pytest

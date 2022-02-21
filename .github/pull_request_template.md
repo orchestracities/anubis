@@ -40,9 +40,9 @@ you considered, etc...
 
 
 
-[cla]: https://raw.githubusercontent.com/orchestracities/opa-authz/master/individual_cla.pdf
+[cla]: https://raw.githubusercontent.com/orchestracities/anubis/master/individual_cla.pdf
     "Martel Open Source Software Individual Contributor License Agreement"
-[contrib]: https://github.com/orchestracities/opa-authz/blob/master/CONTRIBUTING.md
-    "Contributing to OPA-authz"
-[release]: https://github.com/orchestracities/opa-authz/blob/master/RELEASE_NOTES.md
-    "OPA-authz Release Notes"
+[contrib]: https://github.com/orchestracities/anubis/blob/master/CONTRIBUTING.md
+    "Contributing to Anubis"
+[release]: https://github.com/orchestracities/anubis/blob/master/RELEASE_NOTES.md
+    "Anubis Release Notes"
