@@ -10,11 +10,6 @@ default authz = false
 # Action to method mappings
 scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
 
-# Helper to get the token payload
-token = {"payload": payload} {
-  [header, payload, signature] := io.jwt.decode(bearer_token)
-}
-
 # Extract Bearer Token
 bearer_token = t {
 	v := authorization
@@ -22,8 +17,42 @@ bearer_token = t {
 	t := substring(v, count("Bearer "), -1)
 }
 
+# Helper to get the token payload
+token = {"payload": payload, "header": header} {
+  [header, payload, signature] := io.jwt.decode(bearer_token)
+}
+
+# Valid Issuers
+valid_iss = split(opa.runtime()["env"]["VALID_ISSUERS"], ";")
+
 # API URI
-api_uri = "http://policy-api:8000/v1/policies/"
+api_uri = opa.runtime()["env"]["AUTH_API_URI"]
+
+# Audience
+aud = opa.runtime()["env"]["VALID_AUDIENCE"]
+
+# Token issuer
+issuer = token.payload.iss
+
+# Get token metadata
+metadata = http.send({
+    "url": concat("", [issuer, "/.well-known/openid-configuration"]),
+    "method": "GET",
+    "force_cache": true,
+    "force_cache_duration_seconds": 86400
+}).body
+
+# Get endpoints for jws and the token
+jwks_endpoint := metadata.jwks_uri
+token_endpoint := metadata.token_endpoint
+
+# jwks_request for validation
+jwks_request(url) = http.send({
+    "url": url,
+    "method": "GET",
+    "force_cache": true,
+    "force_cache_duration_seconds": 3600
+})
 
 # Grab data from API
 data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}}).body
@@ -55,8 +84,12 @@ default user_permitted = false
 
 # Check for token validity
 is_token_valid {
-  now := time.now_ns() / 1000000000
+  now = time.now_ns() / 1000000000
   token.payload.exp >= now
+  jwks = json.marshal(jwks_request(jwks_endpoint).body.keys[_])
+  io.jwt.verify_rs256(bearer_token, jwks)
+	token.payload.azp = aud
+	issuer = valid_iss[_]
 }
 
 # Token valid when testing (default is false)
@@ -67,6 +100,7 @@ is_token_valid {
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
 path_matches_policy(resource, resource_type, path) {
+	print(valid_iss)
   resource = "*"
   resource_type = "entity"
   current_path := split(path, "/")

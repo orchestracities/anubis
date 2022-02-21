@@ -1,5 +1,24 @@
 # Anubis Release Notes
 
+## 0.0.3
+
+### New features
+
+- Token verification with jws, valid issuers, audience
+- Env variables for configuration of Auth API endpoint, audience, valid issuers
+
+### Bug fixes
+
+### Documentation
+
+- Improved documentation to account for new features
+
+### Continuous Integration
+
+- Added to workflow to account for changes
+
+### Technical debt
+
 ## 0.0.2
 
 ### New features

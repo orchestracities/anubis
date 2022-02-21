@@ -235,7 +235,14 @@ For running this demo you'll need to have the follwing installed:
 
 ### Deploying the demo
 
-To deploy a demo that includes the Auth API, OPA, Keycloak, and a Context
+Before running the demo, add these lines to your `/etc/hosts` file:
+
+```bash
+0.0.0.0    keycloak
+0.0.0.0    policy-api
+```
+
+To deploy the demo that includes the Auth API, OPA, Keycloak, and a Context
 Broker, run the following script:
 
 ```bash
@@ -258,6 +265,16 @@ To clean up the deployment after you're done, run:
 $ cd scripts
 $ ./clean.sh
 ```
+
+### Configuration
+
+The following environment variables are used by the rego policy for
+configuration (see the [docker-compose file](docker-compose.yaml)):
+
+- `AUTH_API_URI`: Specifies the URI of the auth management API.
+- `VALID_ISSUERS`: Specifies the valid issuers of the auth tokens
+  (coming from Keycloak). This can be a list of issuers, separated by `;`.
+- `VALID_AUDIENCE`: The valid aud value for token verification.
 
 ## Test rego
 
