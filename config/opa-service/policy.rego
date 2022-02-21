@@ -23,13 +23,13 @@ token = {"payload": payload, "header": header} {
 }
 
 # Valid Issuers
-valid_iss = ["http://keycloak:8080/auth/realms/master"]
+valid_iss = [opa.runtime()["env"]["VALID_ISSUERS"]]
 
 # API URI
-api_uri = "http://policy-api:8000/v1/policies/"
+api_uri = opa.runtime()["env"]["AUTH_API_URI"]
 
 # Audience
-aud = "client1"
+aud = opa.runtime()["env"]["VALID_AUDIENCE"]
 
 # Token issuer
 issuer = token.payload.iss
