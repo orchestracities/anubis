@@ -17,7 +17,7 @@ echo "Deploying services via Docker Compose..."
 docker-compose up -d
 
 wait=0
-HOST="http://keycloak:8080"
+HOST="http://localhost:8080"
 while [ "$(curl -s -o /dev/null -L -w ''%{http_code}'' $HOST)" != "200" ] && [ $wait -le 60 ]
 do
   echo "Waiting for Keycloak..."

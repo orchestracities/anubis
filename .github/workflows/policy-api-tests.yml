@@ -45,10 +45,6 @@ jobs:
           tags: latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Setup keycloak hostname
-        run: sudo echo "0.0.0.0 keycloak" | sudo tee -a /etc/hosts
-      - name: Setup policy-api hostname
-        run: sudo echo "0.0.0.0 policy-api" | sudo tee -a /etc/hosts
       - name: Setup demo
         working-directory: ./scripts
         run: |
