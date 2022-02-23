@@ -455,7 +455,8 @@
     "username" : "admin",
     "enabled" : true,
     "totp" : false,
-    "emailVerified" : false,
+    "emailVerified" : true,
+    "email": "admin@mail.com",
     "credentials" : [ {
       "id" : "2461a6e9-7f15-42c3-a11e-ff7bec1863ed",
       "type" : "password",
