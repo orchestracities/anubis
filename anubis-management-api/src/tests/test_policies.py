@@ -65,6 +65,14 @@ def test_policies(test_db):
         "service_path": "/",
         "tenant": "test"}
 
+    response = client.get(
+        "/v1/policies/" + policy_id,
+        headers={
+            "accept": "text/turtle",
+            "fiware_service": "test",
+            "fiware_service_path": "/"})
+    assert response.status_code == 200
+
     response = client.delete(
         "/v1/policies/" + policy_id,
         headers={

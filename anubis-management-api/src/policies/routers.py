@@ -162,9 +162,7 @@ def read_policy(
     db_service_path = get_db_service_path(
         db, fiware_service, fiware_service_path)
     db_policy = operations.get_policy(db, policy_id=policy_id)
-    if db_service_path.id != db_policy.service_path_id:
-        raise HTTPException(status_code=404, detail="Policy not found")
-    if not db_policy:
+    if not db_policy or db_service_path.id != db_policy.service_path_id:
         raise HTTPException(status_code=404, detail="Policy not found")
     if accept == 'text/turtle':
         return Response(

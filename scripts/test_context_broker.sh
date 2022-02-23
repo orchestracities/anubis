@@ -8,7 +8,7 @@ jq '.access_token'`
 export token="${token%\"}"
 export token="${token#\"}"
 
-echo "Can i read entities?"
+echo "Can I read all entities?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" 'http://localhost:8000/v2/entities'`
 if [ $response == "200" ]
@@ -21,7 +21,7 @@ fi
 
 echo ""
 
-echo "Can I create an entity at / in Tenant1?"
+echo "Can I create an entity in ServicePath / for Tenant1?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8000/v2/entities' \
 --header 'Content: application/json' \
@@ -48,7 +48,7 @@ fi
 
 echo ""
 
-echo "Can i create an entity at /Path1 in Tenant1? (Shouldn't be able to here)"
+echo "Can I create an entity at /Path1 in Tenant1? (Shouldn't be able to here)"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8000/v2/entities' \
 --header 'Content: application/json' \
@@ -69,7 +69,7 @@ if [ $response == "403" ]
 then
   echo "PASSED"
 else
-  echo "ERROR: Can create entity"
+  echo "ERROR: Can create entity, but shouldn't be able to"
   exit 1
 fi
 
@@ -95,7 +95,7 @@ if [ $response == "200" ]
 then
   echo "PASSED"
 else
-  echo "ERROR: Can create entity"
+  echo "ERROR: Can't read entity attributes"
   exit 1
 fi
 
@@ -108,7 +108,7 @@ if [ $response == "200" ]
 then
   echo "PASSED"
 else
-  echo "ERROR: Can create entity"
+  echo "ERROR: Can't read entity attributes"
   exit 1
 fi
 
@@ -121,7 +121,7 @@ if [ $response == "204" ]
 then
   echo "PASSED"
 else
-  echo "ERROR: Can create entity"
+  echo "ERROR: Can't delete entity"
   exit 1
 fi
 
