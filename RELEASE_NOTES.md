@@ -44,6 +44,7 @@
 - Add docker build workflow
 - Testing and full setup
 - Add opa and e2e tests to ci
+- Expanded tests
 
 ### Technical debt
 

@@ -17,7 +17,7 @@ echo "Deploying services via Docker Compose..."
 docker-compose up -d
 
 wait=0
-HOST="http://keycloak:8080"
+HOST="http://localhost:8080"
 while [ "$(curl -s -o /dev/null -L -w ''%{http_code}'' $HOST)" != "200" ] && [ $wait -le 60 ]
 do
   echo "Waiting for Keycloak..."
@@ -65,6 +65,19 @@ curl -s -i -X 'POST' \
 "access_to": "*",
 "resource_type": "entity",
 "mode": ["acl:Write"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant1' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "*",
+"resource_type": "entity",
+"mode": ["acl:Control"],
 "agent": ["acl:AuthenticatedAgent"]
 }'
 
