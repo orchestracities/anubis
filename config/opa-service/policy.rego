@@ -100,7 +100,6 @@ is_token_valid {
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
 path_matches_policy(resource, resource_type, path) {
-	print(valid_iss)
   resource = "*"
   resource_type = "entity"
   current_path := split(path, "/")
