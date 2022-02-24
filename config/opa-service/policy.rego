@@ -59,7 +59,7 @@ data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/r
 
 # The user/subject
 subject := p {
-	p := token.payload.sub
+	p := token.payload.email
 }
 
 # Fiware service
@@ -155,7 +155,7 @@ path_matches_policy(resource, resource_type, path) {
 # User permissions
 user_permitted {
   is_token_valid
-  entry := data.user_permissions[token.payload.sub][_]
+  entry := data.user_permissions[subject][_]
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant

@@ -12,6 +12,7 @@
 ### Documentation
 
 - Improved documentation to account for new features
+- Users identified by emails instead of Keycloak IDs
 
 ### Continuous Integration
 
