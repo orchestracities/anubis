@@ -11,7 +11,8 @@ def serialize(db: Session, policies: [Policy]):
         rego = {
             "user_permissions": {},
             "group_permissions": {},
-            "role_permissions": {}}
+            "role_permissions": {},
+            "default_permissions": []}
         for policy in policies:
             for agent in policy.agent:
                 for mode in policy.mode:
@@ -19,6 +20,8 @@ def serialize(db: Session, policies: [Policy]):
                         entity = "AuthenticatedAgent"
                     elif agent.iri == "foaf:Agent":
                         entity = "Agent"
+                    elif agent.iri == "default":
+                        entity = "Default"
                     else:
                         entity = agent.iri.split(":", 2)[2]
                     action = mode.iri
@@ -52,6 +55,8 @@ def serialize(db: Session, policies: [Policy]):
                                 policy_element)
                         else:
                             rego["role_permissions"][entity] = [policy_element]
+                    elif agent.type == "default":
+                        rego["default_permissions"].append(policy_element)
         return json.dumps(rego)
     else:
         raise ValueError("no policies")

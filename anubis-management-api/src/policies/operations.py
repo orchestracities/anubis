@@ -143,7 +143,10 @@ def get_agents_by_type(
 
 def create_agent(db: Session, agent_iri: str):
     # default agent are created on db instantiation
-    agent_type = agent_iri[:agent_iri.index(":", 4)]
+    if agent_iri == "default":
+        agent_type = "default"
+    else:
+        agent_type = agent_iri[:agent_iri.index(":", 4)]
     db_agent = models.Agent(iri=agent_iri, type=agent_type)
     db.add(db_agent)
     db.commit()

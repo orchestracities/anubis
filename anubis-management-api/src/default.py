@@ -11,6 +11,7 @@ AGENT_GROUP_IRI = 'acl:agentGroup'
 AGENT_ROLE_IRI = 'oc-acl:agentRole'
 DELETE_MODE_IRI = 'oc-acl:Delete'
 SAME_TENANT_AS_RESOURCE_AGENT_ID = 'oc-acl:ResourceTenantAgent'
+DEFAULT = 'default'
 
 # commodity
 DEFAULT_MODES = [
@@ -22,6 +23,7 @@ DEFAULT_MODES = [
 DEFAULT_AGENTS = [
     AUTHENTICATED_AGENT_ID,
     UNAUTHENTICATED_AGENT_IRI,
-    SAME_TENANT_AS_RESOURCE_AGENT_ID]
+    SAME_TENANT_AS_RESOURCE_AGENT_ID,
+    DEFAULT]
 AGENT_IRI_REGEX = "^" + AGENT_CLASS_IRI + \
     r":[a-zA-Z0-9_\-]+$" + "|^" + AGENT_GROUP_IRI + r":[a-zA-Z0-9_\-]+$" + "|^" + AGENT_IRI + r":[a-zA-Z0-9_\-]+$"

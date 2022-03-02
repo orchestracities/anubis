@@ -208,3 +208,12 @@ user_permitted {
   entry.tenant == request.tenant
   entry.service_path == request.service_path
 }
+
+# Default permissions
+user_permitted {
+  entry := data.default_permissions[_]
+  scope_method[entry.action][_] == request.action
+  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  entry.tenant == request.tenant
+  entry.service_path == request.service_path
+}
