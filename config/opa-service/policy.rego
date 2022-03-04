@@ -78,6 +78,7 @@ request = {"user":subject, "action": method, "resource":path, "tenant":fiware_se
 # Auth main rule
 authz {
   user_permitted
+	policy_creation
 }
 
 default user_permitted = false
@@ -216,4 +217,60 @@ user_permitted {
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
   entry.service_path == request.service_path
+}
+
+# If creating an entity, adds a control policy for the user who created it if not present
+policy_creation {
+	not testing
+	request.action == "POST"
+	user_permission_not_already_present
+	current_path := split(request.resource, "/")
+  current_path[1] == "v2"
+  current_path[2] == "entities"
+	new_entity = current_path[3]
+	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": new_entity, "resource_type": "entity", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
+}
+
+# If creating an entity type, adds a control policy for the user who created it if not present
+policy_creation {
+	not testing
+	request.action == "POST"
+	user_permission_not_already_present
+	current_path := split(request.resource, "/")
+  current_path[1] == "v2"
+  current_path[2] == "types"
+	new_entity = current_path[3]
+	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": new_entity, "resource_type": "entity_type", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
+}
+
+# If creating a subscription, adds a control policy for the user who created it if not present
+policy_creation {
+	not testing
+	request.action == "POST"
+	user_permission_not_already_present
+	current_path := split(request.resource, "/")
+  current_path[1] == "v2"
+  current_path[2] == "subscriptions"
+	new_entity = current_path[3]
+	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": new_entity, "resource_type": "subscription", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
+}
+
+user_permission_not_already_present {
+	not data.user_permissions[subject]
+}
+user_permission_not_already_present {
+	entry := data.user_permissions[subject][_]
+	not path_matches_policy(entry.resource, entry.resource_type, request.resource)
+	not entry.tenant == request.tenant
+  not entry.service_path == request.service_path
+}
+
+# Skip if testing
+policy_creation {
+	testing
+}
+
+# Skip if request not POST
+policy_creation {
+	request.action != "POST"
 }

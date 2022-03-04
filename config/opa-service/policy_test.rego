@@ -87,6 +87,13 @@ default_data = {
       "resource_type": "entity",
       "tenant": "Tenant1",
       "service_path": "/"
+    },
+    {
+      "action": "acl:Write",
+      "resource": "*",
+      "resource_type": "entity",
+      "tenant": "Tenant1",
+      "service_path": "/"
     }
   ]
 }
@@ -129,6 +136,10 @@ test_foaf_agent_permissions {
 
 test_default_agent_permissions {
   authz with request as {"user":"foobar", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as default_data with testing as true
+}
+
+test_policy_creation {
+  authz with request as {"user":"foobar", "action":"POST", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as default_data with testing as true
 }
 
 # test_api {
