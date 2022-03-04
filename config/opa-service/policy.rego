@@ -3,6 +3,7 @@ package envoy.authz
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
+import input.parsed_body as parsed_body
 
 # Auth defaults to false
 default authz = false
@@ -227,8 +228,7 @@ policy_creation {
 	current_path := split(request.resource, "/")
   current_path[1] == "v2"
   current_path[2] == "entities"
-	new_entity = current_path[3]
-	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": new_entity, "resource_type": "entity", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
+	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": parsed_body["id"], "resource_type": "entity", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
 }
 
 # If creating an entity type, adds a control policy for the user who created it if not present
@@ -239,8 +239,7 @@ policy_creation {
 	current_path := split(request.resource, "/")
   current_path[1] == "v2"
   current_path[2] == "types"
-	new_entity = current_path[3]
-	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": new_entity, "resource_type": "entity_type", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
+	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": parsed_body["id"], "resource_type": "entity_type", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
 }
 
 # If creating a subscription, adds a control policy for the user who created it if not present
@@ -251,8 +250,7 @@ policy_creation {
 	current_path := split(request.resource, "/")
   current_path[1] == "v2"
   current_path[2] == "subscriptions"
-	new_entity = current_path[3]
-	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": new_entity, "resource_type": "subscription", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
+	res = http.send({"method": "post", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}, "body": {"access_to": parsed_body["id"], "resource_type": "subscription", "mode": ["acl:Control"], "agent": [concat("", ["acl:agent:", subject])]}})
 }
 
 user_permission_not_already_present {

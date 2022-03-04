@@ -31,6 +31,10 @@ static_resources:
                   cluster_name: ext_authz-opa-service
                 timeout: 0.250s
               transport_api_version: V3
+              with_request_body:
+                max_request_bytes: 1024
+                allow_partial_message: true
+                pack_as_bytes: false
           - name: envoy.filters.http.router
             typed_config: {}
 
