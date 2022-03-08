@@ -24,7 +24,7 @@ services:
     #   - postgresserver
 
   ext_authz-opa-service:
-    image: openpolicyagent/opa:0.25.1-istio
+    image: openpolicyagent/opa:0.37.2-istio
     environment:
       - AUTH_API_URI=http://policy-api:8000/v1/policies/
       - VALID_ISSUERS=http://keycloak:8080/auth/realms/master
@@ -71,6 +71,8 @@ services:
 
   keycloak:
     image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
+    # if your platform is linux/arm64 use the following image
+    # image: koolwithk/keycloak-arm:16.0.0
     ports:
       - "8080:8080"
     volumes:
