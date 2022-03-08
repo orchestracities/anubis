@@ -176,12 +176,16 @@ For example, user based access control policies will be translated as:
 
 See the [test file](config/opa-service/policy_test.rego) for more examples.
 
-To apply the policy to a specific API, allowed modes (according to WAC spec currently),
-are mapped to a specific HTTP method, e.g.:
+To apply the policy to a specific API, we map [W3C web access control spec](https://github.com/solid/web-access-control-spec)
+defined access modes, e.g. `acl:Write`, `acl:Read` to a specific HTTP method,
+e.g.:
 
   ```javascript
   scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
   ```
+
+(In some use cases, this modes may not be enough, and you may need to define
+an extension of `acl` with modes needed in your APIs.)
 
 Specific rules are defined based on the spec of the API to protect, e.g.:
 
@@ -239,7 +243,7 @@ Currently, the token, when decoded, should contain:
 
 ### Requirements
 
-For running this demo you'll need to have the follwing installed:
+For running this demo you'll need to have the following tools installed:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [curl](https://www.cyberciti.biz/faq/how-to-install-curl-command-on-a-ubuntu-linux/)
@@ -270,6 +274,9 @@ To clean up the deployment after you're done, run:
 $ cd scripts
 $ ./clean.sh
 ```
+
+In case you are using an ARM64 based architecture, before running the scripts,
+use the proper image (see comment in [docker-compose](docker-compose.yaml)).
 
 ### Configuration
 
@@ -314,32 +321,3 @@ To test the rego policy locally:
 The current PoC provides already a quite complete validation of the
 overall goals. For additional planned features you can
 check either the text below, or the pending [issues](issues).
-
-- [ ] Design an API that allow to record policies for tenant.
-  - [x] Store a policy as a tuple: *who* can access *which* resource to do
-    *what* (eventually in future also when and how).
-    A prototype is available, see [anubis-management-api](anubis-management-api).
-  - [x] Allow to create and manage "service_paths" for tenants.
-    A prototype is available, see [anubis-management-api](anubis-management-api).
-  - [ ] Have way to define who can define policy for which resource
-    (it could be based on the same approach)
-  - [ ] Allows to test policies calling OPA validator
-- [ ] Design a translator that
-  - [x] Coverts the abstract policy who / whom / what
-  into a OPA compatible format.
-  A prototype is available, see [anubis-management-api](anubis-management-api).
-  - [x] Define a set of rules that enforce policies on a specific API.
-     A prototype is available, see [policy.rego](config/opa-service/policy.rego).
-  - [ ] Store policies in OPA, instead of retrieve them.
-  - [ ] Record additional data in the OPA data API as needed
-    (may not be required)
-
-To adhere to [W3C web access control spec](https://github.com/solid/web-access-control-spec)
-the API management prototype available at [anubis-management-api](anubis-management-api)
-uses acl defined access modes, e.g. `acl:Write`, `acl:Read`, which are different
-from the ones in [config/opa-service/policy.rego](config/opa-service/policy.rego)
-example (e.g. `entity:read`). In many use cases, this modes are not enough, and
-we may need to define an extension of `acl` with modes needed in our APIs.
-
-The [anubis-management-api](anubis-management-api) is a prototype, it needs some
-work to be more configurable, e.g. in term of db.
