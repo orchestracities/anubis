@@ -3,7 +3,6 @@ package envoy.authz
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
-import input.parsed_body as parsed_body
 
 # Auth defaults to false
 default authz = false
@@ -79,7 +78,6 @@ request = {"user":subject, "action": method, "resource":path, "tenant":fiware_se
 # Auth main rule
 authz {
   user_permitted
-	policy_creation
 }
 
 default user_permitted = false
@@ -154,6 +152,16 @@ path_matches_policy(resource, resource_type, path) {
   current_path[3] == resource
 }
 
+# Check if service path in policy is equal to the request path
+service_path_matches_policy(entry_path, request_path) {
+	entry_path == request_path
+}
+
+# Check if service path in policy is the wildcard, thus matching any path
+service_path_matches_policy(entry_path, request_path) {
+	entry_path == "*"
+}
+
 # User permissions
 user_permitted {
   is_token_valid
@@ -161,7 +169,7 @@ user_permitted {
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
-  entry.service_path == request.service_path
+  service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Group permissions
@@ -173,7 +181,7 @@ user_permitted {
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
-  entry.service_path == request.service_path
+  service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Role permissions
@@ -185,7 +193,7 @@ user_permitted {
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
-  entry.service_path == request.service_path
+  service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # AuthenticatedAgent special permission
@@ -197,7 +205,7 @@ user_permitted {
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
-  entry.service_path == request.service_path
+  service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Agent special permission
@@ -208,7 +216,7 @@ user_permitted {
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
-  entry.service_path == request.service_path
+  service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Default permissions
@@ -217,5 +225,5 @@ user_permitted {
   scope_method[entry.action][_] == request.action
   path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
-  entry.service_path == request.service_path
+	service_path_matches_policy(entry.service_path, request.service_path)
 }
