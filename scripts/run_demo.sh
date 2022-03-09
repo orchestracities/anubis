@@ -41,6 +41,15 @@ curl -s -i -X 'POST' \
   "name": "Tenant1"
 }'
 
+echo "Setting up tenant Tenant2..."
+curl -s -i -X 'POST' \
+  'http://127.0.0.1:8085/v1/tenants/' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "Tenant2"
+}'
+
 echo "Setting up policy that allows reading and creating entities under tenant Tenant1 and path / ..."
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
@@ -79,6 +88,19 @@ curl -s -i -X 'POST' \
 "resource_type": "entity",
 "mode": ["acl:Control"],
 "agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant2' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "*",
+"resource_type": "entity",
+"mode": ["acl:Read"],
+"agent": ["default"]
 }'
 
 echo "Demo deployed!"
