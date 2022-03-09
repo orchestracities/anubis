@@ -138,10 +138,6 @@ test_default_agent_permissions {
   authz with request as {"user":"foobar", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as default_data with testing as true
 }
 
-test_policy_creation {
-  authz with request as {"user":"foobar", "action":"POST", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as default_data with testing as true
-}
-
 # test_api {
 #   authz with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with bearer_token as bearer_token with api_uri as "http://policy-api:8085/v1/policies/" with valid_iss as ["http://keycloak:8080/auth/realms/master"]
 # }
