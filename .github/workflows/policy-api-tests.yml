@@ -21,7 +21,7 @@ jobs:
         working-directory: ./anubis-management-api
         run: pip install pipenv
       - name: Run python tests
-        working-directory: ./anubis-management-api
+        working-directory: ./anubis-management-api/src
         run: |
           pipenv install --dev
           pipenv run pytest
