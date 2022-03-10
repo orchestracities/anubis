@@ -5,6 +5,7 @@ from policies import schemas as policy_schemas
 from policies import operations as policy_operations
 import uuid
 import yaml
+import os
 
 
 def get_tenant(db: Session, tenant_id: str):
@@ -37,7 +38,7 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.refresh(new_tenant)
     # creating default policy
     # TODO: This will eventually read from a non yaml file
-    with open(r'default_policies.yml') as file:
+    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", 'default_policies.yml'), 'r') as file:
         default_policies = yaml.load(file, Loader=yaml.FullLoader)
         for p in default_policies["acl:Authorization"]:
             policy = policy_schemas.PolicyCreate(
