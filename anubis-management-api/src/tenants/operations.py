@@ -40,8 +40,13 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     with open(r'default_policies.yml') as file:
         default_policies = yaml.load(file, Loader=yaml.FullLoader)
         for p in default_policies["acl:Authorization"]:
-            policy = policy_schemas.PolicyCreate(access_to=p["acl:accessTo"]["value"], resource_type=p["acl:accessTo"]["type"], mode=p["acl:mode"], agent=p["acl:agentClass"])
-            policy_operations.create_policy(db=db, service_path_id=default_service_path.id, policy=policy)
+            policy = policy_schemas.PolicyCreate(
+                access_to=p["acl:accessTo"]["value"],
+                resource_type=p["acl:accessTo"]["type"],
+                mode=p["acl:mode"],
+                agent=p["acl:agentClass"])
+            policy_operations.create_policy(
+                db=db, service_path_id=default_service_path.id, policy=policy)
     return new_tenant
 
 
