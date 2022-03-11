@@ -22,7 +22,6 @@ ENV PATH="/.venv/bin:$PATH"
 RUN useradd --create-home apiuser && usermod -aG sudo apiuser
 WORKDIR /home/apiuser
 COPY ./anubis-management-api ./anubis-management-api
-COPY ./config/opa-service/default_policies.yml ./config/opa-service/default_policies.yml
 RUN chown -R apiuser:apiuser /home/apiuser
 USER apiuser
 

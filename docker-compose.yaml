@@ -20,6 +20,8 @@ services:
       - envoymesh
     ports:
       - "8085:8000"
+    volumes:
+      - ./config/opa-service/default_policies.yml:/home/apiuser/config/opa-service/default_policies.yml
     # depends_on:
     #   - postgresserver
 
