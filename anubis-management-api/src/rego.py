@@ -20,8 +20,6 @@ def serialize(db: Session, policies: [Policy]):
                         entity = "AuthenticatedAgent"
                     elif agent.iri == "foaf:Agent":
                         entity = "Agent"
-                    elif agent.iri == "default":
-                        entity = "Default"
                     else:
                         entity = agent.iri.split(":", 2)[2]
                     action = mode.iri
@@ -36,6 +34,10 @@ def serialize(db: Session, policies: [Policy]):
                         "resource_type": resource_type,
                         "service_path": service_path.path,
                         "tenant": tenant.name}
+                    if resource == "default":
+                        policy_element.pop("resource")
+                        policy_element.pop("resource_type")
+                        rego["default_permissions"].append(policy_element)
                     if agent.type == "acl:agent":
                         if rego["user_permissions"].get(entity):
                             rego["user_permissions"][entity].append(

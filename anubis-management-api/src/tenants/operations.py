@@ -41,13 +41,19 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.yml'), 'r') as file:
         default_policies = yaml.load(file, Loader=yaml.FullLoader)
         for p in default_policies["acl:Authorization"]:
-            policy = policy_schemas.PolicyCreate(
-                access_to=p["acl:accessTo"]["value"],
-                resource_type=p["acl:accessTo"]["type"],
-                mode=p["acl:mode"],
-                agent=p["acl:agentClass"])
-            policy_operations.create_policy(
-                db=db, service_path_id=default_service_path.id, policy=policy)
+            if p["acl:accessTo"]["value"] == "default":
+                policy = policy_schemas.PolicyCreate(
+                    access_to="default",
+                    resource_type="*",
+                    mode=p["acl:mode"],
+                    agent=["foaf:Agent"])
+            else:
+                policy = policy_schemas.PolicyCreate(
+                    access_to=p["acl:accessTo"]["value"],
+                    resource_type=p["acl:accessTo"]["type"],
+                    mode=p["acl:mode"],
+                    agent=p["acl:agentClass"])
+            policy_operations.create_policy(db=db, service_path_id=default_service_path.id, policy=policy)
     return new_tenant
 
 

@@ -1,10 +1,7 @@
 # TODO: This will eventually be a different more fitting wac format
 "acl:Authorization":
   - "acl:accessTo":
-      value: "*"
-      type: "entity"
-    "acl:agentClass":
-      - "default"
+      value: "default"
     "acl:mode":
       - "acl:Read"
   - "acl:accessTo":

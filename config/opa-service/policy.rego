@@ -223,7 +223,6 @@ user_permitted {
 user_permitted {
   entry := data.default_permissions[_]
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
   entry.tenant == request.tenant
 	service_path_matches_policy(entry.service_path, request.service_path)
 }

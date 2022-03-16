@@ -83,15 +83,11 @@ default_data = {
 "default_permissions": [
     {
       "action": "acl:Read",
-      "resource": "*",
-      "resource_type": "entity",
       "tenant": "Tenant1",
       "service_path": "/"
     },
     {
       "action": "acl:Write",
-      "resource": "*",
-      "resource_type": "entity",
       "tenant": "Tenant1",
       "service_path": "/"
     }
