@@ -53,7 +53,8 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
                     resource_type=p["acl:accessTo"]["type"],
                     mode=p["acl:mode"],
                     agent=p["acl:agentClass"])
-            policy_operations.create_policy(db=db, service_path_id=default_service_path.id, policy=policy)
+            policy_operations.create_policy(
+                db=db, service_path_id=default_service_path.id, policy=policy)
     return new_tenant
 
 
