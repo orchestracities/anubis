@@ -30,9 +30,13 @@ class PolicyBase(BaseModel):
     # agent iri (unless pre-defined) are agent_type_iri:id
 
     @validator('agent')
-    def valid_agent(cls, agent):
+    def valid_agent(cls, agent, values):
         if agent is None or agent == []:
             raise ValueError('you need to pass at least one agent')
+        print(len(agent))
+        print(values)
+        if "access_to" in values and values["access_to"] == "default" and (len(agent) != 1 or agent[0] != "foaf:Agent"):
+            raise ValueError('when access_to is set to default, only agent permitted is foaf:Agent')
         for a in agent:
             if a not in default.DEFAULT_AGENTS and not re.match(
                     default.AGENT_IRI_REGEX, a):
@@ -60,8 +64,10 @@ class PolicyBase(BaseModel):
         return access_to
 
     @validator('resource_type')
-    def valid_resource_type(cls, resource_type):
+    def valid_resource_type(cls, resource_type, values):
         parse(resource_type, rule='relative_part')
+        if 'access_to' in values and values['access_to'] == "default" and resource_type != "*":
+            raise ValueError('when setting access_to as default, resource_type must be set to *')
         return resource_type
 
 
