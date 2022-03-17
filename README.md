@@ -138,8 +138,9 @@ Additionally, in relation to FIWARE APIs, a policy may include also:
 
 In addition to policies that target specific resources it's possible to create
 a "default" type policy that will be applied to any resource in a given tenant
-and service path. Such policy is created by setting the value of `resource` to
-`default`.
+and service path, as well as any subpath of the service path (e.g. a default
+policy specifying `/foo` with match `/foo/bar`). Such policy is created by
+setting the value of `resource` to `default`.
 
 A set of policies can also be set up to be created upon the creation of a Tenant
 through a file. See
