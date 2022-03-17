@@ -46,7 +46,7 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
                     access_to="default",
                     resource_type="*",
                     mode=p["acl:mode"],
-                    agent=["foaf:Agent"])
+                    agent=p["acl:agentClass"])
             else:
                 policy = policy_schemas.PolicyCreate(
                     access_to=p["acl:accessTo"]["value"],

@@ -80,18 +80,17 @@ foaf_agent_data = {
 }
 
 default_data = {
-"default_permissions": [
-    {
-      "action": "acl:Read",
-      "tenant": "Tenant1",
-      "service_path": "/"
-    },
-    {
-      "action": "acl:Write",
-      "tenant": "Tenant1",
-      "service_path": "/"
-    }
-  ]
+"default_role_permissions": {
+    "AuthenticatedAgent": [
+      {
+        "action": "acl:Read",
+        "resource": "default",
+        "resource_type": "*",
+        "tenant": "Tenant1",
+        "service_path": "/test"
+      }
+    ]
+  }
 }
 
 test_user_permissions {
@@ -131,7 +130,7 @@ test_foaf_agent_permissions {
 }
 
 test_default_agent_permissions {
-  authz with request as {"user":"foobar", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as default_data with testing as true
+  authz with request as {"user":"foobar", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/test/foobar"} with data as default_data with testing as true
 }
 
 # test_api {

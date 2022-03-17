@@ -10,9 +10,11 @@ def serialize(db: Session, policies: [Policy]):
     if len(policies) > 0:
         rego = {
             "user_permissions": {},
+            "default_user_permissions": {},
             "group_permissions": {},
+            "default_group_permissions": {},
             "role_permissions": {},
-            "default_permissions": []}
+            "default_role_permissions": {}}
         for policy in policies:
             for agent in policy.agent:
                 for mode in policy.mode:
@@ -35,30 +37,28 @@ def serialize(db: Session, policies: [Policy]):
                         "service_path": service_path.path,
                         "tenant": tenant.name}
                     if resource == "default":
-                        policy_element.pop("resource")
-                        policy_element.pop("resource_type")
-                        rego["default_permissions"].append(policy_element)
+                        category = "default_"
+                    else:
+                        category = ""
                     if agent.type == "acl:agent":
-                        if rego["user_permissions"].get(entity):
-                            rego["user_permissions"][entity].append(
+                        if rego[category+"user_permissions"].get(entity):
+                            rego[category+"user_permissions"][entity].append(
                                 policy_element)
                         else:
-                            rego["user_permissions"][entity] = [policy_element]
+                            rego[category+"user_permissions"][entity] = [policy_element]
                     elif agent.type == "acl:agentGroup":
-                        if rego["group_permissions"].get(entity):
-                            rego["group_permissions"][entity].append(
+                        if rego[category+"group_permissions"].get(entity):
+                            rego[category+"group_permissions"][entity].append(
                                 policy_element)
                         else:
-                            rego["group_permissions"][entity] = [
+                            rego[category+"group_permissions"][entity] = [
                                 policy_element]
                     elif agent.type == "acl:agentClass":
-                        if rego["role_permissions"].get(entity):
-                            rego["role_permissions"][entity].append(
+                        if rego[category+"role_permissions"].get(entity):
+                            rego[category+"role_permissions"][entity].append(
                                 policy_element)
                         else:
-                            rego["role_permissions"][entity] = [policy_element]
-                    elif agent.type == "default":
-                        rego["default_permissions"].append(policy_element)
+                            rego[category+"role_permissions"][entity] = [policy_element]
         return json.dumps(rego)
     else:
         raise ValueError("no policies")

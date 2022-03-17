@@ -33,8 +33,6 @@ class PolicyBase(BaseModel):
     def valid_agent(cls, agent, values):
         if agent is None or agent == []:
             raise ValueError('you need to pass at least one agent')
-        if "access_to" in values and values["access_to"] == "default" and (len(agent) != 1 or agent[0] != "foaf:Agent"):
-            raise ValueError('when access_to is set to default, only agent permitted is foaf:Agent')
         for a in agent:
             if a not in default.DEFAULT_AGENTS and not re.match(
                     default.AGENT_IRI_REGEX, a):

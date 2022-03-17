@@ -2,11 +2,14 @@
 "acl:Authorization":
   - "acl:accessTo":
       value: "default"
+      type: "*"
+    "acl:agentClass":
+      - "acl:agentClass:User"
     "acl:mode":
       - "acl:Read"
   - "acl:accessTo":
-      value: "*"
-      type: "entity"
+      value: "default"
+      type: "*"
     "acl:agentClass":
       - "acl:agentClass:Admin"
     "acl:mode":
