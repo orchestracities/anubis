@@ -63,7 +63,8 @@ class PolicyBase(BaseModel):
     def valid_resource_type(cls, resource_type, values):
         parse(resource_type, rule='relative_part')
         if 'access_to' in values and values['access_to'] == "default" and resource_type != "*":
-            raise ValueError('when setting access_to as default, resource_type must be set to *')
+            raise ValueError(
+                'when setting access_to as default, resource_type must be set to *')
         return resource_type
 
 
