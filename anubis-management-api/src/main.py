@@ -2,8 +2,23 @@ from fastapi import Depends, FastAPI
 from tenants import routers as t
 from policies import routers as p
 
+from fastapi.middleware.cors import CORSMiddleware
+
+import os
 
 app = FastAPI()
+
+allowed_origins = os.environ.get('CORS_ALLOWED_ORIGINS', "*").split(";")
+allowed_methods = os.environ.get('CORS_ALLOWED_METHODS', "*").split(";")
+allowed_headers = os.environ.get('CORS_ALLOWED_HEADERS', "*").split(";")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=allowed_methods,
+    allow_headers=allowed_headers,
+)
 
 # TODO auth
 # https://docs.authlib.org/en/latest/client/fastapi.html

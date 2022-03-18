@@ -17,6 +17,7 @@
 ### Continuous Integration
 
 - Added to workflow to account for changes
+- Configurable CORS
 
 ### Technical debt
 
