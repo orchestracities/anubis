@@ -271,11 +271,11 @@ configuration (see the [docker-compose file](docker-compose.yaml)):
 
 For the policy API, the following env variables are also available:
 
-- `CORS_ALLOWED_ORIGINS`: A list, separated by `;`, of the allowed CORS origins
+- `CORS_ALLOWED_ORIGINS`: A `;` separated list of the allowed CORS origins
   (e.g. `http://localhost;http://localhost:3000`)
-- `CORS_ALLOWED_METHODS`: A list, separated by `;`, of the allowed CORS methods
+- `CORS_ALLOWED_METHODS`: A `;` separated list of the allowed CORS methods
   (e.g. `GET;POST:DELETE`)
-- `CORS_ALLOWED_HEADERS`: A list, separated by `;`, of the allowed CORS headers
+- `CORS_ALLOWED_HEADERS`: A `;` separated list of the allowed CORS headers
   (e.g. `content-type;some-other-header`)
 
 ## Test rego
