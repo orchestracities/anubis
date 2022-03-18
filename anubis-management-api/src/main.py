@@ -8,9 +8,12 @@ import os
 
 app = FastAPI()
 
-allowed_origins = os.environ.get('CORS_ALLOWED_ORIGINS', "*").replace(" ","").split(";")
-allowed_methods = os.environ.get('CORS_ALLOWED_METHODS', "*").replace(" ","").split(";")
-allowed_headers = os.environ.get('CORS_ALLOWED_HEADERS', "*").replace(" ","").split(";")
+allowed_origins = os.environ.get(
+    'CORS_ALLOWED_ORIGINS', "*").replace(" ", "").split(";")
+allowed_methods = os.environ.get(
+    'CORS_ALLOWED_METHODS', "*").replace(" ", "").split(";")
+allowed_headers = os.environ.get(
+    'CORS_ALLOWED_HEADERS', "*").replace(" ", "").split(";")
 
 app.add_middleware(
     CORSMiddleware,
