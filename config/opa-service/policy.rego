@@ -172,6 +172,12 @@ service_path_matches_default_policy(entry_path, request_path) {
 	not arrays_dont_have_same_value(split_entry_path, split_request_path)
 }
 
+# Check if service path in policy is equal to the request path, with / matching
+# all subpaths
+service_path_matches_default_policy(entry_path, request_path) {
+	entry_path == "/"
+}
+
 arrays_dont_have_same_value(a, b) {
 	some i, _ in a
 	a[i] != b[i]
