@@ -26,7 +26,7 @@ services:
     #   - postgresserver
 
   ext_authz-opa-service:
-    image: openpolicyagent/opa:0.25.1-istio
+    image: openpolicyagent/opa:0.38.1-envoy
     environment:
       - AUTH_API_URI=http://policy-api:8000/v1/policies/
       - VALID_ISSUERS=http://keycloak:8080/auth/realms/master
