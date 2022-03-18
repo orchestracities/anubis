@@ -4,7 +4,7 @@
       value: "default"
       type: "*"
     "acl:agentClass":
-      - "acl:agentClass:User"
+      - "acl:AuthenticatedAgent"
     "acl:mode":
       - "acl:Read"
   - "acl:accessTo":
