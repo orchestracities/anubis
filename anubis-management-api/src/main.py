@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI
 from tenants import routers as t
 from policies import routers as p
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
@@ -13,6 +14,17 @@ app = FastAPI()
 app.include_router(t.router)
 app.include_router(p.router)
 
+origins = [
+"*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/v1/")
 async def v1_root():

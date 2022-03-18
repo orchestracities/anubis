@@ -1,5 +1,10 @@
 # Anubis Release Notes
 
+### Change the main py in order to work with the frontend app
+
+- updating the main.py in order to communicate with the frontend app without cors issues
+- change the realm-export adding the graphql config
+
 ## 0.0.3
 
 ### New features
