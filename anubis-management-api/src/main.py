@@ -14,7 +14,7 @@ allowed_headers = os.environ.get('CORS_ALLOWED_HEADERS', "*").split(";")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=allowed_methods,
     allow_headers=allowed_headers,
