@@ -49,6 +49,10 @@ jobs:
         working-directory: ./scripts
         run: |
           ./run_demo.sh
+      - name: Test CORS
+        working-directory: ./scripts
+        run: |
+          ./test_cors.sh
       - name: Test demo
         working-directory: ./scripts
         run: |
