@@ -30,7 +30,7 @@ class PolicyBase(BaseModel):
     # agent iri (unless pre-defined) are agent_type_iri:id
 
     @validator('agent')
-    def valid_agent(cls, agent):
+    def valid_agent(cls, agent, values):
         if agent is None or agent == []:
             raise ValueError('you need to pass at least one agent')
         for a in agent:
@@ -60,8 +60,11 @@ class PolicyBase(BaseModel):
         return access_to
 
     @validator('resource_type')
-    def valid_resource_type(cls, resource_type):
+    def valid_resource_type(cls, resource_type, values):
         parse(resource_type, rule='relative_part')
+        if 'access_to' in values and values['access_to'] == "default" and resource_type != "*":
+            raise ValueError(
+                'when setting access_to as default, resource_type must be set to *')
         return resource_type
 
 

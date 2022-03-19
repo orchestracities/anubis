@@ -1,7 +1,11 @@
 from sqlalchemy.orm import Session
 
 from . import models, schemas
+from policies import schemas as policy_schemas
+from policies import operations as policy_operations
 import uuid
+import yaml
+import os
 
 
 def get_tenant(db: Session, tenant_id: str):
@@ -32,6 +36,18 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.add(default_service_path)
     db.commit()
     db.refresh(new_tenant)
+    # creating default policy
+    # TODO: This will eventually read from a non yaml file
+    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.yml'), 'r') as file:
+        default_policies = yaml.load(file, Loader=yaml.FullLoader)
+        for p in default_policies["acl:Authorization"]:
+            policy = policy_schemas.PolicyCreate(
+                access_to=p["acl:accessTo"]["value"],
+                resource_type=p["acl:accessTo"]["type"],
+                mode=p["acl:mode"],
+                agent=p["acl:agentClass"])
+            policy_operations.create_policy(
+                db=db, service_path_id=default_service_path.id, policy=policy)
     return new_tenant
 
 
