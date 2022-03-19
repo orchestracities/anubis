@@ -281,6 +281,15 @@ configuration (see the [docker-compose file](docker-compose.yaml)):
   (coming from Keycloak). This can be a list of issuers, separated by `;`.
 - `VALID_AUDIENCE`: The valid aud value for token verification.
 
+For the policy API, the following env variables are also available:
+
+- `CORS_ALLOWED_ORIGINS`: A `;` separated list of the allowed CORS origins
+  (e.g. `http://localhost;http://localhost:3000`)
+- `CORS_ALLOWED_METHODS`: A `;` separated list of the allowed CORS methods
+  (e.g. `GET;POST:DELETE`)
+- `CORS_ALLOWED_HEADERS`: A `;` separated list of the allowed CORS headers
+  (e.g. `content-type;some-other-header`)
+
 ## Test rego
 
 To test the rego policy locally:
