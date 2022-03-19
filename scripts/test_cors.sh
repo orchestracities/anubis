@@ -19,9 +19,9 @@ export response=`curl -i -s -H "Origin: http://example.com" -H "Access-Control-R
 if [[ "$response" == *"access-control-allow-origin"* ]]
 then
   echo "ERROR: access-control-allow-origin header is present"
+  exit 1
 else
   echo "CORS setup correctly. http://example.com is not allowed as origin"
-  exit 1
 fi
 
 echo ""
