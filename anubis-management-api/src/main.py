@@ -33,7 +33,7 @@ app.include_router(t.router)
 app.include_router(p.router)
 
 origins = [
-"*"
+    "*"
 ]
 
 app.add_middleware(
@@ -43,6 +43,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/v1/")
 async def v1_root():
