@@ -9,6 +9,11 @@ import input.attributes.request.http.headers.authorization as authorization
 # Auth defaults to false
 default authz = false
 
+# Auth main rule
+authz {
+  user_permitted
+}
+
 # Action to method mappings
 scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
 
@@ -77,13 +82,6 @@ fiware_servicepath := p {
 # Request data
 request = {"user":subject, "action": method, "resource":path, "tenant":fiware_service, "service_path":fiware_servicepath}
 
-# Auth main rule
-authz {
-  user_permitted
-}
-
-default user_permitted = false
-
 # Check for token validity
 is_token_valid {
   now = time.now_ns() / 1000000000
@@ -98,60 +96,6 @@ is_token_valid {
 testing = false
 is_token_valid {
   testing
-}
-
-# Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
-path_matches_policy(resource, resource_type, path) {
-  resource = "*"
-  resource_type = "entity"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "entities"
-}
-
-# Checks if the entity in the policy matches the path
-path_matches_policy(resource, resource_type, path) {
-  resource_type = "entity"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "entities"
-  current_path[3] == resource
-}
-
-# Checks if the policy has the wildcard asterisks, thus matching paths to any entity types or all
-path_matches_policy(resource, resource_type, path) {
-  resource = "*"
-  resource_type = "entity_type"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "types"
-}
-
-# Checks if the entity type in the policy matches the path
-path_matches_policy(resource, resource_type, path) {
-  resource_type = "entity_type"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "types"
-  current_path[3] == resource
-}
-
-# Checks if the policy has the wildcard asterisks, thus matching paths to any subscription or all
-path_matches_policy(resource, resource_type, path) {
-  resource = "*"
-  resource_type = "subscription"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "subscriptions"
-}
-
-# Checks if the subscription in the policy matches the path
-path_matches_policy(resource, resource_type, path) {
-  resource_type = "subscription"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "subscriptions"
-  current_path[3] == resource
 }
 
 # Check if service path in policy is equal to the request path
@@ -182,6 +126,8 @@ arrays_dont_have_same_value(a, b) {
 	some i, _ in a
 	a[i] != b[i]
 }
+
+default user_permitted = false
 
 # User permissions
 user_permitted {
