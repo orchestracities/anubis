@@ -126,3 +126,16 @@ else
 fi
 
 echo ""
+
+echo "Can I read all entities in Tenant2 with the default policy of acl:Read set?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" -H "fiware-service: Tenant2" -H "fiware-servicepath: /" 'http://localhost:8000/v2/entities'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't read entities in Tenant2 with default policy of acl:Read"
+  exit 1
+fi
+
+echo ""

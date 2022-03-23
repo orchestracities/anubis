@@ -16,6 +16,7 @@ SQLAlchemy = "~=1.4.31"
 urllib3 = "~=1.26.5"
 uuid = "~=1.30"
 uvicorn = "~=0.17.1"
+pyyaml = "~=6.0"
 
 [dev-packages]
 pytest = "~=6.2.5"

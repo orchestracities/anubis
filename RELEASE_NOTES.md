@@ -11,6 +11,7 @@
 
 - Token verification with jws, valid issuers, audience
 - Env variables for configuration of Auth API endpoint, audience, valid issuers
+- Default policies
 
 ### Bug fixes
 
