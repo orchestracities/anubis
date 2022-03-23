@@ -11,6 +11,7 @@ services:
       - envoymesh
     ports:
       - "8000:8000"
+      - "8090:8090"
 
   policy-api:
     build:
