@@ -1,9 +1,19 @@
 # Anubis Release Notes
 
-### Change the main py in order to work with the frontend app
+## 0.0.4
 
-- updating the main.py in order to communicate with the frontend app without cors issues
-- change the realm-export adding the graphql config
+### New features
+
+- adding the graphql config inside the realm export
+- change the url for the client1 inside keycloack in order to communicate with the frontend 
+
+### Bug fixes
+
+### Documentation
+
+### Continuous Integration
+
+### Technical debt
 
 ## 0.0.3
 
