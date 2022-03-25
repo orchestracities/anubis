@@ -32,6 +32,21 @@ if [ $wait -gt 60 ]; then
   exit -1
 fi
 
+HOST="http://127.0.0.1:8085/v1/tenants/"
+while [ "$(curl -s -o /dev/null -L -w ''%{http_code}'' $HOST)" != "200" ] && [ $wait -le 60 ]
+do
+  echo "Waiting for anubis..."
+  sleep 5
+  wait=$((wait+5))
+  echo "Elapsed time: $wait"
+done
+
+if [ $wait -gt 60 ]; then
+  echo "timeout while waiting services to be ready"
+  docker-compose down -v
+  exit -1
+fi
+
 echo "Setting up tenant Tenant1..."
 curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
