@@ -7,6 +7,8 @@
 - Token verification with jws, valid issuers, audience
 - Env variables for configuration of Auth API endpoint, audience, valid issuers
 - Default policies
+- adding the graphql config inside the realm export
+- change the url for the client1 in order to communicate with the frontend
 
 ### Bug fixes
 
