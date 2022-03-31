@@ -47,6 +47,8 @@ def create_tenant(
 def read_tenant(tenant_id: str, db: Session = Depends(get_db)):
     db_tenant = operations.get_tenant(db, tenant_id=tenant_id)
     if db_tenant is None:
+        db_tenant = operations.get_tenant_by_name(db, name=tenant_id)
+    if db_tenant is None:
         raise HTTPException(status_code=404, detail="Tenant not found")
     return db_tenant
 
@@ -61,6 +63,8 @@ def delete_service(
         tenant_id: str,
         db: Session = Depends(get_db)):
     db_tenant = operations.get_tenant(db, tenant_id=tenant_id)
+    if db_tenant is None:
+        db_tenant = operations.get_tenant_by_name(db, name=tenant_id)
     if not db_tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
     operations.delete_tenant(db=db, tenant=db_tenant)
@@ -77,6 +81,12 @@ def create_service_path(
         tenant_id: str,
         service_path: schemas.ServicePathCreate,
         db: Session = Depends(get_db)):
+    db_tenant = operations.get_tenant(db, tenant_id=tenant_id)
+    if db_tenant is None:
+        db_tenant = operations.get_tenant_by_name(db, name=tenant_id)
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    tenant_id = db_tenant.id
     service_path_parent_index = service_path.path.rfind('/')
     service_path_parent_id = None
     scope = None
@@ -120,6 +130,12 @@ def read_tenant_service_paths(
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
+    db_tenant = operations.get_tenant(db, tenant_id=tenant_id)
+    if db_tenant is None:
+        db_tenant = operations.get_tenant_by_name(db, name=tenant_id)
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    tenant_id = db_tenant.id
     service_paths = operations.get_tenant_service_paths(
         db, tenant_id=tenant_id, skip=skip, limit=limit)
     return service_paths
@@ -131,6 +147,11 @@ def read_service_path(
         tenant_id: str,
         service_path_id: str,
         db: Session = Depends(get_db)):
+    if db_tenant is None:
+        db_tenant = operations.get_tenant_by_name(db, name=tenant_id)
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    tenant_id = db_tenant.id
     service_path = operations.get_tenant_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
     return service_path
@@ -148,6 +169,11 @@ def delete_service_path(
         tenant_id: str,
         service_path_id: str,
         db: Session = Depends(get_db)):
+    if db_tenant is None:
+        db_tenant = operations.get_tenant_by_name(db, name=tenant_id)
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    tenant_id = db_tenant.id
     db_service_path = operations.get_tenant_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
     if not db_service_path:

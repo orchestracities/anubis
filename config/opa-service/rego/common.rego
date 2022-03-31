@@ -132,9 +132,9 @@ default user_permitted = false
 # User permissions
 user_permitted {
   is_token_valid
-  entry := data.user_permissions[subject][_]
+  entry := data.user_permissions[request.user][_]
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -142,7 +142,7 @@ user_permitted {
 # Default User permissions
 user_permitted {
   is_token_valid
-  entry := data.default_user_permissions[subject][_]
+  entry := data.default_user_permissions[request.user][_]
   scope_method[entry.action][_] == request.action
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
@@ -155,7 +155,7 @@ user_permitted {
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -178,7 +178,7 @@ user_permitted {
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -201,7 +201,7 @@ user_permitted {
   entry := data.role_permissions[role][_]
   role == "AuthenticatedAgent"
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -223,7 +223,7 @@ user_permitted {
   entry := data.role_permissions[role][_]
   role == "Agent"
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }

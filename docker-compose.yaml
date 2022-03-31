@@ -54,7 +54,7 @@ services:
       - --set=decision_logs.console=true
       - /etc/rego/common.rego
       - /etc/rego/context_broker_policy.rego
-      - /etc/rego/api_policy.rego
+      - /etc/rego/anubis_management_api_policy.rego
     networks:
       - envoymesh
 

@@ -343,3 +343,7 @@ we may need to define an extension of `acl` with modes needed in our APIs.
 
 The [anubis-management-api](anubis-management-api) is a prototype, it needs some
 work to be more configurable, e.g. in term of db.
+
+## Credits
+
+- [JSON.lua package](config/opa-service/lua/JSON.lua) by Jeffrey Friedl
