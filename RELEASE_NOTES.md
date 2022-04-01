@@ -10,6 +10,8 @@
 - acl for policieis, tenants and servicepaths
 - automatic creation of policies for entities, assigned to the user who
   successfully created the entity
+- adding the graphql config inside the realm export
+- change the url for the client1 in order to communicate with the frontend
 
 ### Bug fixes
 
