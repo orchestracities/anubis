@@ -68,3 +68,37 @@ else
 fi
 
 echo ""
+
+echo "Can I read Tenant1?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" 'http://localhost:8090/v1/tenants/Tenant1'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't read Tenant1"
+  exit 1
+fi
+
+echo ""
+
+echo "Can I create a servicepath under ServicePath / for Tenant1?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8090/v1/tenants/Tenant1/service_paths' \
+--header 'Content: application/json' \
+--header 'fiware-Service: Tenant1' \
+--header 'fiware-ServicePath: /' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $token" \
+--data-raw '{
+  "path": "/somepath"
+}'`
+if [ $response == "201" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't create service path"
+  exit 1
+fi
+
+echo ""
