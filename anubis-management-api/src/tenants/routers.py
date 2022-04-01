@@ -156,7 +156,8 @@ def read_service_path(
     service_path = operations.get_tenant_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
     if not service_path:
-        service_path = operations.get_tenant_service_path_by_path(db, tenant_id=tenant_id, path="/"+service_path_id)
+        service_path = operations.get_tenant_service_path_by_path(
+            db, tenant_id=tenant_id, path="/" + service_path_id)
     return service_path
 
 # TODO how to handle changes on the tree? either path is dynamically computed, or this is cumbersome
@@ -181,7 +182,8 @@ def delete_service_path(
     db_service_path = operations.get_tenant_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
     if not db_service_path:
-        db_service_path = operations.get_tenant_service_path_by_path(db, tenant_id=tenant_id, path="/"+service_path_id)
+        db_service_path = operations.get_tenant_service_path_by_path(
+            db, tenant_id=tenant_id, path="/" + service_path_id)
     if not db_service_path:
         raise HTTPException(status_code=404, detail="ServicePath not found")
     if db_service_path.path == '/':
