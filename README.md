@@ -128,8 +128,17 @@ In general, a policy is defined by:
 - *actor*: The user, group or role, that is linked to the policy
 - *action*: The action allowed on this resource (e.g. acl:Read for GET requests)
 - *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
-- *resource_type*: The type of the resource (e.g. entity, entity_type,
-  subscription,  device, ...)
+- *resource_type*: The type of the resource.
+
+The currently supported resource types for the policies are:
+
+- *entity*: Context Broker entity
+- *entity_type*: Context Broker entity type
+- *subscription*: Context Broker subscription
+- *policy*: A policy of the Anubis Management API (to allow users to have
+  control over the policies that are created)
+- *tenant*: A tenant (or Fiware service)
+- *service_path*: A Fiware service path under a given tenant.
 
 Additionally, in relation to FIWARE APIs, a policy may include also:
 
@@ -141,6 +150,13 @@ a "default" type policy that will be applied to any resource in a given tenant
 and service path, as well as any subpath of the service path (e.g. a default
 policy specifying `/foo` with match `/foo/bar`). Such policy is created by
 setting the value of `resource` to `default`.
+
+When creating a new policy from the api, a new policy is also automatically
+created that gives `acl:Control` rights of the new policy to the user
+that created it.
+The same happens when creating a new Context Broker entity, where an
+`acl:Control` policy is created for the new entity, giving control of it to
+the user that made the request.
 
 A set of policies can also be set up to be created upon the creation of a Tenant
 through a file. See
