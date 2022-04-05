@@ -130,15 +130,20 @@ In general, a policy is defined by:
 - *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
 - *resource_type*: The type of the resource.
 
-The currently supported resource types for the policies are:
+For the authorisation rules currently in place, the supported resource types
+are:
 
-- *entity*: Context Broker entity
-- *entity_type*: Context Broker entity type
-- *subscription*: Context Broker subscription
+- *entity*: NGSI entity
+- *entity_type*: NGSI entity type
+- *subscription*: NGSI subscription
 - *policy*: A policy of the Anubis Management API (to allow users to have
   control over the policies that are created)
 - *tenant*: A tenant (or Fiware service)
 - *service_path*: A Fiware service path under a given tenant.
+
+This can be extended by creating new
+[authorisation rules](config/opa-service/rego), and setting up the necessary
+filters in the [envoy configuration](config/opa-service/v3.yaml).
 
 Additionally, in relation to FIWARE APIs, a policy may include also:
 
@@ -152,9 +157,9 @@ policy specifying `/foo` with match `/foo/bar`). Such policy is created by
 setting the value of `resource` to `default`.
 
 When creating a new policy from the api, a new policy is also automatically
-created that gives `acl:Control` rights of the new policy to the user
+created that gives `acl:Control` rights for the new policy to the user
 that created it.
-The same happens when creating a new Context Broker entity, where an
+The same happens when creating a new NGSI entity, where an
 `acl:Control` policy is created for the new entity, giving control of it to
 the user that made the request.
 
