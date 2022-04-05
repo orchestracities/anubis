@@ -11,6 +11,7 @@ services:
       - envoymesh
     ports:
       - "8000:8000"
+      - "8090:8090"
 
   policy-api:
     build:
@@ -40,7 +41,7 @@ services:
       - "8282:8282"
       - "8181:8181"
     volumes:
-      - ./config/opa-service/policy.rego:/etc/policy.rego
+      - ./config/opa-service/rego:/etc/rego
       - ./config/opa-service/opa.yaml:/opa.yaml
     command:
       - run
@@ -51,7 +52,9 @@ services:
       - --diagnostic-addr=0.0.0.0:8282
       - --set=plugins.envoy_ext_authz_grpc.addr=:9002
       - --set=decision_logs.console=true
-      - /etc/policy.rego
+      - /etc/rego/common.rego
+      - /etc/rego/context_broker_policy.rego
+      - /etc/rego/anubis_management_api_policy.rego
     networks:
       - envoymesh
 

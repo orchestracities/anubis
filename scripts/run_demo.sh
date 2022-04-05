@@ -78,4 +78,82 @@ curl -s -i -X 'POST' \
 "agent": ["acl:AuthenticatedAgent"]
 }'
 
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant1' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "*",
+"resource_type": "policy",
+"mode": ["acl:Read"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant1' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "*",
+"resource_type": "policy",
+"mode": ["acl:Write"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant1' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "*",
+"resource_type": "tenant",
+"mode": ["acl:Read"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant1' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "*",
+"resource_type": "tenant",
+"mode": ["acl:Write"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant1' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "/",
+"resource_type": "service_path",
+"mode": ["acl:Read"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H 'fiware_service: Tenant1' \
+-H 'fiware_service_path: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "/",
+"resource_type": "service_path",
+"mode": ["acl:Write"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
 echo "Demo deployed!"

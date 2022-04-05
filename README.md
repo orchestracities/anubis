@@ -128,8 +128,22 @@ In general, a policy is defined by:
 - *actor*: The user, group or role, that is linked to the policy
 - *action*: The action allowed on this resource (e.g. acl:Read for GET requests)
 - *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
-- *resource_type*: The type of the resource (e.g. entity, entity_type,
-  subscription,  device, ...)
+- *resource_type*: The type of the resource.
+
+For the authorisation rules currently in place, the supported resource types
+are:
+
+- *entity*: NGSI entity
+- *entity_type*: NGSI entity type
+- *subscription*: NGSI subscription
+- *policy*: A policy of the Anubis Management API (to allow users to have
+  control over the policies that are created)
+- *tenant*: A tenant (or Fiware service)
+- *service_path*: A Fiware service path under a given tenant.
+
+This can be extended by creating new
+[authorisation rules](config/opa-service/rego), and setting up the necessary
+filters in the [envoy configuration](config/opa-service/v3.yaml).
 
 Additionally, in relation to FIWARE APIs, a policy may include also:
 
@@ -141,6 +155,13 @@ a "default" type policy that will be applied to any resource in a given tenant
 and service path, as well as any subpath of the service path (e.g. a default
 policy specifying `/foo` with match `/foo/bar`). Such policy is created by
 setting the value of `resource` to `default`.
+
+When creating a new policy from the api, a new policy is also automatically
+created that gives `acl:Control` rights for the new policy to the user
+that created it.
+The same happens when creating a new NGSI entity, where an
+`acl:Control` policy is created for the new entity, giving control of it to
+the user that made the request.
 
 A set of policies can also be set up to be created upon the creation of a Tenant
 through a file. See
@@ -343,3 +364,7 @@ we may need to define an extension of `acl` with modes needed in our APIs.
 
 The [anubis-management-api](anubis-management-api) is a prototype, it needs some
 work to be more configurable, e.g. in term of db.
+
+## Credits
+
+- [JSON.lua package](config/opa-service/lua/JSON.lua) by Jeffrey Friedl

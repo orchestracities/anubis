@@ -56,7 +56,7 @@ class PolicyBase(BaseModel):
 
     @validator('access_to')
     def valid_iri(cls, access_to):
-        parse(access_to, rule='relative_part')
+        parse(access_to)
         return access_to
 
     @validator('resource_type')
