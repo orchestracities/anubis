@@ -5,6 +5,7 @@ services:
     image: envoyproxy/envoy:v1.18-latest
     volumes:
       - ./config/envoy/v3.yaml:/etc/envoy/envoy.yaml
+      - ./config/opa-service/lua:/etc/envoy/lua
     networks:
       - envoymesh
     ports:

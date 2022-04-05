@@ -39,7 +39,7 @@ static_resources:
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
               inline_code: |
-                common = (loadfile "/etc/envoy-config/opa-service/lua/common.lua")()
+                common = (loadfile "/etc/envoy/lua/common.lua")()
                 function envoy_on_request(request_handle)
                   common:context_broker_request(request_handle)
                 end
@@ -91,7 +91,7 @@ static_resources:
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
               inline_code: |
-                common = (loadfile "/etc/envoy-config/opa-service/lua/common.lua")()
+                common = (loadfile "/etc/envoy/lua/common.lua")()
                 function envoy_on_request(request_handle)
                   common:management_api_request(request_handle)
                 end

@@ -96,8 +96,6 @@ allow = response {
     }
 }
 
-default user_permitted = false
-
 # Check for token validity
 is_token_valid {
   now = time.now_ns() / 1000000000
