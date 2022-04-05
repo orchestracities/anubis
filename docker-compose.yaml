@@ -2,11 +2,9 @@ version: "3.7"
 services:
 
   front-envoy:
-    build:
-      context: .
-      dockerfile: Dockerfile-frontenvoy
-    environment:
-      - FRONT_ENVOY_YAML
+    image: envoyproxy/envoy:v1.18-latest
+    volumes:
+      - ./config/envoy/v3.yaml:/etc/envoy/envoy.yaml
     networks:
       - envoymesh
     ports:
@@ -15,16 +13,22 @@ services:
   policy-api:
     build:
       context: .
-      dockerfile: Dockerfile-api
+      dockerfile: Dockerfile
     networks:
       - envoymesh
+    environment:
+      - CORS_ALLOWED_ORIGINS=http://localhost
+      - CORS_ALLOWED_METHODS=*
+      - CORS_ALLOWED_HEADERS=*
     ports:
       - "8085:8000"
+    volumes:
+      - ./config/opa-service/default_policies.yml:/home/apiuser/config/opa-service/default_policies.yml
     # depends_on:
     #   - postgresserver
 
   ext_authz-opa-service:
-    image: openpolicyagent/opa:0.37.2-envoy
+    image: openpolicyagent/opa:0.38.1-envoy-3
     environment:
       - AUTH_API_URI=http://policy-api:8000/v1/policies/
       - VALID_ISSUERS=http://keycloak:8080/auth/realms/master

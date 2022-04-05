@@ -36,7 +36,7 @@ def test_policies(test_db):
             "fiware_service_path": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert len(body) == 3
 
     response = client.get(
         "/v1/policies/" + policy_id,

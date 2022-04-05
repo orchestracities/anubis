@@ -6,6 +6,11 @@
 
 - Token verification with jws, valid issuers, audience
 - Env variables for configuration of Auth API endpoint, audience, valid issuers
+- Default policies
+- adding the graphql config inside the realm export
+- change the url for the client1 in order to communicate with the frontend
+- Support policy link in response Header
+- Update to opa 0.38.1 and envoy 1.18
 
 ### Bug fixes
 
@@ -17,6 +22,7 @@
 ### Continuous Integration
 
 - Added to workflow to account for changes
+- Configurable CORS
 
 ### Technical debt
 

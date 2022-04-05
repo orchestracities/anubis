@@ -136,6 +136,18 @@ Additionally, in relation to FIWARE APIs, a policy may include also:
 - *tenant*: The tenant this permission falls under
 - *service_path*: The service path this permission falls under
 
+In addition to policies that target specific resources it's possible to create
+a "default" type policy that will be applied to any resource in a given tenant
+and service path, as well as any subpath of the service path (e.g. a default
+policy specifying `/foo` with match `/foo/bar`). Such policy is created by
+setting the value of `resource` to `default`.
+
+A set of policies can also be set up to be created upon the creation of a Tenant
+through a file. See
+[this provided example](config/opa-service/default-policies.yml). The path to
+this file can be set using the `DEFAULT_POLICIES_CONFIG_FILE` environment
+variable.
+
 For the usage with OPA, policies are translated into OPA data format.
 For example, user based access control policies will be translated as:
 
@@ -275,6 +287,15 @@ configuration (see the [docker-compose file](docker-compose.yaml)):
 - `VALID_ISSUERS`: Specifies the valid issuers of the auth tokens
   (coming from Keycloak). This can be a list of issuers, separated by `;`.
 - `VALID_AUDIENCE`: The valid aud value for token verification.
+
+For the policy API, the following env variables are also available:
+
+- `CORS_ALLOWED_ORIGINS`: A `;` separated list of the allowed CORS origins
+  (e.g. `http://localhost;http://localhost:3000`)
+- `CORS_ALLOWED_METHODS`: A `;` separated list of the allowed CORS methods
+  (e.g. `GET;POST:DELETE`)
+- `CORS_ALLOWED_HEADERS`: A `;` separated list of the allowed CORS headers
+  (e.g. `content-type;some-other-header`)
 
 ## Test rego
 

@@ -4,6 +4,5 @@ plugins:
     path: envoy/authz/allow
     dry-run: false
     enable-reflection: true
-#    proto-descriptor: /testsrv.pb
 decision_logs:
   console: true
