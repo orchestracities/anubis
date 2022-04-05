@@ -191,6 +191,10 @@ def create_policy(
             None,
             convert_underscores=False),
         db: Session = Depends(get_db)):
+    if policy.resource_type == "tenant" and policy.access_to != fiware_service:
+        raise HTTPException(
+            status_code=422,
+            detail="access_to field needs to be the same as fiware_service when using type tenant")
     db_service_path = get_db_service_path(
         db, fiware_service, fiware_service_path)
 

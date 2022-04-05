@@ -62,6 +62,19 @@ fi
 
 echo ""
 
+echo "Has the Control policy for the entity urn:ngsi-ld:AirQualityObserved:demo been created?"
+echo "==============================================================="
+export response=`curl -s -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" 'http://localhost:8090/v1/policies/' | jq '[.[].access_to | select(. == "urn:ngsi-ld:AirQualityObserved:demo")] | length'`
+if [ $response == 1 ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Policy for entity urn:ngsi-ld:AirQualityObserved:demo wasn't automatically created"
+  exit 1
+fi
+
+echo ""
+
 echo "Can I create an entity at /Path1 in Tenant1? (Shouldn't be able to here)"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8000/v2/entities' \

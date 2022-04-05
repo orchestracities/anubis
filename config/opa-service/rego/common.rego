@@ -12,6 +12,10 @@ default allow = {
     "headers": {}
 }
 
+# Auth main rule
+authz {
+  user_permitted
+}
 
 # Action to method mappings
 scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
@@ -110,60 +114,6 @@ is_token_valid {
   testing
 }
 
-# Checks if the policy has the wildcard asterisks, thus matching paths to any entity or all
-path_matches_policy(resource, resource_type, path) {
-  resource = "*"
-  resource_type = "entity"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "entities"
-}
-
-# Checks if the entity in the policy matches the path
-path_matches_policy(resource, resource_type, path) {
-  resource_type = "entity"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "entities"
-  current_path[3] == resource
-}
-
-# Checks if the policy has the wildcard asterisks, thus matching paths to any entity types or all
-path_matches_policy(resource, resource_type, path) {
-  resource = "*"
-  resource_type = "entity_type"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "types"
-}
-
-# Checks if the entity type in the policy matches the path
-path_matches_policy(resource, resource_type, path) {
-  resource_type = "entity_type"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "types"
-  current_path[3] == resource
-}
-
-# Checks if the policy has the wildcard asterisks, thus matching paths to any subscription or all
-path_matches_policy(resource, resource_type, path) {
-  resource = "*"
-  resource_type = "subscription"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "subscriptions"
-}
-
-# Checks if the subscription in the policy matches the path
-path_matches_policy(resource, resource_type, path) {
-  resource_type = "subscription"
-  current_path := split(path, "/")
-  current_path[1] == "v2"
-  current_path[2] == "subscriptions"
-  current_path[3] == resource
-}
-
 # Check if service path in policy is equal to the request path
 service_path_matches_policy(entry_path, request_path) {
 	entry_path == request_path
@@ -193,12 +143,14 @@ arrays_dont_have_same_value(a, b) {
 	a[i] != b[i]
 }
 
+default user_permitted = false
+
 # User permissions
 user_permitted {
   is_token_valid
-  entry := data.user_permissions[subject][_]
+  entry := data.user_permissions[request.user][_]
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -206,7 +158,7 @@ user_permitted {
 # Default User permissions
 user_permitted {
   is_token_valid
-  entry := data.default_user_permissions[subject][_]
+  entry := data.default_user_permissions[request.user][_]
   scope_method[entry.action][_] == request.action
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
@@ -219,7 +171,7 @@ user_permitted {
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -242,7 +194,7 @@ user_permitted {
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -265,7 +217,7 @@ user_permitted {
   entry := data.role_permissions[role][_]
   role == "AuthenticatedAgent"
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
@@ -287,7 +239,7 @@ user_permitted {
   entry := data.role_permissions[role][_]
   role == "Agent"
   scope_method[entry.action][_] == request.action
-  path_matches_policy(entry.resource, entry.resource_type, request.resource)
+  path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
