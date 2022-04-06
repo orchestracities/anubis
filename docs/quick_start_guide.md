@@ -80,20 +80,20 @@ opa-authz-upstream-service-1        "/usr/bin/contextBro…"   upstream-service 
 
 1. Create a tenant in Anubis
 
-  ```bash
-  $ curl -s -i -X 'POST' \
-    'http://127.0.0.1:8085/v1/tenants/' \
-    -H 'accept: */*' \
-    -H 'Content-Type: application/json' \
-    -d '{
-    "name": "Tenant1"
-    }'
-  HTTP/1.1 201 Created
-  date: Wed, 06 Apr 2022 14:03:09 GMT
-  server: uvicorn
-  tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
-  Transfer-Encoding: chunked
-  ```
+      ```bash
+      $ curl -s -i -X 'POST' \
+        'http://127.0.0.1:8085/v1/tenants/' \
+        -H 'accept: */*' \
+        -H 'Content-Type: application/json' \
+        -d '{
+        "name": "Tenant1"
+        }'
+      HTTP/1.1 201 Created
+      date: Wed, 06 Apr 2022 14:03:09 GMT
+      server: uvicorn
+      tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
+      Transfer-Encoding: chunked
+      ```
 
 1. Create a policy that allows creating entities under tenant `Tenant1` and
     path `/` for any correctly authenticated user.
