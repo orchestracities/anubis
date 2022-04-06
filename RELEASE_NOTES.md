@@ -4,6 +4,10 @@
 
 ### New features
 
+- Support policy link in response Header
+- Update to opa 0.38.1 and envoy 1.18
+- Support filtering `/policies` by `resource` and `resourceType`
+
 ### Bug fixes
 
 ### Documentation

@@ -23,7 +23,7 @@ static_resources:
                 route:
                   cluster: upstream-service
           http_filters:
-          - name: envoy.filters.http.ext_authz
+          - name: envoy.ext_authz
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
               grpc_service:
@@ -31,11 +31,15 @@ static_resources:
                   cluster_name: ext_authz-opa-service
                 timeout: 0.250s
               transport_api_version: V3
+              with_request_body:
+                max_request_bytes: 8192
+                allow_partial_message: true
+              failure_mode_allow: false
           - name: envoy.filters.http.lua
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
               inline_code: |
-                common = (loadfile "/etc/envoy-config/opa-service/lua/common.lua")()
+                common = (loadfile "/etc/envoy/lua/common.lua")()
                 function envoy_on_request(request_handle)
                   common:context_broker_request(request_handle)
                 end
@@ -87,7 +91,7 @@ static_resources:
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
               inline_code: |
-                common = (loadfile "/etc/envoy-config/opa-service/lua/common.lua")()
+                common = (loadfile "/etc/envoy/lua/common.lua")()
                 function envoy_on_request(request_handle)
                   common:management_api_request(request_handle)
                 end

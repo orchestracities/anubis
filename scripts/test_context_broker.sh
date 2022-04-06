@@ -21,6 +21,20 @@ fi
 
 echo ""
 
+echo "Can I get link to policies?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" -D - 'http://localhost:8000/v2/entities' | grep -i 'link'`
+if [[ ! -z "$response" ]]
+then
+  echo "PASSED"
+  echo "VALUE: $response"
+else
+  echo "ERROR: Can't read policy link"
+  exit 1
+fi
+
+echo ""
+
 echo "Can I create an entity in ServicePath / for Tenant1?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8000/v2/entities' \

@@ -2,11 +2,10 @@ version: "3.7"
 services:
 
   front-envoy:
-    build:
-      context: .
-      dockerfile: Dockerfile-frontenvoy
-    environment:
-      - FRONT_ENVOY_YAML
+    image: envoyproxy/envoy:v1.18-latest
+    volumes:
+      - ./config/envoy/v3.yaml:/etc/envoy/envoy.yaml
+      - ./config/opa-service/lua:/etc/envoy/lua
     networks:
       - envoymesh
     ports:
@@ -16,7 +15,7 @@ services:
   policy-api:
     build:
       context: .
-      dockerfile: Dockerfile-api
+      dockerfile: Dockerfile
     networks:
       - envoymesh
     environment:
@@ -31,7 +30,7 @@ services:
     #   - postgresserver
 
   ext_authz-opa-service:
-    image: openpolicyagent/opa:0.38.1-envoy
+    image: openpolicyagent/opa:0.38.1-envoy-3
     environment:
       - AUTH_API_URI=http://policy-api:8000/v1/policies/
       - VALID_ISSUERS=http://keycloak:8080/auth/realms/master

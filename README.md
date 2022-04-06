@@ -197,12 +197,16 @@ For example, user based access control policies will be translated as:
 
 See the [test file](config/opa-service/policy_test.rego) for more examples.
 
-To apply the policy to a specific API, allowed modes (according to WAC spec currently),
-are mapped to a specific HTTP method, e.g.:
+To apply the policy to a specific API, we map [W3C web access control spec](https://github.com/solid/web-access-control-spec)
+defined access modes, e.g. `acl:Write`, `acl:Read` to a specific HTTP method,
+e.g.:
 
   ```javascript
   scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
   ```
+
+(In some use cases, this modes may not be enough, and you may need to define
+an extension of `acl` with modes needed in your APIs.)
 
 Specific rules are defined based on the spec of the API to protect, e.g.:
 
@@ -260,7 +264,7 @@ Currently, the token, when decoded, should contain:
 
 ### Requirements
 
-For running this demo you'll need to have the follwing installed:
+For running this demo you'll need to have the following tools installed:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [curl](https://www.cyberciti.biz/faq/how-to-install-curl-command-on-a-ubuntu-linux/)
@@ -291,6 +295,9 @@ To clean up the deployment after you're done, run:
 $ cd scripts
 $ ./clean.sh
 ```
+
+In case you are using an ARM64 based architecture, before running the scripts,
+use the proper image (see comment in [docker-compose](docker-compose.yaml)).
 
 ### Configuration
 

@@ -1,7 +1,7 @@
 local OBJDEF = {}
 
-local decodejwt = (loadfile "/etc/envoy-config/opa-service/lua/decodejwt.lua")()
-local JSON = (loadfile "/etc/envoy-config/opa-service/lua/JSON.lua")()
+local decodejwt = (loadfile "/etc/envoy/lua/decodejwt.lua")()
+local JSON = (loadfile "/etc/envoy/lua/JSON.lua")()
 
 function OBJDEF:context_broker_request(request_handle)
   chunks = {}
