@@ -14,7 +14,9 @@ pages:
   - 'Getting Started': 'quick_start_guide.md'
   - 'User & Programmers Manual':
       - 'Introduction': 'user/index.md'
-  #    - 'API Walkthrough': 'user/walkthrough.md'
+      - 'Policies': 'user/policies.md'
+      - 'API Walkthrough': 'user/walkthrough.md'
   - 'Installation & Administration Manual':
       - 'Introduction': 'admin/index.md'
-  #    - 'Installing Anubis': 'admin/install.md'
+      - 'Installing Anubis': 'admin/install.md'
+      - 'Data model': 'admin/datemodel.md'
