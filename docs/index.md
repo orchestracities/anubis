@@ -86,9 +86,11 @@ The figure below shows the current architecture.
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
     implemented using a authz envoy
 [authz filter](https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/ext_authz).
-1. The PEP evaluates a set of rules that apply the abstract policies to the
+1. The PEP pass over the request to the PDP (Policy Decision Point), provided by
+    OPA which evaluates a set of rules that apply the abstract policies to the
     specific API to be protected
-1. In combination with the policies stored in the Policy Management API;
+1. In combination with the policies stored in the Policy Management API,
+    that acts as PAP (Policy Administration Point);
 1. If the evaluation of the policies return 'allowed', then the request is
     forwarded to the API.
 

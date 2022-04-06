@@ -1,7 +1,7 @@
 # Access Control Policy Management
 
 This API provides functionalities to manage Role Base Access Control policies.
-THe policy management part is complemented by Tenant and Service management
+The policy management part is complemented by Tenant and Service management
 as supported by FIWARE APIs.
 
 While policies are expressed in a generic way, and as such this means
