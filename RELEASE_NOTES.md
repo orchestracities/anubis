@@ -4,6 +4,10 @@
 
 ### New features
 
+- Support policy link in response Header
+- Update to opa 0.38.1 and envoy 1.18
+- Support filtering `/policies` by `resource` and `resourceType`
+
 ### Bug fixes
 
 ### Documentation
@@ -24,8 +28,6 @@
   successfully created the entity
 - adding the graphql config inside the realm export
 - change the url for the client1 in order to communicate with the frontend
-- Support policy link in response Header
-- Update to opa 0.38.1 and envoy 1.18
 
 ### Bug fixes
 
