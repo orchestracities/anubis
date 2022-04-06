@@ -76,7 +76,7 @@ opa-authz-policy-api-1              "uvicorn main:app --…"   policy-api       
 opa-authz-upstream-service-1        "/usr/bin/contextBro…"   upstream-service        running (healthy)   0.0.0.0:1026->1026/tcp
 ```
 
-## Performing basic operations with Anubis api 
+## Performing basic operations with Anubis api
 
 ### Create a tenant in Anubis
 
