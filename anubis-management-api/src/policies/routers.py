@@ -103,7 +103,7 @@ policies_not_json_responses = {
 def read_policies(
         fiware_service: Optional[str] = Header(
             None),
-    fiware_servicepath: Optional[str] = Header(
+        fiware_servicepath: Optional[str] = Header(
             None),
         mode: Optional[str] = None,
         agent: Optional[str] = None,
@@ -184,7 +184,7 @@ def create_policy(
         policy: schemas.PolicyCreate,
         fiware_service: Optional[str] = Header(
             None),
-    fiware_servicepath: Optional[str] = Header(
+        fiware_servicepath: Optional[str] = Header(
             None),
         db: Session = Depends(get_db)):
     if policy.resource_type == "tenant" and policy.access_to != fiware_service:
