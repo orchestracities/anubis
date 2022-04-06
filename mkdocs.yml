@@ -2,9 +2,9 @@ site_name: Anubis
 site_url: https://anubis.readthedocs.org
 repo_url: https://github.com/orchestracities/anubis
 site_description: Anubis
-docs_dir: docs/manuals
+docs_dir: docs
 site_dir: html
-edit_uri: edit/master/docs/manuals
+edit_uri: edit/master/docs
 markdown_extensions: [toc,fenced_code]
 use_directory_urls: false
 theme: readthedocs
