@@ -1,4 +1,4 @@
-fiware-servicepathlocal OBJDEF = {}
+local OBJDEF = {}
 
 local decodejwt = (loadfile "/etc/envoy/lua/decodejwt.lua")()
 local JSON = (loadfile "/etc/envoy/lua/JSON.lua")()
@@ -77,7 +77,7 @@ function OBJDEF:management_api_response(response_handle)
       [":authority"] = meta.authority,
       ["Content-Type"] = "application/json",
       ["fiware-service"] = meta.fiwareservice,
-      ["fiware_service_path"] = meta.fiwareservicepath,
+      ["fiware-servicepath"] = meta.fiwareservicepath,
     },
     '{"access_to": "'..response_handle:headers():get("policy-id")..'", "resource_type": "policy", "mode": ["acl:Control"], "agent": ["acl:agent:'..meta.userid..'"]}',
     5000,
