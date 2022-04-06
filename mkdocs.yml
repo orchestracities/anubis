@@ -12,9 +12,9 @@ extra_css: ["https://www.fiware.org/style/fiware_readthedocs.css", "https://www.
 pages:
   - Home: index.md
   - 'Getting Started': 'quick_start_guide.md'
-  - 'User & Programmers Manual':
-      - 'Introduction': 'user/index.md'
-      - 'API Walkthrough': 'user/walkthrough.md'
-  - 'Installation & Administration Manual':
-      - 'Introduction': 'admin/index.md'
-      - 'Installing Anubis': 'admin/install.md'
+  #- 'User & Programmers Manual':
+  #    - 'Introduction': 'user/index.md'
+  #    - 'API Walkthrough': 'user/walkthrough.md'
+  #- 'Installation & Administration Manual':
+  #    - 'Introduction': 'admin/index.md'
+  #    - 'Installing Anubis': 'admin/install.md'
