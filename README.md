@@ -4,18 +4,18 @@ Welcome to Anubis!
 
 ## What is the project about?
 
-This project explores the development of a flexible Policy Enforcement solution
+Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
 In short we are dealing with policy portability :) What do you mean by policy
 portability?
 
 Let's think of a user that register some data in platform A.
-To control who can his data he develops a set of policies.
+To control who can access his data he develops a set of policies.
 If he move the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
-Our aim is to avoid that :) or at least simplify this as much as possible
+Anubis aims to avoid that :) or at least simplify this as much as possible
 for the data owner.
 
 ## Why this project?
@@ -49,10 +49,10 @@ The project is looking into
 ## Why Anubis?
 
 [Anubis](https://en.wikipedia.org/wiki/Anubis) is an ancient Egyptian god,
-that has multiple roles in the mithology of ancient Egypt. In particular,
+that has multiple roles in the mythology of ancient Egypt. In particular,
 we opted for this name, because he decides the fate of souls:
-based on their weights he allows the soults to ascend to a heavenly existence,
-or condamn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
+based on their weights he allows the souls to ascend to a heavenly existence,
+or condemn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
 system for souls :)
 
 ## Status
@@ -264,13 +264,13 @@ Currently, the token, when decoded, should contain:
 
 ### Requirements
 
-For running this demo you'll need to have the following tools installed:
+To run this demo you'll need to have the following installed:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [curl](https://www.cyberciti.biz/faq/how-to-install-curl-command-on-a-ubuntu-linux/)
 - [jq](https://stedolan.github.io/jq/download/)
 
-### Deploying the demo
+### Deployment
 
 To deploy the demo that includes the Auth API, OPA, Keycloak, and a Context
 Broker, run the following script:

@@ -78,9 +78,9 @@ services:
   #     - envoymesh
 
   keycloak:
-    image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
+    # image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
     # if your platform is linux/arm64 use the following image
-    # image: koolwithk/keycloak-arm:16.0.0
+    image: koolwithk/keycloak-arm:16.0.0
     ports:
       - "8080:8080"
     volumes:
