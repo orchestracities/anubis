@@ -102,23 +102,20 @@ policies_not_json_responses = {
             responses=policies_not_json_responses)
 def read_policies(
         fiware_service: Optional[str] = Header(
-            None,
-            convert_underscores=False),
-    fiware_service_path: Optional[str] = Header(
-            None,
-            convert_underscores=False),
+            None),
+    fiware_servicepath: Optional[str] = Header(
+            None),
         mode: Optional[str] = None,
         agent: Optional[str] = None,
         accept: Optional[str] = Header(
-            None,
-            convert_underscores=False),
+            None),
         resource: Optional[str] = None,
         resource_type: Optional[str] = None,
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
     db_service_path = get_db_service_path(
-        db, fiware_service, fiware_service_path)
+        db, fiware_service, fiware_servicepath)
     db_policies = operations.get_policies_by_service_path(
         db,
         service_path_id=db_service_path.id,
@@ -152,19 +149,16 @@ def read_policies(
 def read_policy(
         policy_id: str,
         fiware_service: Optional[str] = Header(
-            None,
-            convert_underscores=False),
-    fiware_service_path: Optional[str] = Header(
-            None,
-            convert_underscores=False),
+            None),
+    fiware_servicepath: Optional[str] = Header(
+            None),
         accept: Optional[str] = Header(
-            None,
-            convert_underscores=False),
+            None),
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
     db_service_path = get_db_service_path(
-        db, fiware_service, fiware_service_path)
+        db, fiware_service, fiware_servicepath)
     db_policy = operations.get_policy(db, policy_id=policy_id)
     if not db_policy or db_service_path.id != db_policy.service_path_id:
         raise HTTPException(status_code=404, detail="Policy not found")
@@ -189,18 +183,16 @@ def create_policy(
         response: Response,
         policy: schemas.PolicyCreate,
         fiware_service: Optional[str] = Header(
-            None,
-            convert_underscores=False),
-    fiware_service_path: Optional[str] = Header(
-            None,
-            convert_underscores=False),
+            None),
+    fiware_servicepath: Optional[str] = Header(
+            None),
         db: Session = Depends(get_db)):
     if policy.resource_type == "tenant" and policy.access_to != fiware_service:
         raise HTTPException(
             status_code=422,
             detail="access_to field needs to be the same as fiware_service when using type tenant")
     db_service_path = get_db_service_path(
-        db, fiware_service, fiware_service_path)
+        db, fiware_service, fiware_servicepath)
 
     policy_id = operations.create_policy(
         db=db, service_path_id=db_service_path.id, policy=policy).id
@@ -218,14 +210,12 @@ def delete_policy(
         response: Response,
         policy_id: str,
         fiware_service: Optional[str] = Header(
-            None,
-            convert_underscores=False),
-    fiware_service_path: Optional[str] = Header(
-            None,
-            convert_underscores=False),
+            None),
+    fiware_servicepath: Optional[str] = Header(
+            None),
         db: Session = Depends(get_db)):
     db_service_path = get_db_service_path(
-        db, fiware_service, fiware_service_path)
+        db, fiware_service, fiware_servicepath)
     db_policy = operations.get_policy(db, policy_id=policy_id)
     if db_service_path.id != db_policy.service_path_id:
         raise HTTPException(status_code=404, detail="Policy not found")

@@ -1,4 +1,4 @@
-local OBJDEF = {}
+fiware-servicepathlocal OBJDEF = {}
 
 local decodejwt = (loadfile "/etc/envoy/lua/decodejwt.lua")()
 local JSON = (loadfile "/etc/envoy/lua/JSON.lua")()
@@ -40,8 +40,8 @@ function OBJDEF:context_broker_response(response_handle)
       [":path"] = "/v1/policies/",
       [":authority"] = meta.authority,
       ["Content-Type"] = "application/json",
-      ["fiware_service"] = meta.fiwareservice,
-      ["fiware_service_path"] = meta.fiwareservicepath,
+      ["fiware-service"] = meta.fiwareservice,
+      ["fiware-servicepath"] = meta.fiwareservicepath,
     },
     '{"access_to": "'..meta.access_to..'", "resource_type": "entity", "mode": ["acl:Control"], "agent": ["acl:agent:'..meta.userid..'"]}',
     5000,
@@ -76,7 +76,7 @@ function OBJDEF:management_api_response(response_handle)
       [":path"] = "/v1/policies/",
       [":authority"] = meta.authority,
       ["Content-Type"] = "application/json",
-      ["fiware_service"] = meta.fiwareservice,
+      ["fiware-service"] = meta.fiwareservice,
       ["fiware_service_path"] = meta.fiwareservicepath,
     },
     '{"access_to": "'..response_handle:headers():get("policy-id")..'", "resource_type": "policy", "mode": ["acl:Control"], "agent": ["acl:agent:'..meta.userid..'"]}',
