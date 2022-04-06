@@ -1,4 +1,4 @@
-# Welcome to Anubis!
+# Welcome to Anubis
 
 Anubis is a flexible Policy Enforcement solution that makes easier to reuse
 security policies across different services, assuming the policies entail the
@@ -11,7 +11,6 @@ the control access policies for that data also in platform B.
 
 Anubis aims to avoid that :) or at least simplify this as much as possible
 for the data owner.
-
 
 ## Why this project?
 
