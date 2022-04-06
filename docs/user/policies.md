@@ -2,7 +2,6 @@
 
 The policy internal data format is inspired by
 [Web Access control](https://solid.github.io/web-access-control-spec/).
-See [policy management api](anubis-management-api) for details.
 
 In general, a policy is defined by:
 
@@ -110,5 +109,5 @@ i.e. define policies for the resource.
 
 In some use cases, the default modes may not be enough,
 and you may need to define an extension of `acl` with modes needed in your API.
-[Customize](../admin/customize) contains guidance on how to create custom
+[Customize](../admin/customize.md) contains guidance on how to create custom
 access modes.
