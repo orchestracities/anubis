@@ -1,0 +1,20 @@
+site_name: Anubis
+site_url: https://anubis.readthedocs.org
+repo_url: https://github.com/orchestracities/anubis
+site_description: Anubis
+docs_dir: docs/manuals
+site_dir: html
+edit_uri: edit/master/docs/manuals
+markdown_extensions: [toc,fenced_code]
+use_directory_urls: false
+theme: readthedocs
+extra_css: ["https://www.fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_core.css"]
+pages:
+  - Home: index.md
+  - 'Getting Started': 'quick_start_guide.md'
+  - 'User & Programmers Manual':
+      - 'Introduction': 'user/index.md'
+      - 'API Walkthrough': 'user/walkthrough.md'
+  - 'Installation & Administration Manual':
+      - 'Introduction': 'admin/index.md'
+      - 'Installing Anubis': 'admin/install.md'
