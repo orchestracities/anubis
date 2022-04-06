@@ -29,9 +29,11 @@ def get_policies_by_service_path(
                     models.Mode.iri == mode).filter(
                         models.Policy.service_path_id == service_path_id)
         if resource:
-            db_policies = db_policies.filter(models.Policy.access_to == resource)
+            db_policies = db_policies.filter(
+                models.Policy.access_to == resource)
         if resource_type:
-            db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+            db_policies = db_policies.filter(
+                models.Policy.resource_type == resource_type)
         return db_policies.offset(skip).limit(limit).all()
     elif mode is None and agent is not None:
         return get_policies_by_agent(
@@ -53,7 +55,12 @@ def get_policies_by_service_path(
             limit=limit)
     else:
         return _get_policies_by_service_path(
-            db=db, service_path_id=service_path_id, resource=resource, resource_type=resource_type, skip=skip, limit=limit)
+            db=db,
+            service_path_id=service_path_id,
+            resource=resource,
+            resource_type=resource_type,
+            skip=skip,
+            limit=limit)
 
 
 def get_policies_by_mode(
@@ -72,7 +79,8 @@ def get_policies_by_mode(
     if resource:
         db_policies = db_policies.filter(models.Policy.access_to == resource)
     if resource_type:
-        db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+        db_policies = db_policies.filter(
+            models.Policy.resource_type == resource_type)
     return db_policies.offset(skip).limit(limit).all()
 
 
@@ -92,7 +100,8 @@ def get_policies_by_agent(
     if resource:
         db_policies = db_policies.filter(models.Policy.access_to == resource)
     if resource_type:
-        db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+        db_policies = db_policies.filter(
+            models.Policy.resource_type == resource_type)
     return db_policies.offset(skip).limit(limit).all()
 
 
@@ -109,7 +118,8 @@ def _get_policies_by_service_path(
     if resource:
         db_policies = db_policies.filter(models.Policy.access_to == resource)
     if resource_type:
-        db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+        db_policies = db_policies.filter(
+            models.Policy.resource_type == resource_type)
     return db_policies.offset(skip).limit(limit).all()
 
 
