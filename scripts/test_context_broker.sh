@@ -23,7 +23,7 @@ echo ""
 
 echo "Can I get link to policies?"
 echo "==============================================================="
-export response=`curl -I -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" 'http://localhost:8000/v2/entities' | grep -Fi link`
+export response=`curl -s -o /dev/null -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" -D - 'http://localhost:8000/v2/entities' | grep -i 'link'`
 if [[ ! -z "$response" ]]
 then
   echo "PASSED"

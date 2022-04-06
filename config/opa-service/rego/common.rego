@@ -6,17 +6,6 @@ import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
 
-# Auth defaults to false
-default allow = {
-    "allowed": false,
-    "headers": {}
-}
-
-# Auth main rule
-authz {
-  user_permitted
-}
-
 # Action to method mappings
 scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
 
@@ -86,13 +75,18 @@ fiware_servicepath := p {
 request = {"user":subject, "action": method, "resource":path, "tenant":fiware_service, "service_path":fiware_servicepath}
 
 # Compute link
-link := sprintf("<%s%s?type=%s>; rel=\"acl\"", [api_uri,"resource","resource_type"])
+default header_link = ""
+
+# Auth defaults to false
+default allow = {
+    "allowed": false,
+}
 
 # Auth main rule
 allow = response {
 		response := {
         "allowed": user_permitted,
-        "headers": {"Link": link}
+        "response_headers_to_add": {"Link": header_link}
     }
 }
 

@@ -112,6 +112,8 @@ def read_policies(
         accept: Optional[str] = Header(
             None,
             convert_underscores=False),
+        resource: Optional[str] = None,
+        resource_type: Optional[str] = None,
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
@@ -122,6 +124,8 @@ def read_policies(
         service_path_id=db_service_path.id,
         mode=mode,
         agent=agent,
+        resource=resource,
+        resource_type=resource_type,
         skip=skip,
         limit=limit)
     if accept == 'text/turtle':

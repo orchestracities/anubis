@@ -16,21 +16,30 @@ def get_policies_by_service_path(
         service_path_id: str,
         mode: str = None,
         agent: str = None,
+        resource: str = None,
+        resource_type: str = None,
         skip: int = 0,
         limit: int = 100):
     if mode is not None and agent is not None:
-        return db.query(
+        db_policies = db.query(
             models.Policy).join(
             models.Policy.agent).filter(
             models.Agent.iri == agent).join(
                 models.Policy.mode).filter(
                     models.Mode.iri == mode).filter(
-                        models.Policy.service_path_id == service_path_id).offset(skip).limit(limit).all()
+                        models.Policy.service_path_id == service_path_id)
+        if resource:
+            db_policies = db_policies.filter(models.Policy.access_to == resource)
+        if resource_type:
+            db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+        return db_policies.offset(skip).limit(limit).all()
     elif mode is None and agent is not None:
         return get_policies_by_agent(
             db=db,
             service_path_id=service_path_id,
             agent=agent,
+            resource=resource,
+            resource_type=resource_type,
             skip=skip,
             limit=limit)
     elif mode is not None and agent is None:
@@ -38,47 +47,70 @@ def get_policies_by_service_path(
             db=db,
             service_path_id=service_path_id,
             mode=mode,
+            resource=resource,
+            resource_type=resource_type,
             skip=skip,
             limit=limit)
     else:
         return _get_policies_by_service_path(
-            db=db, service_path_id=service_path_id, skip=skip, limit=limit)
+            db=db, service_path_id=service_path_id, resource=resource, resource_type=resource_type, skip=skip, limit=limit)
 
 
 def get_policies_by_mode(
         db: Session,
         service_path_id: str,
         mode: str,
+        resource: str = None,
+        resource_type: str = None,
         skip: int = 0,
         limit: int = 100):
-    return db.query(
+    db_policies = db.query(
         models.Policy).join(
         models.Policy.mode).filter(
             models.Mode.iri == mode).filter(
-                models.Policy.service_path_id == service_path_id).offset(skip).limit(limit).all()
+                models.Policy.service_path_id == service_path_id)
+    if resource:
+        db_policies = db_policies.filter(models.Policy.access_to == resource)
+    if resource_type:
+        db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+    return db_policies.offset(skip).limit(limit).all()
 
 
 def get_policies_by_agent(
         db: Session,
         service_path_id: str,
         agent: str,
+        resource: str = None,
+        resource_type: str = None,
         skip: int = 0,
         limit: int = 100):
-    return db.query(
+    db_policies = db.query(
         models.Policy).join(
         models.Policy.agent).filter(
             models.Agent.iri == agent).filter(
-                models.Policy.service_path_id == service_path_id).offset(skip).limit(limit).all()
+                models.Policy.service_path_id == service_path_id)
+    if resource:
+        db_policies = db_policies.filter(models.Policy.access_to == resource)
+    if resource_type:
+        db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+    return db_policies.offset(skip).limit(limit).all()
 
 
 def _get_policies_by_service_path(
         db: Session,
         service_path_id: str,
+        resource: str = None,
+        resource_type: str = None,
         skip: int = 0,
         limit: int = 100):
-    return db.query(
+    db_policies = db.query(
         models.Policy).filter(
-        models.Policy.service_path_id == service_path_id).offset(skip).limit(limit).all()
+        models.Policy.service_path_id == service_path_id)
+    if resource:
+        db_policies = db_policies.filter(models.Policy.access_to == resource)
+    if resource_type:
+        db_policies = db_policies.filter(models.Policy.resource_type == resource_type)
+    return db_policies.offset(skip).limit(limit).all()
 
 
 def get_policy_by_access_to(db: Session, access_to: str):

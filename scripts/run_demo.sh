@@ -126,7 +126,7 @@ curl -s -i -X 'POST' \
 -H 'fiware_service_path: /' \
 -H 'Content-Type: application/json' \
 -d '{
-"access_to": "*",
+"access_to": "Tenant1",
 "resource_type": "tenant",
 "mode": ["acl:Read"],
 "agent": ["acl:AuthenticatedAgent"]
@@ -139,7 +139,7 @@ curl -s -i -X 'POST' \
 -H 'fiware_service_path: /' \
 -H 'Content-Type: application/json' \
 -d '{
-"access_to": "*",
+"access_to": "Tenant1",
 "resource_type": "tenant",
 "mode": ["acl:Write"],
 "agent": ["acl:AuthenticatedAgent"]
