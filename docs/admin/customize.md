@@ -37,7 +37,7 @@ In this case, the `path_matches_policy` check if a the incoming request has a
 given format, while `user_permitted` checks if according to the user based
 access policies, the request is allowed.
 
-### Creating a custom lua
+### Creating a custom lua script to automate policy creation at resource creation
 
 TBD
 
