@@ -3,6 +3,8 @@ from tenants import routers as t
 from policies import routers as p
 from version import ANUBIS_VERSION
 
+from fastapi.openapi.utils import get_openapi
+
 from fastapi.middleware.cors import CORSMiddleware
 
 import os
