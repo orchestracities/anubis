@@ -95,7 +95,8 @@ opa-authz-upstream-service-1        "/usr/bin/contextBro…"   upstream-service 
   Transfer-Encoding: chunked
   ```
 
-1. Create a policy that allows creating entities under tenant `Tenant1` and path `/` for any correctly authenticated user.
+1. Create a policy that allows creating entities under tenant `Tenant1` and
+  path `/` for any correctly authenticated user.
 
   ```bash
   $ curl -s -i -X 'POST' \
@@ -120,7 +121,7 @@ opa-authz-upstream-service-1        "/usr/bin/contextBro…"   upstream-service 
   The field `policy-id` contains the id of the policy created,
   use it in the following request.
 
-### Retrieve the just created policy using WAC serilization.
+1. Retrieve the just created policy using WAC serilization.
 
 ```bash
 $ curl -s -i -X 'GET' \
@@ -143,7 +144,7 @@ example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
     acl:mode <acl:Write> .
 ```
 
-### Retrieve the just created policy using rego serilization.
+1. Retrieve the just created policy using rego serilization.
 
 ```bash
 $ curl -s -i -X 'GET' \
@@ -173,7 +174,7 @@ content-type: application/json
 }
 ```
 
-### Retrieve the just created policy using the default api format.
+1. Retrieve the just created policy using the default api format.
 
 ```bash
 $ curl -s -i -X 'GET' \
@@ -200,7 +201,7 @@ content-type: application/json
 
 ## Testing the policy
 
-### Check if without authorization you can create an entity.
+1. Check if without authorization you can create an entity.
 
 ```bash
 $ curl -s -i -X POST 'http://localhost:8000/v2/entities' \
@@ -222,14 +223,14 @@ server: envoy
 content-length: 0
 ```
 
-### Obtain a valid `access_token` from keycloak
+1. Obtain a valid `access_token` from keycloak
 
 ```bash
 $ export token=`curl -s -d "client_id=client1&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/auth/realms/master/protocol/openid-connect/token' | \
 jq -j '.access_token'`
 ```
 
-### Use the token to create an entity
+1. Use the token to create an entity
 
 ```bash
 $ curl -s -i -X POST 'http://localhost:8000/v2/entities' \
@@ -260,7 +261,7 @@ server: envoy
 Notice that the response header contains a link to retrieve
 the policies specific to the created entity: `http://policy-api:8000/v1/policies/?resource=*&type=entity`
 
-### Check the decision log in the opa service.
+1. Check the decision log in the opa service.
 
 ```bash
 $ docker compose logs -f
