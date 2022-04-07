@@ -54,7 +54,7 @@ def custom_openapi():
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="Anubis",
-        version="0.2.0-dev",
+        version=ANUBIS_VERSION,
         description="Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.",
         routes=app.routes,
     )
