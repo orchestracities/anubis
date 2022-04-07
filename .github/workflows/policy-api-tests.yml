@@ -57,14 +57,6 @@ jobs:
         working-directory: ./scripts
         run: |
           ./test_context_broker.sh
-      - name: Update Open API spec
-        working-directory: ./scripts
-        run: |
-          ./download_open_api.sh
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Update open api specs
       - name: Clean up
         working-directory: ./scripts
         run: |
