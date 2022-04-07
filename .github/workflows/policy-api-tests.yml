@@ -57,6 +57,20 @@ jobs:
         working-directory: ./scripts
         run: |
           ./test_context_broker.sh
+      - name: Update Open API spec
+        working-directory: ./scripts
+        run: |
+          ./download_open_api.sh
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Add changes" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
       - name: Clean up
         working-directory: ./scripts
         run: |
