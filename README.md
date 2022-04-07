@@ -1,21 +1,27 @@
 # Anubis
 
+[![License: APACHE-2.0](https://img.shields.io/github/license/orchestracities/anubis.svg)](https://opensource.org/licenses/APACHE-2.0)
+[![Docker Status](https://img.shields.io/docker/pulls/orchestracities/anubis-management-api.svg)](https://hub.docker.com/r/orchestracities/anubis-management-api)
+[![Support](https://img.shields.io/badge/support-ask-yellowgreen.svg)](https://github.com/orchestracities/anubis/issues)
+<br/>
+[![Documentation badge](https://img.shields.io/readthedocs/anubis-pep.svg)](https://anubis-pep.readthedocs.io/en/en/latest/)
+
 Welcome to Anubis!
 
 ## What is the project about?
 
-This project explores the development of a flexible Policy Enforcement solution
+Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
 In short we are dealing with policy portability :) What do you mean by policy
 portability?
 
 Let's think of a user that register some data in platform A.
-To control who can his data he develops a set of policies.
+To control who can access his data he develops a set of policies.
 If he move the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
-Our aim is to avoid that :) or at least simplify this as much as possible
+Anubis aims to avoid that :) or at least simplify this as much as possible
 for the data owner.
 
 ## Why this project?
@@ -49,10 +55,10 @@ The project is looking into
 ## Why Anubis?
 
 [Anubis](https://en.wikipedia.org/wiki/Anubis) is an ancient Egyptian god,
-that has multiple roles in the mithology of ancient Egypt. In particular,
+that has multiple roles in the mythology of ancient Egypt. In particular,
 we opted for this name, because he decides the fate of souls:
-based on their weights he allows the soults to ascend to a heavenly existence,
-or condamn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
+based on their weights he allows the souls to ascend to a heavenly existence,
+or condemn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
 system for souls :)
 
 ## Status
@@ -98,24 +104,26 @@ The figure below shows the current architecture.
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
     implemented using a authz envoy
 [authz filter](https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/ext_authz).
-1. The PEP evaluates a set of rules that apply the abstract policies to the
+1. The PEP pass over the request to the PDP (Policy Decision Point), provided by
+    OPA which evaluates a set of rules that apply the abstract policies to the
     specific API to be protected
-1. In combination with the policies stored in the Policy Management API;
+1. In combination with the policies stored in the Policy Management API,
+    that acts as PAP (Policy Administration Point);
 1. If the evaluation of the policies return 'allowed', then the request is
     forwarded to the API.
 
 ## Policy management
 
-The POCs currently supports only Role Based Access Control policies. Policies
+Anubis currently supports only Role Based Access Control policies. Policies
 are stored in the [policy management api](anubis-management-api), that supports
 the translation to WAC and to a data input format supported by
 [OPA](https://www.openpolicyagent.org/), the engine that performs
 the policy evaluation.
 
 At the time being, the API specific rules have been developed
-specifically for the [NGSIv2 Context Broker](https://fiware-orion.readthedocs.io/en/master/)
-and JWT-based authentication. You can see these rule in this
-[rego file](config/opa-service/policy.rego).
+specifically for the [NGSIv2 Context Broker](https://fiware-orion.readthedocs.io/en/master/),
+Anubis management, and JWT-based authentication. You can see Orion rules in this
+[rego file](config/opa-service/rego/context_broker_policy.rego).
 
 ### Policy format
 
@@ -150,105 +158,13 @@ Additionally, in relation to FIWARE APIs, a policy may include also:
 - *tenant*: The tenant this permission falls under
 - *service_path*: The service path this permission falls under
 
-In addition to policies that target specific resources it's possible to create
-a "default" type policy that will be applied to any resource in a given tenant
-and service path, as well as any subpath of the service path (e.g. a default
-policy specifying `/foo` with match `/foo/bar`). Such policy is created by
-setting the value of `resource` to `default`.
-
-When creating a new policy from the api, a new policy is also automatically
-created that gives `acl:Control` rights for the new policy to the user
-that created it.
-The same happens when creating a new NGSI entity, where an
-`acl:Control` policy is created for the new entity, giving control of it to
-the user that made the request.
-
-A set of policies can also be set up to be created upon the creation of a Tenant
-through a file. See
-[this provided example](config/opa-service/default-policies.yml). The path to
-this file can be set using the `DEFAULT_POLICIES_CONFIG_FILE` environment
-variable.
-
-For the usage with OPA, policies are translated into OPA data format.
-For example, user based access control policies will be translated as:
-
-  ```json
-  {
-  "user_permissions": {
-      "1c4f9f82-e5a7-4b32-84ea-a1774531f1d2": [
-        {
-          "action": "acl:Read",
-          "resource": "*",
-          "resource_type": "entity",
-          "tenant": "Tenant",
-          "service_path": "/"
-        },
-        {
-          "action": "acl:Write",
-          "resource": "foo",
-          "resource_type": "entity",
-          "tenant": "Tenant",
-          "service_path": "/"
-        }
-      ]
-    }
-  }
-  ```
-
-See the [test file](config/opa-service/policy_test.rego) for more examples.
-
-To apply the policy to a specific API, we map [W3C web access control spec](https://github.com/solid/web-access-control-spec)
-defined access modes, e.g. `acl:Write`, `acl:Read` to a specific HTTP method,
-e.g.:
-
-  ```javascript
-  scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
-  ```
-
-(In some use cases, this modes may not be enough, and you may need to define
-an extension of `acl` with modes needed in your APIs.)
-
-Specific rules are defined based on the spec of the API to protect, e.g.:
-
-  ```javascript
-  # Checks if the entity in the policy matches the path
-  path_matches_policy(resource, resource_type, path) {
-    resource_type = "entity"
-    current_path := split(path, "/")
-    current_path[1] == "v2"
-    current_path[2] == "entities"
-    current_path[3] == resource
-  }
-
-  # User permissions
-  user_permitted {
-    is_token_valid
-    entry := data.user_permissions[token.payload.sub][_]
-    scope_method[entry.action][_] == request.action
-    path_matches_policy(entry.resource, entry.resource_type, request.resource)
-    entry.tenant == request.tenant
-    entry.service_path == request.service_path
-  }
-  ```
-
-In this case, the `path_matches_policy` check if a the incoming request has a
-given format, while `user_permitted` checks if according to the user based
-access policies, the request is allowed.
-
 ## Authentication
 
 The authentication per se is not covered by the PEP, the assumption is that
 the client authenticates before issuing and obtains a valid JWT token.
 
 Currently the PEP only verifies that the token is valid by checking against its
-expiration:
-
-  ```javascript
-  is_token_valid {
-    now := time.now_ns() / 1000000000
-    token.payload.exp >= now
-  }
-  ```
+expiration.
 
 Of course, more complex validations are possible.
 See [OPA Docs](https://www.openpolicyagent.org/docs/latest/oauth-oidc/)
@@ -264,13 +180,13 @@ Currently, the token, when decoded, should contain:
 
 ### Requirements
 
-For running this demo you'll need to have the following tools installed:
+To run this demo you'll need to have the following installed:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [curl](https://www.cyberciti.biz/faq/how-to-install-curl-command-on-a-ubuntu-linux/)
 - [jq](https://stedolan.github.io/jq/download/)
 
-### Deploying the demo
+### Deployment
 
 To deploy the demo that includes the Auth API, OPA, Keycloak, and a Context
 Broker, run the following script:
@@ -349,7 +265,7 @@ check either the text below, or the pending [issues](issues).
     A prototype is available, see [anubis-management-api](anubis-management-api).
   - [x] Allow to create and manage "service_paths" for tenants.
     A prototype is available, see [anubis-management-api](anubis-management-api).
-  - [ ] Have way to define who can define policy for which resource
+  - [x] Have way to define who can define policy for which resource
     (it could be based on the same approach)
   - [ ] Allows to test policies calling OPA validator
 - [ ] Design a translator that
@@ -361,13 +277,6 @@ check either the text below, or the pending [issues](issues).
   - [ ] Store policies in OPA, instead of retrieve them.
   - [ ] Record additional data in the OPA data API as needed
     (may not be required)
-
-To adhere to [W3C web access control spec](https://github.com/solid/web-access-control-spec)
-the API management prototype available at [anubis-management-api](anubis-management-api)
-uses acl defined access modes, e.g. `acl:Write`, `acl:Read`, which are different
-from the ones in [config/opa-service/policy.rego](config/opa-service/policy.rego)
-example (e.g. `entity:read`). In many use cases, this modes are not enough, and
-we may need to define an extension of `acl` with modes needed in our APIs.
 
 The [anubis-management-api](anubis-management-api) is a prototype, it needs some
 work to be more configurable, e.g. in term of db.

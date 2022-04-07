@@ -14,6 +14,8 @@
 
 ### Documentation
 
+- Documentation structure and first content
+
 ### Continuous Integration
 
 ### Technical debt

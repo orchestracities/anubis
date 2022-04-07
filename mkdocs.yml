@@ -1,0 +1,30 @@
+site_name: Anubis
+site_url: https://anubis.readthedocs.org
+repo_url: https://github.com/orchestracities/anubis
+site_description: Anubis
+docs_dir: docs
+site_dir: html
+edit_uri: edit/master/docs
+markdown_extensions:
+  - toc:
+  - fenced_code:
+  - codehilite:
+      use_pygments: False
+use_directory_urls: false
+theme: readthedocs
+extra_css: ["https://www.fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_core.css"]
+nav:
+  - Home: index.md
+  - 'Getting Started': 'quick_start_guide.md'
+  - 'User & Programmers Manual':
+      - 'Introduction': 'user/index.md'
+      - 'Policies': 'user/policies.md'
+      - 'API Walkthrough': 'user/walkthrough.md'
+  - 'Installation & Administration Manual':
+      - 'Introduction': 'admin/index.md'
+      - 'Installing Anubis': 'admin/install.md'
+      - 'Data model': 'admin/datemodel.md'
+      - 'Defaul policies': 'admin/default-policies.md'
+      - 'Customize': 'admin/customize.md'
+      - 'Logs': 'admin/logs.md'
+

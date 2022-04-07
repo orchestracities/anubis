@@ -1,0 +1,23 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '*.*.*'
+      - '*.*'
+  pull_request:
+    branches:
+      - 'master'
+jobs:
+  build:
+    name: Build docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+      - name: Build
+        uses: Tiryoh/actions-mkdocs@v0
+        with:
+          mkdocs_version: 'latest' # option
+          configfile: 'mkdocs.yml' # option
