@@ -5,7 +5,11 @@ site_description: Anubis
 docs_dir: docs
 site_dir: html
 edit_uri: edit/master/docs
-markdown_extensions: [toc,fenced_code]
+markdown_extensions:
+    toc:
+    fenced_code:
+    codehilite:
+        use_pygments: False
 use_directory_urls: false
 theme: readthedocs
 extra_css: ["https://www.fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_core.css"]
