@@ -78,47 +78,47 @@ opa-authz-upstream-service-1        "/usr/bin/contextBro…"   upstream-service 
 
 ## Performing basic operations with Anubis api
 
-### Create a tenant in Anubis
+1. Create a tenant in Anubis
 
-```bash
-$ curl -s -i -X 'POST' \
-  'http://127.0.0.1:8085/v1/tenants/' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "name": "Tenant1"
-  }'
-HTTP/1.1 201 Created
-date: Wed, 06 Apr 2022 14:03:09 GMT
-server: uvicorn
-tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
-Transfer-Encoding: chunked
-```
+  ```bash
+  $ curl -s -i -X 'POST' \
+    'http://127.0.0.1:8085/v1/tenants/' \
+    -H 'accept: */*' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "name": "Tenant1"
+    }'
+  HTTP/1.1 201 Created
+  date: Wed, 06 Apr 2022 14:03:09 GMT
+  server: uvicorn
+  tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
+  Transfer-Encoding: chunked
+  ```
 
-### Create a policy that allows creating entities under tenant `Tenant1` and path `/` for any correctly authenticated user.
+1. Create a policy that allows creating entities under tenant `Tenant1` and path `/` for any correctly authenticated user.
 
-```bash
-$ curl -s -i -X 'POST' \
-  'http://127.0.0.1:8085/v1/policies/' \
-  -H 'accept: */*' \
-  -H 'fiware-service: Tenant1' \
-  -H 'fiware-servicepath: /' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "access_to": "*",
-  "resource_type": "entity",
-  "mode": ["acl:Write"],
-  "agent": ["acl:AuthenticatedAgent"]
-  }'
-HTTP/1.1 201 Created
-date: Wed, 06 Apr 2022 15:57:18 GMT
-server: uvicorn
-policy-id: a0be6113-2339-40d7-9e85-56f93372f279
-Transfer-Encoding: chunked
-```
+  ```bash
+  $ curl -s -i -X 'POST' \
+    'http://127.0.0.1:8085/v1/policies/' \
+    -H 'accept: */*' \
+    -H 'fiware-service: Tenant1' \
+    -H 'fiware-servicepath: /' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "access_to": "*",
+    "resource_type": "entity",
+    "mode": ["acl:Write"],
+    "agent": ["acl:AuthenticatedAgent"]
+    }'
+  HTTP/1.1 201 Created
+  date: Wed, 06 Apr 2022 15:57:18 GMT
+  server: uvicorn
+  policy-id: a0be6113-2339-40d7-9e85-56f93372f279
+  Transfer-Encoding: chunked
+  ```
   
-The field `policy-id` contains the id of the policy created,
-use it in the following request.
+  The field `policy-id` contains the id of the policy created,
+  use it in the following request.
 
 ### Retrieve the just created policy using WAC serilization.
 
