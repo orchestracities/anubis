@@ -51,50 +51,47 @@ Policies can be serialized in different formats.
 
 - application/json:
 
-  ```json
-  {
-      "access_to": "*",
-      "resource_type": "entity",
-      "mode": [
-          "acl:Write"
-      ],
-      "agent": [
-          "acl:AuthenticatedAgent"
-      ],
-      "id": "a0be6113-2339-40d7-9e85-56f93372f279"
-  }
-  ```
+    :::json
+    {
+        "access_to": "*",
+        "resource_type": "entity",
+        "mode": [
+            "acl:Write"
+        ],
+        "agent": [
+            "acl:AuthenticatedAgent"
+        ],
+        "id": "a0be6113-2339-40d7-9e85-56f93372f279"
+    }
 
 - text/rego:
 
-  ```json
-  {
-    "user_permissions": {},
-    "group_permissions": {},
-    "role_permissions": {
-        "AuthenticatedAgent": [
-            {
-                "action": "acl:Write",
-                "resource": "*",
-                "resource_type": "entity",
-                "service_path": "/",
-                "tenant": "Tenant1"
-            }
-        ]
+    :::json
+    {
+      "user_permissions": {},
+      "group_permissions": {},
+      "role_permissions": {
+          "AuthenticatedAgent": [
+              {
+                  "action": "acl:Write",
+                  "resource": "*",
+                  "resource_type": "entity",
+                  "service_path": "/",
+                  "tenant": "Tenant1"
+              }
+          ]
+      }
     }
-  }
-  ```
 
 - text/turle:
 
-  ```text
-  @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-  @prefix example: <http://example.org/> .
-  example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
-      acl:accessTo <http://example.org/*> ;
-      acl:agentClass <acl:AuthenticatedAgent> ;
-      acl:mode <acl:Write> .
-  ```
+    :::text
+    @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+    @prefix example: <http://example.org/> .
+    example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
+        acl:accessTo <http://example.org/*> ;
+        acl:agentClass <acl:AuthenticatedAgent> ;
+        acl:mode <acl:Write> .
 
 ## Access modes and RESTful APIs
 
