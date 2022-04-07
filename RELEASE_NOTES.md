@@ -10,6 +10,8 @@
 
 ### Bug fixes
 
+- Fixes to FIWARE headers
+
 ### Documentation
 
 ### Continuous Integration

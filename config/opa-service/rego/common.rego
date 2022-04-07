@@ -54,7 +54,7 @@ jwks_request(url) = http.send({
 })
 
 # Grab data from API
-data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware_service": request.tenant, "fiware_service_path": request.service_path}}).body
+data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware-service": request.tenant, "fiware-servicepath": request.service_path}}).body
 
 # The user/subject
 subject := p {

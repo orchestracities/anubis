@@ -179,8 +179,8 @@ Here are few curl calls that exemplify how the API works:
     $curl -i -X 'POST' \
     'http://127.0.0.1:8000/v1/policies/' \
     -H 'accept: */*' \
-    -H 'fiware_service: EKZ' \
-    -H 'fiware_service_path: /' \
+    -H 'fiware-service: EKZ' \
+    -H 'fiware-servicepath: /' \
     -H 'Content-Type: application/json' \
     -d '{
     "access_to": "urn:myentity",
@@ -204,8 +204,8 @@ Here are few curl calls that exemplify how the API works:
     $curl -i -X 'GET' \
     'http://127.0.0.1:8000/v1/policies/5c3ac3b2-ad98-4358-8525-a3f7947170af?skip=0&limit=100' \
     -H 'accept: application/json' \
-    -H 'fiware_service: EKZ' \
-    -H 'fiware_service_path: /'
+    -H 'fiware-service: EKZ' \
+    -H 'fiware-servicepath: /'
 
     HTTP/1.1 200 OK
     date: Sat, 28 Aug 2021 12:01:40 GMT
@@ -228,8 +228,8 @@ Here are few curl calls that exemplify how the API works:
     $curl -i -X 'GET' \
     'http://127.0.0.1:8000/v1/policies/5c3ac3b2-ad98-4358-8525-a3f7947170af?skip=0&limit=100' \
     -H 'accept: text/turtle' \
-    -H 'fiware_service: EKZ' \
-    -H 'fiware_service_path: /'
+    -H 'fiware-service: EKZ' \
+    -H 'fiware-servicepath: /'
 
     HTTP/1.1 200 OK
     date: Sat, 28 Aug 2021 12:02:52 GMT
@@ -250,8 +250,8 @@ Here are few curl calls that exemplify how the API works:
     $curl -i -X 'GET' \
     'http://127.0.0.1:8000/v1/policies/5c3ac3b2-ad98-4358-8525-a3f7947170af?skip=0&limit=100' \
     -H 'accept: text/rego' \
-    -H 'fiware_service: EKZ' \
-    -H 'fiware_service_path: /'
+    -H 'fiware-service: EKZ' \
+    -H 'fiware-servicepath: /'
 
     HTTP/1.1 200 OK
     date: Sat, 28 Aug 2021 12:03:57 GMT

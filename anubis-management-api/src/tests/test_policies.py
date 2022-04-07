@@ -18,8 +18,8 @@ def test_policies(test_db):
     response = client.post(
         "/v1/policies/",
         headers={
-            "fiware_service": "test",
-            "fiware_service_path": "/"},
+            "fiware-service": "test",
+            "fiware-servicepath": "/"},
         json={
             "access_to": "resource",
             "resource_type": "entity",
@@ -32,8 +32,8 @@ def test_policies(test_db):
     response = client.get(
         "/v1/policies/",
         headers={
-            "fiware_service": "test",
-            "fiware_service_path": "/"})
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
     assert len(body) == 3
@@ -41,8 +41,8 @@ def test_policies(test_db):
     response = client.get(
         "/v1/policies/" + policy_id,
         headers={
-            "fiware_service": "test",
-            "fiware_service_path": "/"})
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
     assert body["access_to"] == "resource"
@@ -54,8 +54,8 @@ def test_policies(test_db):
         "/v1/policies/",
         headers={
             "accept": "text/rego",
-            "fiware_service": "test",
-            "fiware_service_path": "/"})
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
     assert body["user_permissions"]["test"][0] == {
@@ -69,13 +69,13 @@ def test_policies(test_db):
         "/v1/policies/" + policy_id,
         headers={
             "accept": "text/turtle",
-            "fiware_service": "test",
-            "fiware_service_path": "/"})
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
     assert response.status_code == 200
 
     response = client.delete(
         "/v1/policies/" + policy_id,
         headers={
-            "fiware_service": "test",
-            "fiware_service_path": "/"})
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
     assert response.status_code == 204

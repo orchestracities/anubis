@@ -70,8 +70,8 @@ echo "Setting up policy that allows creating entities under tenant Tenant1 and p
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "*",
@@ -83,8 +83,8 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "*",
@@ -96,8 +96,8 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "*",
@@ -109,8 +109,8 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "*",
@@ -122,8 +122,8 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "Tenant1",
@@ -135,8 +135,8 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "Tenant1",
@@ -148,8 +148,8 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "/",
@@ -161,8 +161,8 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
--H 'fiware_service: Tenant1' \
--H 'fiware_service_path: /' \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "/",
