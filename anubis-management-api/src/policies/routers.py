@@ -203,7 +203,7 @@ def create_policy(
                 agent=agent,
                 resource=policy.access_to,
                 resource_type=policy.resource_type,
-                )
+            )
             policies = policies + db_policies
     if len(db_policies) > 0:
         raise HTTPException(
