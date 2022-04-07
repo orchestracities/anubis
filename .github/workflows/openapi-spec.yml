@@ -36,6 +36,7 @@ jobs:
         run: |
           npm install -g openapi-markdown
           openapi-markdown -i open-api-spec/openapi.json -o docs/user/walkthrough.md
+          sed -i '1s/^/<!-- markdownlint-disable -->/' docs/user/walkthrough.md
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
