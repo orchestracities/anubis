@@ -77,119 +77,119 @@ Verify that all services are up and running:
 
 1. Create a tenant in Anubis
 
-    :::bash
-    $ curl -s -i -X 'POST' \
-      'http://127.0.0.1:8085/v1/tenants/' \
-      -H 'accept: */*' \
-      -H 'Content-Type: application/json' \
-      -d '{
-        "name": "Tenant1"
-      }'
-    HTTP/1.1 201 Created
-    date: Wed, 06 Apr 2022 14:03:09 GMT
-    server: uvicorn
-    tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
-    Transfer-Encoding: chunked
+      :::bash
+      $ curl -s -i -X 'POST' \
+        'http://127.0.0.1:8085/v1/tenants/' \
+        -H 'accept: */*' \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "name": "Tenant1"
+        }'
+      HTTP/1.1 201 Created
+      date: Wed, 06 Apr 2022 14:03:09 GMT
+      server: uvicorn
+      tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
+      Transfer-Encoding: chunked
 
 1. Create a policy that allows creating entities under tenant `Tenant1` and
   path `/` for any correctly authenticated user.
 
-    :::bash
-    $ curl -s -i -X 'POST' \
-      'http://127.0.0.1:8085/v1/policies/' \
-      -H 'accept: */*' \
-      -H 'fiware-service: Tenant1' \
-      -H 'fiware-servicepath: /' \
-      -H 'Content-Type: application/json' \
-      -d '{
-        "access_to": "*",
-        "resource_type": "entity",
-        "mode": ["acl:Write"],
-        "agent": ["acl:AuthenticatedAgent"]
-      }'
-    HTTP/1.1 201 Created
-    date: Wed, 06 Apr 2022 15:57:18 GMT
-    server: uvicorn
-    policy-id: a0be6113-2339-40d7-9e85-56f93372f279
-    Transfer-Encoding: chunked
+      :::bash
+      $ curl -s -i -X 'POST' \
+        'http://127.0.0.1:8085/v1/policies/' \
+        -H 'accept: */*' \
+        -H 'fiware-service: Tenant1' \
+        -H 'fiware-servicepath: /' \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "access_to": "*",
+          "resource_type": "entity",
+          "mode": ["acl:Write"],
+          "agent": ["acl:AuthenticatedAgent"]
+        }'
+      HTTP/1.1 201 Created
+      date: Wed, 06 Apr 2022 15:57:18 GMT
+      server: uvicorn
+      policy-id: a0be6113-2339-40d7-9e85-56f93372f279
+      Transfer-Encoding: chunked
   
   The field `policy-id` contains the id of the policy created,
   use it in the following request.
 
 1. Retrieve the just created policy using WAC serilization.
 
-    :::bash
-    $ curl -s -i -X 'GET' \
-      'http://127.0.0.1:8085/v1/policies/a0be6113-2339-40d7-9e85-56f93372f279' \
-      -H 'fiware-service: Tenant1' \
-      -H 'fiware-servicepath: /' \
-      -H 'Accept: text/turtle'
-    HTTP/1.1 200 OK
-    date: Wed, 06 Apr 2022 16:11:19 GMT
-    server: uvicorn
-    content-length: 273
-    content-type: text/turtle; charset=utf-8
+      :::bash
+      $ curl -s -i -X 'GET' \
+        'http://127.0.0.1:8085/v1/policies/a0be6113-2339-40d7-9e85-56f93372f279' \
+        -H 'fiware-service: Tenant1' \
+        -H 'fiware-servicepath: /' \
+        -H 'Accept: text/turtle'
+      HTTP/1.1 200 OK
+      date: Wed, 06 Apr 2022 16:11:19 GMT
+      server: uvicorn
+      content-length: 273
+      content-type: text/turtle; charset=utf-8
 
-    @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-    @prefix example: <http://example.org/> .
+      @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+      @prefix example: <http://example.org/> .
 
-    example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
-        acl:accessTo <http://example.org/*> ;
-        acl:agentClass <acl:AuthenticatedAgent> ;
-        acl:mode <acl:Write> .
+      example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
+          acl:accessTo <http://example.org/*> ;
+          acl:agentClass <acl:AuthenticatedAgent> ;
+          acl:mode <acl:Write> .
 
 1. Retrieve the just created policy using rego serilization.
 
-    :::bash
-    $ curl -s -i -X 'GET' \
-      'http://127.0.0.1:8085/v1/policies/a0be6113-2339-40d7-9e85-56f93372f279' \
-      -H 'fiware-service: Tenant1' \
-      -H 'fiware-servicepath: /' \
-      -H 'Accept: text/rego'
-    HTTP/1.1 200 OK
-    date: Wed, 06 Apr 2022 16:13:05 GMT
-    server: uvicorn
-    content-length: 206
-    content-type: application/json
-    {
-      "user_permissions": {},
-      "group_permissions": {},
-      "role_permissions": {
-          "AuthenticatedAgent": [
-              {
-                  "action": "acl:Write",
-                  "resource": "*",
-                  "resource_type": "entity",
-                  "service_path": "/",
-                  "tenant": "Tenant1"
-              }
-          ]
+      :::bash
+      $ curl -s -i -X 'GET' \
+        'http://127.0.0.1:8085/v1/policies/a0be6113-2339-40d7-9e85-56f93372f279' \
+        -H 'fiware-service: Tenant1' \
+        -H 'fiware-servicepath: /' \
+        -H 'Accept: text/rego'
+      HTTP/1.1 200 OK
+      date: Wed, 06 Apr 2022 16:13:05 GMT
+      server: uvicorn
+      content-length: 206
+      content-type: application/json
+      {
+        "user_permissions": {},
+        "group_permissions": {},
+        "role_permissions": {
+            "AuthenticatedAgent": [
+                {
+                    "action": "acl:Write",
+                    "resource": "*",
+                    "resource_type": "entity",
+                    "service_path": "/",
+                    "tenant": "Tenant1"
+                }
+            ]
+        }
       }
-    }
 
 1. Retrieve the just created policy using the default api format.
 
-    :::bash
-    $ curl -s -i -X 'GET' \
-      'http://127.0.0.1:8085/v1/policies/a0be6113-2339-40d7-9e85-56f93372f279' \
-      -H 'fiware-service: Tenant1' \
-      -H 'fiware-servicepath: /'
-    HTTP/1.1 200 OK
-    date: Wed, 06 Apr 2022 16:13:05 GMT
-    server: uvicorn
-    content-length: 206
-    content-type: application/json
-    {
-        "access_to": "*",
-        "resource_type": "entity",
-        "mode": [
-            "acl:Write"
-        ],
-        "agent": [
-            "acl:AuthenticatedAgent"
-        ],
-        "id": "a0be6113-2339-40d7-9e85-56f93372f279"
-    }
+      :::bash
+      $ curl -s -i -X 'GET' \
+        'http://127.0.0.1:8085/v1/policies/a0be6113-2339-40d7-9e85-56f93372f279' \
+        -H 'fiware-service: Tenant1' \
+        -H 'fiware-servicepath: /'
+      HTTP/1.1 200 OK
+      date: Wed, 06 Apr 2022 16:13:05 GMT
+      server: uvicorn
+      content-length: 206
+      content-type: application/json
+      {
+          "access_to": "*",
+          "resource_type": "entity",
+          "mode": [
+              "acl:Write"
+          ],
+          "agent": [
+              "acl:AuthenticatedAgent"
+          ],
+          "id": "a0be6113-2339-40d7-9e85-56f93372f279"
+      }
 
 ## Testing the policy
 
