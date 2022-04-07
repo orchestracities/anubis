@@ -38,3 +38,18 @@ async def v1_root():
         "tenants_url": "/v1/tenants",
         "policies_url": "/v1/policies",
         "resources_url": "/v1/resources"}
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="Anubis",
+        version="0.1.0-dev",
+        description="Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.",
+        routes=app.routes,
+    )
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
