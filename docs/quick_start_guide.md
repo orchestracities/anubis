@@ -113,8 +113,8 @@ Verify that all services are up and running:
         policy-id: a0be6113-2339-40d7-9e85-56f93372f279
         Transfer-Encoding: chunked
   
-  The field `policy-id` contains the id of the policy created,
-  use it in the following request.
+    The field `policy-id` contains the id of the policy created,
+    use it in the following request.
 
 1. Retrieve the just created policy using WAC serilization.
 
