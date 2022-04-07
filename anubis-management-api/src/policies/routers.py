@@ -193,7 +193,22 @@ def create_policy(
             detail="access_to field needs to be the same as fiware_service when using type tenant")
     db_service_path = get_db_service_path(
         db, fiware_service, fiware_servicepath)
-
+    policies = []
+    for agent in policy.agent:
+        for mode in policy.mode:
+            db_policies = operations.get_policies_by_service_path(
+                db=db,
+                service_path_id=db_service_path.id,
+                mode=mode,
+                agent=agent,
+                resource=policy.access_to,
+                resource_type=policy.resource_type,
+                )
+            policies = policies + db_policies
+    if len(db_policies) > 0:
+        raise HTTPException(
+            status_code=400,
+            detail="a policy with those modes/agents already exists for that resource")
     policy_id = operations.create_policy(
         db=db, service_path_id=db_service_path.id, policy=policy).id
     response.headers["Policy-ID"] = policy_id
