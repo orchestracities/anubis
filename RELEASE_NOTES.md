@@ -18,6 +18,8 @@
 
 ### Continuous Integration
 
+- Update openapi specs automatically
+
 ### Technical debt
 
 ## 0.1
