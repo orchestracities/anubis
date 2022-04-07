@@ -138,7 +138,7 @@ Verify that all services are up and running:
         acl:agentClass <acl:AuthenticatedAgent> ;
         acl:mode <acl:Write> .
 
-2. Retrieve the just created policy using rego serilization.
+1. Retrieve the just created policy using rego serilization.
 
     :::bash
     $ curl -s -i -X 'GET' \
@@ -167,7 +167,7 @@ Verify that all services are up and running:
       }
     }
 
-3. Retrieve the just created policy using the default api format.
+1. Retrieve the just created policy using the default api format.
 
     :::bash
     $ curl -s -i -X 'GET' \
