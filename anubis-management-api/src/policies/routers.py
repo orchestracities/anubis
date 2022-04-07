@@ -207,7 +207,7 @@ def create_policy(
             policies = policies + db_policies
     if len(db_policies) > 0:
         raise HTTPException(
-            status_code=400,
+            status_code=422,
             detail="a policy with those modes/agents already exists for that resource")
     policy_id = operations.create_policy(
         db=db, service_path_id=db_service_path.id, policy=policy).id

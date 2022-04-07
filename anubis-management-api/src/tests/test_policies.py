@@ -39,7 +39,7 @@ def test_policies(test_db):
             "resource_type": "entity",
             "mode": ["acl:Read"],
             "agent": ["acl:agent:test"]})
-    assert response.status_code == 400
+    assert response.status_code == 422
 
     response = client.get(
         "/v1/policies/",

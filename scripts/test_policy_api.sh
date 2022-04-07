@@ -59,7 +59,7 @@ export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://l
   "mode": ["acl:Read"],
   "agent": ["acl:AuthenticatedAgent"]
 }'`
-if [ $response == "400" ]
+if [ $response == "422" ]
 then
   echo "PASSED"
 else
