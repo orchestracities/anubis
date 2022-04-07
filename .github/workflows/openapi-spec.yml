@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+        with:
+          ref: ${{ github.head_ref }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -20,13 +22,13 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64,linux/arm64
           push: false
-          tags: latest
+          tags: orchestracities/anubis:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Setup demo
+      - name: Start anubis
         working-directory: ./scripts
         run: |
-          ./run_demo.sh
+          docker run -p 127.0.0.1:8085:8000/tcp --name anubis -d orchestracities/anubis:latest
       - name: Update Open API spec
         working-directory: ./scripts
         run: |
@@ -42,6 +44,5 @@ jobs:
         with:
           commit_message: Update open api specs
       - name: Clean up
-        working-directory: ./scripts
         run: |
-          ./clean.sh
+          docker rm -f anubis
