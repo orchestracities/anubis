@@ -61,9 +61,10 @@ jobs:
         working-directory: ./scripts
         run: |
           ./download_open_api.sh
-    - uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Update open api specs
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update open api specs
       - name: Clean up
         working-directory: ./scripts
         run: |
