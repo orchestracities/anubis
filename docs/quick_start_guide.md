@@ -80,42 +80,42 @@ opa-authz-upstream-service-1        "/usr/bin/contextBro…"   upstream-service 
 
 1. Create a tenant in Anubis
 
-  ```bash
-  $ curl -s -i -X 'POST' \
+```bash
+$ curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "name": "Tenant1"
+    "name": "Tenant1"
   }'
-  HTTP/1.1 201 Created
-  date: Wed, 06 Apr 2022 14:03:09 GMT
-  server: uvicorn
-  tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
-  Transfer-Encoding: chunked
-  ```
+HTTP/1.1 201 Created
+date: Wed, 06 Apr 2022 14:03:09 GMT
+server: uvicorn
+tenant-id: 8c42e1ee-15e7-48f3-864c-1bbfbd95dea9
+Transfer-Encoding: chunked
+```
 
-1. Create a policy that allows creating entities under tenant `Tenant1` and
+2. Create a policy that allows creating entities under tenant `Tenant1` and
   path `/` for any correctly authenticated user.
 
-  ```bash
-  $ curl -s -i -X 'POST' \
+```bash
+$ curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/policies/' \
   -H 'accept: */*' \
   -H 'fiware-service: Tenant1' \
   -H 'fiware-servicepath: /' \
   -H 'Content-Type: application/json' \
   -d '{
-  "access_to": "*",
-  "resource_type": "entity",
-  "mode": ["acl:Write"],
-  "agent": ["acl:AuthenticatedAgent"]
+    "access_to": "*",
+    "resource_type": "entity",
+    "mode": ["acl:Write"],
+    "agent": ["acl:AuthenticatedAgent"]
   }'
-  HTTP/1.1 201 Created
-  date: Wed, 06 Apr 2022 15:57:18 GMT
-  server: uvicorn
-  policy-id: a0be6113-2339-40d7-9e85-56f93372f279
-  Transfer-Encoding: chunked
+HTTP/1.1 201 Created
+date: Wed, 06 Apr 2022 15:57:18 GMT
+server: uvicorn
+policy-id: a0be6113-2339-40d7-9e85-56f93372f279
+Transfer-Encoding: chunked
   ```
   
   The field `policy-id` contains the id of the policy created,
@@ -144,7 +144,7 @@ example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
     acl:mode <acl:Write> .
 ```
 
-1. Retrieve the just created policy using rego serilization.
+2. Retrieve the just created policy using rego serilization.
 
 ```bash
 $ curl -s -i -X 'GET' \
@@ -174,7 +174,7 @@ content-type: application/json
 }
 ```
 
-1. Retrieve the just created policy using the default api format.
+3. Retrieve the just created policy using the default api format.
 
 ```bash
 $ curl -s -i -X 'GET' \
@@ -223,31 +223,31 @@ server: envoy
 content-length: 0
 ```
 
-1. Obtain a valid `access_token` from keycloak
+2. Obtain a valid `access_token` from keycloak
 
 ```bash
 $ export token=`curl -s -d "client_id=client1&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/auth/realms/master/protocol/openid-connect/token' | \
 jq -j '.access_token'`
 ```
 
-1. Use the token to create an entity
+3. Use the token to create an entity
 
 ```bash
 $ curl -s -i -X POST 'http://localhost:8000/v2/entities' \
--H 'Content: application/json' \
--H 'fiware-Service: Tenant1' \
--H 'fiware-ServicePath: /' \
--H 'Content-Type: application/json' \
--H "Authorization: Bearer $token" \
--d '{
-  "id": "urn:ngsi-ld:AirQualityObserved:demo",
-  "type": "AirQualityObserved",
-  "temperature": {
-    "type": "Number",
-    "value": 12.2,
-    "metadata": {}
-  }
-}'
+  -H 'Content: application/json' \
+  -H 'fiware-Service: Tenant1' \
+  -H 'fiware-ServicePath: /' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $token" \
+  -d '{
+    "id": "urn:ngsi-ld:AirQualityObserved:demo",
+    "type": "AirQualityObserved",
+    "temperature": {
+      "type": "Number",
+      "value": 12.2,
+      "metadata": {}
+    }
+  }'
 HTTP/1.1 201 Created
 content-length: 0
 location: /v2/entities/urn:ngsi-ld:AirQualityObserved:demo?type=AirQualityObserved
@@ -261,7 +261,7 @@ server: envoy
 Notice that the response header contains a link to retrieve
 the policies specific to the created entity: `http://policy-api:8000/v1/policies/?resource=*&type=entity`
 
-1. Check the decision log in the opa service.
+4. Check the decision log in the opa service.
 
 ```bash
 $ docker compose logs -f
