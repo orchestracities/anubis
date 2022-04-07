@@ -338,6 +338,19 @@ V1 Root
 | ---- | ----------- |
 | 200 | Successful Response |
 
+### /version/
+
+#### GET
+##### Summary:
+
+V1 Version
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+
 ### Models
 
 

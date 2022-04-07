@@ -947,6 +947,22 @@
           }
         }
       }
+    },
+    "/version/": {
+      "get": {
+        "summary": "V1 Version",
+        "operationId": "v1_version_version__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
