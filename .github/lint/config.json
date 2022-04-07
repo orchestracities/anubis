@@ -10,8 +10,5 @@
   "MD033": {
     "allowed_elements": ["a","img","br"]
   },
-  "MD014" : false,
-  "MD046": {
-    "style": "fenced"
-  }
+  "MD014" : false
 }
