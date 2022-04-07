@@ -29,6 +29,18 @@ def test_policies(test_db):
     policy_id = response.headers["Policy-ID"]
     assert policy_id
 
+    response = client.post(
+        "/v1/policies/",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"},
+        json={
+            "access_to": "resource",
+            "resource_type": "entity",
+            "mode": ["acl:Read"],
+            "agent": ["acl:agent:test"]})
+    assert response.status_code == 400
+
     response = client.get(
         "/v1/policies/",
         headers={
