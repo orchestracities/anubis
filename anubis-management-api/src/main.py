@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI
 from tenants import routers as t
 from policies import routers as p
+from version import ANUBIS_VERSION
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -38,3 +39,8 @@ async def v1_root():
         "tenants_url": "/v1/tenants",
         "policies_url": "/v1/policies",
         "resources_url": "/v1/resources"}
+
+@app.get("/version/")
+async def v1_version():
+    return {
+        "version": ANUBIS_VERSION}
