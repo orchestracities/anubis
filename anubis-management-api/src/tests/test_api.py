@@ -15,6 +15,7 @@ def test_root(test_db):
     assert body["policies_url"] == "/v1/policies"
     assert body["resources_url"] == "/v1/resources"
 
+
 def test_version(test_db):
     response = client.get("/version")
     assert response.status_code == 200

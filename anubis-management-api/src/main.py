@@ -40,6 +40,7 @@ async def v1_root():
         "policies_url": "/v1/policies",
         "resources_url": "/v1/resources"}
 
+
 @app.get("/version/")
 async def v1_version():
     return {
