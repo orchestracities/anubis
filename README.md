@@ -4,7 +4,7 @@
 [![Docker Status](https://img.shields.io/docker/pulls/orchestracities/anubis-management-api.svg)](https://hub.docker.com/r/orchestracities/anubis-management-api)
 [![Support](https://img.shields.io/badge/support-ask-yellowgreen.svg)](https://github.com/orchestracities/anubis/issues)
 <br/>
-[![Documentation badge](https://img.shields.io/readthedocs/anubis-pep.svg)](https://anubis-pep.readthedocs.io/en/en/latest/)
+[![Documentation badge](https://img.shields.io/readthedocs/anubis-pep.svg)](https://anubis-pep.readthedocs.io/en/latest/)
 
 Welcome to Anubis!
 
