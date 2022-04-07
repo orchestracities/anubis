@@ -45,6 +45,30 @@ fi
 
 echo ""
 
+echo "Can I create the same policy in ServicePath / for Tenant1 (wouldn't be able to)?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8090/v1/policies/' \
+--header 'Content: application/json' \
+--header 'fiware-Service: Tenant1' \
+--header 'fiware-ServicePath: /' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $token" \
+--data-raw '{
+  "access_to": "some_entity",
+  "resource_type": "entity",
+  "mode": ["acl:Read"],
+  "agent": ["acl:AuthenticatedAgent"]
+}'`
+if [ $response == "422" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Created duplicate policy"
+  exit 1
+fi
+
+echo ""
+
 echo "Can I create a policy in ServicePath / for Tenant2? (shouldn't be able to)"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8090/v1/policies/' \

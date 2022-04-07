@@ -11,6 +11,7 @@
 ### Bug fixes
 
 - Fixes to FIWARE headers
+- Prevented creation of duplicate policies
 
 ### Documentation
 
