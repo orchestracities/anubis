@@ -39,6 +39,7 @@ async def v1_root():
         "policies_url": "/v1/policies",
         "resources_url": "/v1/resources"}
 
+
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
