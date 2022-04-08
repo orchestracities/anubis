@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI
 from tenants import routers as t
 from policies import routers as p
 from version import ANUBIS_VERSION
+from fastapi.openapi.utils import get_openapi
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -45,3 +46,19 @@ async def v1_root():
 async def v1_version():
     return {
         "version": ANUBIS_VERSION}
+
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="Anubis",
+        version=ANUBIS_VERSION,
+        description="Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.",
+        routes=app.routes,
+    )
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
