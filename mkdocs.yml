@@ -24,7 +24,7 @@ nav:
       - 'Introduction': 'admin/index.md'
       - 'Installing Anubis': 'admin/install.md'
       - 'Data model': 'admin/datemodel.md'
-      - 'Defaul policies': 'admin/default-policies.md'
+      - 'Default policies': 'admin/default-policies.md'
       - 'Customize': 'admin/customize.md'
       - 'Logs': 'admin/logs.md'
 

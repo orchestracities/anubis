@@ -17,6 +17,7 @@
 ### Documentation
 
 - Documentation structure and first content
+- Fix code block formatting
 
 ### Continuous Integration
 
