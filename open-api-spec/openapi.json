@@ -632,6 +632,15 @@
           {
             "required": false,
             "schema": {
+              "title": "Agent Type",
+              "type": "string"
+            },
+            "name": "agent_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
               "title": "Skip",
               "type": "integer",
               "default": 0

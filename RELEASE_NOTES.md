@@ -8,6 +8,7 @@
 - Update to opa 0.38.1 and envoy 1.18
 - Support filtering `/tenants/some_tenant/service_paths` by `name`
 - Support filtering `/policies` by `resource` and `resourceType`
+- Support filtering `/policies` by `agentType`
 - Implement `/version` endpoint
 
 ### Bug fixes
