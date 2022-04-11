@@ -78,6 +78,42 @@ def test_policies(test_db):
     assert len(body) == 1
 
     response = client.get(
+        "/v1/policies/?resource_type=entity&&agent_type=acl:agent",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
+    body = response.json()
+    assert response.status_code == 200
+    assert len(body) == 1
+
+    response = client.get(
+        "/v1/policies/?resource_type=entity&&agent_type=acl:agentGroup",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
+    body = response.json()
+    assert response.status_code == 200
+    assert len(body) == 0
+
+    response = client.get(
+        "/v1/policies/?resource_type=entity&&agent_type=acl:agent&&resource=resource",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
+    body = response.json()
+    assert response.status_code == 200
+    assert len(body) == 1
+
+    response = client.get(
+        "/v1/policies/?resource_type=entity&&agent_type=acl:agent&&resource=foobar",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"})
+    body = response.json()
+    assert response.status_code == 200
+    assert len(body) == 0
+
+    response = client.get(
         "/v1/policies/?resource_type=subscription",
         headers={
             "fiware-service": "test",
