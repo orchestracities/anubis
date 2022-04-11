@@ -114,6 +114,7 @@ Read Tenant Service Paths
 | ---- | ---------- | ----------- | -------- | ---- |
 | tenant_id | path |  | Yes | string |
 | name | query |  | No | string |
+| startswith | query |  | No | string |
 | skip | query |  | No | integer |
 | limit | query |  | No | integer |
 
