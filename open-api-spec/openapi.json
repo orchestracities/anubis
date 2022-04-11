@@ -262,6 +262,15 @@
           {
             "required": false,
             "schema": {
+              "title": "Name",
+              "type": "string"
+            },
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
               "title": "Skip",
               "type": "integer",
               "default": 0
