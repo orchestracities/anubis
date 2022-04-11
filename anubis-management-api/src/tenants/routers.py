@@ -139,7 +139,12 @@ def read_tenant_service_paths(
         raise HTTPException(status_code=404, detail="Tenant not found")
     tenant_id = db_tenant.id
     service_paths = operations.get_tenant_service_paths(
-        db, tenant_id=tenant_id, name=name, startswith=startswith, skip=skip, limit=limit)
+        db,
+        tenant_id=tenant_id,
+        name=name,
+        startswith=startswith,
+        skip=skip,
+        limit=limit)
     return service_paths
 
 
