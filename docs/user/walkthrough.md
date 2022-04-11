@@ -244,6 +244,7 @@ Read Policies
 | agent | query |  | No | string |
 | resource | query |  | No | string |
 | resource_type | query |  | No | string |
+| agent_type | query |  | No | string |
 | skip | query |  | No | integer |
 | limit | query |  | No | integer |
 | fiware-service | header |  | No | string |
