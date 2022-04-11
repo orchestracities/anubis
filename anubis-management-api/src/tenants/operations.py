@@ -64,17 +64,13 @@ def get_tenant_service_paths(
         db: Session,
         tenant_id: str,
         name: str = None,
-        startswith: str = None,
         skip: int = 0,
         limit: int = 100):
     db_service_paths = db.query(models.ServicePath).filter(
         models.ServicePath.tenant_id == tenant_id)
     if name:
         db_service_paths = db_service_paths.filter(
-            models.ServicePath.path == name)
-    if startswith:
-        db_service_paths = db_service_paths.filter(
-            models.ServicePath.path.startswith(startswith))
+            models.ServicePath.path.startswith(name))
     return db_service_paths.offset(skip).limit(limit).all()
 
 

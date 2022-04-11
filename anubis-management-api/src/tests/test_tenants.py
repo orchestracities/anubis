@@ -75,7 +75,7 @@ def test_service_paths(test_db):
     response = client.get(
         "/v1/tenants/" +
         tenant_id +
-        "/service_paths/?startswith=/foobar")
+        "/service_paths/?name=/foobar")
     body = response.json()
     assert response.status_code == 200
     assert len(body) == 2

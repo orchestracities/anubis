@@ -128,7 +128,6 @@ def create_service_path(
 def read_tenant_service_paths(
         tenant_id: str,
         name: Optional[str] = None,
-        startswith: Optional[str] = None,
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
@@ -142,7 +141,6 @@ def read_tenant_service_paths(
         db,
         tenant_id=tenant_id,
         name=name,
-        startswith=startswith,
         skip=skip,
         limit=limit)
     return service_paths
