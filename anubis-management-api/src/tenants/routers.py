@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response
 from . import operations, models, schemas
 from dependencies import get_db
@@ -127,6 +127,7 @@ def create_service_path(
             response_model=List[schemas.ServicePath])
 def read_tenant_service_paths(
         tenant_id: str,
+        name: Optional[str] = None,
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
@@ -137,7 +138,7 @@ def read_tenant_service_paths(
         raise HTTPException(status_code=404, detail="Tenant not found")
     tenant_id = db_tenant.id
     service_paths = operations.get_tenant_service_paths(
-        db, tenant_id=tenant_id, skip=skip, limit=limit)
+        db, tenant_id=tenant_id, name=name, skip=skip, limit=limit)
     return service_paths
 
 

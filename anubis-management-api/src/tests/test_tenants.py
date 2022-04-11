@@ -51,10 +51,23 @@ def test_service_paths(test_db):
     service_path_id = response.headers["Service-Path-ID"]
     assert service_path_id
 
+    response = client.post(
+        "/v1/tenants/" + tenant_id + "/service_paths",
+        json={"path": "/foobar/barbar"}
+    )
+    assert response.status_code == 201
+    service_path_id = response.headers["Service-Path-ID"]
+    assert service_path_id
+
     response = client.get("/v1/tenants/" + tenant_id + "/service_paths/")
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 2
+    assert len(body) == 3
+
+    response = client.get("/v1/tenants/" + tenant_id + "/service_paths/?name=/foobar")
+    body = response.json()
+    assert response.status_code == 200
+    assert len(body) == 1
 
     response = client.get(
         "/v1/tenants/" +
@@ -63,7 +76,7 @@ def test_service_paths(test_db):
         service_path_id)
     body = response.json()
     assert response.status_code == 200
-    assert body["path"] == "/foobar"
+    assert body["path"] == "/foobar/barbar"
     assert body["tenant_id"] == tenant_id
 
     response = client.delete(
