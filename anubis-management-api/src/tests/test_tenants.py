@@ -64,10 +64,15 @@ def test_service_paths(test_db):
     assert response.status_code == 200
     assert len(body) == 3
 
-    response = client.get("/v1/tenants/" + tenant_id + "/service_paths/?name=/foobar")
+    response = client.get("/v1/tenants/" + tenant_id + "/service_paths/?name=/foobar/barbar")
     body = response.json()
     assert response.status_code == 200
     assert len(body) == 1
+
+    response = client.get("/v1/tenants/" + tenant_id + "/service_paths/?startswith=/foobar")
+    body = response.json()
+    assert response.status_code == 200
+    assert len(body) == 2
 
     response = client.get(
         "/v1/tenants/" +
