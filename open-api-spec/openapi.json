@@ -271,15 +271,6 @@
           {
             "required": false,
             "schema": {
-              "title": "Startswith",
-              "type": "string"
-            },
-            "name": "startswith",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
               "title": "Skip",
               "type": "integer",
               "default": 0
