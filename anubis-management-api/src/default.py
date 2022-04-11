@@ -25,5 +25,10 @@ DEFAULT_AGENTS = [
     UNAUTHENTICATED_AGENT_IRI,
     SAME_TENANT_AS_RESOURCE_AGENT_ID,
     DEFAULT]
+DEFAULT_AGENT_TYPES = [
+    AGENT_IRI,
+    AGENT_CLASS_IRI,
+    AGENT_GROUP_IRI
+]
 AGENT_IRI_REGEX = "^" + AGENT_CLASS_IRI + \
     r":[a-zA-Z0-9_\-]+$" + "|^" + AGENT_GROUP_IRI + r":[a-zA-Z0-9_\-]+$" + "|^" + AGENT_IRI + r":[a-zA-Z0-9_\-\@\.]+$"

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from tenants import operations as so
 from wac import serialize as w_serialize
 from rego import serialize as r_serialize
+import default
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -111,9 +112,14 @@ def read_policies(
             None),
         resource: Optional[str] = None,
         resource_type: Optional[str] = None,
+        agent_type: Optional[str] = None,
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
+    if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
+        raise HTTPException(
+            status_code=422,
+            detail='agent_type {} is not a valid agent type. Valid types are {} or {}'.format(agent_type, default.DEFAULT_AGENTS, default.DEFAULT_AGENT_TYPES))
     db_service_path = get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_policies = operations.get_policies_by_service_path(
@@ -121,6 +127,7 @@ def read_policies(
         service_path_id=db_service_path.id,
         mode=mode,
         agent=agent,
+        agent_type=agent_type,
         resource=resource,
         resource_type=resource_type,
         skip=skip,

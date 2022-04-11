@@ -16,6 +16,7 @@ def get_policies_by_service_path(
         service_path_id: str,
         mode: str = None,
         agent: str = None,
+        agent_type: str = None,
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
@@ -48,6 +49,7 @@ def get_policies_by_service_path(
         return get_policies_by_mode(
             db=db,
             service_path_id=service_path_id,
+            agent_type=agent_type,
             mode=mode,
             resource=resource,
             resource_type=resource_type,
@@ -57,6 +59,7 @@ def get_policies_by_service_path(
         return _get_policies_by_service_path(
             db=db,
             service_path_id=service_path_id,
+            agent_type=agent_type,
             resource=resource,
             resource_type=resource_type,
             skip=skip,
@@ -67,6 +70,7 @@ def get_policies_by_mode(
         db: Session,
         service_path_id: str,
         mode: str,
+        agent_type: str = None,
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
@@ -76,6 +80,15 @@ def get_policies_by_mode(
         models.Policy.mode).filter(
             models.Mode.iri == mode).filter(
                 models.Policy.service_path_id == service_path_id)
+    if agent_type:
+        if agent_type in default.DEFAULT_AGENTS:
+            db_policies = db_policies.join(
+                models.Policy.agent).filter(
+                    models.Agent.iri.startswith(agent_type))
+        if agent_type in default.DEFAULT_AGENT_TYPES:
+            db_policies = db_policies.join(
+                models.Policy.agent).filter(
+                    models.Agent.iri.startswith(agent_type+":"))
     if resource:
         db_policies = db_policies.filter(models.Policy.access_to == resource)
     if resource_type:
@@ -108,6 +121,7 @@ def get_policies_by_agent(
 def _get_policies_by_service_path(
         db: Session,
         service_path_id: str,
+        agent_type: str = None,
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
@@ -115,6 +129,15 @@ def _get_policies_by_service_path(
     db_policies = db.query(
         models.Policy).filter(
         models.Policy.service_path_id == service_path_id)
+    if agent_type:
+        if agent_type in default.DEFAULT_AGENTS:
+            db_policies = db_policies.join(
+                models.Policy.agent).filter(
+                    models.Agent.iri.startswith(agent_type))
+        if agent_type in default.DEFAULT_AGENT_TYPES:
+            db_policies = db_policies.join(
+                models.Policy.agent).filter(
+                    models.Agent.iri.startswith(agent_type+":"))
     if resource:
         db_policies = db_policies.filter(models.Policy.access_to == resource)
     if resource_type:
