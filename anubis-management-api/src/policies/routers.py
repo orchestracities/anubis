@@ -119,7 +119,10 @@ def read_policies(
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,
-            detail='agent_type {} is not a valid agent type. Valid types are {} or {}'.format(agent_type, default.DEFAULT_AGENTS, default.DEFAULT_AGENT_TYPES))
+            detail='agent_type {} is not a valid agent type. Valid types are {} or {}'.format(
+                agent_type,
+                default.DEFAULT_AGENTS,
+                default.DEFAULT_AGENT_TYPES))
     db_service_path = get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_policies = operations.get_policies_by_service_path(
