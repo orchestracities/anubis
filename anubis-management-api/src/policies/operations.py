@@ -90,7 +90,8 @@ def get_policies_by_mode(
                 models.Policy.agent).filter(
                     models.Agent.iri.startswith(agent_type + ":"))
     if resource:
-        db_policies = db_policies.filter(models.Policy.access_to.contains(resource))
+        db_policies = db_policies.filter(
+            models.Policy.access_to.contains(resource))
     if resource_type:
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
@@ -111,7 +112,8 @@ def get_policies_by_agent(
             models.Agent.iri == agent).filter(
                 models.Policy.service_path_id == service_path_id)
     if resource:
-        db_policies = db_policies.filter(models.Policy.access_to.contains(resource))
+        db_policies = db_policies.filter(
+            models.Policy.access_to.contains(resource))
     if resource_type:
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
@@ -139,7 +141,8 @@ def _get_policies_by_service_path(
                 models.Policy.agent).filter(
                     models.Agent.iri.startswith(agent_type + ":"))
     if resource:
-        db_policies = db_policies.filter(models.Policy.access_to.contains(resource))
+        db_policies = db_policies.filter(
+            models.Policy.access_to.contains(resource))
     if resource_type:
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
