@@ -113,6 +113,7 @@ Read Tenant Service Paths
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | tenant_id | path |  | Yes | string |
+| name | query |  | No | string |
 | skip | query |  | No | integer |
 | limit | query |  | No | integer |
 
