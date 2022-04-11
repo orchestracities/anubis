@@ -6,8 +6,7 @@
 
 - Support policy link in response Header
 - Update to opa 0.38.1 and envoy 1.18
-- Support filtering `/tenants/some_tenant/service_paths` by `name` and
-  `startswith`
+- Support filtering `/tenants/some_tenant/service_paths` by `name`
 - Support filtering `/policies` by `resource` and `resourceType`
 - Implement `/version` endpoint
 
