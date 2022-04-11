@@ -35,20 +35,50 @@ def test_policies(test_db):
             "fiware-service": "test",
             "fiware-servicepath": "/"},
         json={
-            "access_to": "resource",
+            "access_to": "resource:foobar",
             "resource_type": "entity",
             "mode": ["acl:Read"],
             "agent": ["acl:agent:test"]})
-    assert response.status_code == 422
+    assert response.status_code == 201
+    policy_id = response.headers["Policy-ID"]
+    assert policy_id
+
+    response = client.post(
+        "/v1/policies/",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"},
+        json={
+            "access_to": "resource:foobar:bar",
+            "resource_type": "entity",
+            "mode": ["acl:Read"],
+            "agent": ["acl:agent:test"]})
+    assert response.status_code == 201
+    policy_id = response.headers["Policy-ID"]
+    assert policy_id
+
+    response = client.post(
+        "/v1/policies/",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"},
+        json={
+            "access_to": "resource",
+            "resource_type": "entity",
+            "mode": ["acl:Write"],
+            "agent": ["acl:agent:test"]})
+    assert response.status_code == 201
+    policy_id = response.headers["Policy-ID"]
+    assert policy_id
 
     response = client.get(
         "/v1/policies/",
         headers={
             "fiware-service": "test",
             "fiware-servicepath": "/"})
-    body = response.json()
     assert response.status_code == 200
-    assert len(body) == 3
+    body = response.json()
+    assert len(body) == 6
 
     response = client.get(
         "/v1/policies/?agent_type=acl:agent",
@@ -57,7 +87,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert len(body) == 4
 
     response = client.get(
         "/v1/policies/?agent_type=acl:agentGroup",
@@ -75,7 +105,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert len(body) == 4
 
     response = client.get(
         "/v1/policies/?resource_type=entity&&agent_type=acl:agent",
@@ -84,7 +114,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert len(body) == 4
 
     response = client.get(
         "/v1/policies/?resource_type=entity&&agent_type=acl:agentGroup",
@@ -102,16 +132,16 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert len(body) == 4
 
     response = client.get(
-        "/v1/policies/?resource_type=entity&&agent_type=acl:agent&&resource=foobar",
+        "/v1/policies/?resource_type=entity&&agent_type=acl:agent&&resource=resource:foobar",
         headers={
             "fiware-service": "test",
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 0
+    assert len(body) == 2
 
     response = client.get(
         "/v1/policies/?resource_type=subscription",
@@ -131,7 +161,7 @@ def test_policies(test_db):
     assert response.status_code == 200
     assert body["access_to"] == "resource"
     assert body["resource_type"] == "entity"
-    assert body["mode"] == ["acl:Read"]
+    assert body["mode"] == ["acl:Write"]
     assert body["agent"] == ["acl:agent:test"]
 
     response = client.get(

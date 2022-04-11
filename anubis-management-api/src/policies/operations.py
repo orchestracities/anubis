@@ -31,10 +31,10 @@ def get_policies_by_service_path(
                         models.Policy.service_path_id == service_path_id)
         if resource:
             db_policies = db_policies.filter(
-                models.Policy.access_to == resource)
+                models.Policy.access_to.contains(resource))
         if resource_type:
             db_policies = db_policies.filter(
-                models.Policy.resource_type == resource_type)
+                models.Policy.resource_type.contains(resource))
         return db_policies.offset(skip).limit(limit).all()
     elif mode is None and agent is not None:
         return get_policies_by_agent(
@@ -90,10 +90,10 @@ def get_policies_by_mode(
                 models.Policy.agent).filter(
                     models.Agent.iri.startswith(agent_type + ":"))
     if resource:
-        db_policies = db_policies.filter(models.Policy.access_to == resource)
+        db_policies = db_policies.filter(models.Policy.access_to.contains(resource))
     if resource_type:
         db_policies = db_policies.filter(
-            models.Policy.resource_type == resource_type)
+            models.Policy.resource_type.contains(resource_type))
     return db_policies.offset(skip).limit(limit).all()
 
 
@@ -111,10 +111,10 @@ def get_policies_by_agent(
             models.Agent.iri == agent).filter(
                 models.Policy.service_path_id == service_path_id)
     if resource:
-        db_policies = db_policies.filter(models.Policy.access_to == resource)
+        db_policies = db_policies.filter(models.Policy.access_to.contains(resource))
     if resource_type:
         db_policies = db_policies.filter(
-            models.Policy.resource_type == resource_type)
+            models.Policy.resource_type.contains(resource_type))
     return db_policies.offset(skip).limit(limit).all()
 
 
@@ -139,10 +139,10 @@ def _get_policies_by_service_path(
                 models.Policy.agent).filter(
                     models.Agent.iri.startswith(agent_type + ":"))
     if resource:
-        db_policies = db_policies.filter(models.Policy.access_to == resource)
+        db_policies = db_policies.filter(models.Policy.access_to.contains(resource))
     if resource_type:
         db_policies = db_policies.filter(
-            models.Policy.resource_type == resource_type)
+            models.Policy.resource_type.contains(resource_type))
     return db_policies.offset(skip).limit(limit).all()
 
 
