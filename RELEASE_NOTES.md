@@ -20,6 +20,7 @@
 
 - Documentation structure and first content
 - Fix code block formatting
+- Fix architecture figure display
 
 ### Continuous Integration
 
