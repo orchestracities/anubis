@@ -1,0 +1,21 @@
+wac:
+  default:
+      prefix: default
+      baseUrl: https://default.url/
+      resourceTypeUrls:
+        entity:
+          url: https://default.orion.url/v2/entities/
+        entityType:
+          url: https://default.orion.url/v2/types/
+        policy:
+          url: https://default.anubis.url/v1/policies/
+  Tenant1:
+      prefix: tenant1
+      baseUrl: https://tenant1.url/
+      resourceTypeUrls:
+        entity:
+          url: https://tenant1.orion.url/v2/entities/
+        entityType:
+          url: https://tenant1.orion.url/v2/types/
+        policy:
+          url: https://tenant1.anubis.url/v1/policies/
