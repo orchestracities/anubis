@@ -213,7 +213,8 @@ def test_policies(test_db):
     g.parse(data=response.text)
     for subj, pred, obj in g:
         if URIRef("http://www.w3.org/ns/auth/acl#accessTo") == pred:
-            assert URIRef("https://tenant1.orion.url/v2/entities/resource") == obj
+            assert URIRef(
+                "https://tenant1.orion.url/v2/entities/resource") == obj
         elif URIRef("http://www.w3.org/ns/auth/acl#agentClass") == pred:
             assert URIRef("acl:agent:test") == obj
         elif URIRef("http://www.w3.org/ns/auth/acl#mode") == pred:
