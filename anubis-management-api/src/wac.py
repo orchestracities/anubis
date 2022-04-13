@@ -49,7 +49,7 @@ def serialize(db: Session, fiware_service: [str], policies: [Policy]):
         else:
             access_to_property = acl.accessTo
             if default_wac.get(fiware_service) and
-                default_wac[fiware_service]["resourceTypeUrls"].get(
+            default_wac[fiware_service]["resourceTypeUrls"].get(
                     policy.resource_type):
                 resource_namespace = Namespace(
                     default_wac[fiware_service]["resourceTypeUrls"][policy.resource_type]["url"])
