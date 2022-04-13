@@ -10,6 +10,7 @@
 - Support filtering `/policies` by `resource` and `resourceType`
 - Support filtering `/policies` by `agentType`
 - Implement `/version` endpoint
+- Added config file for wac serialisation
 
 ### Bug fixes
 
