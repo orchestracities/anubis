@@ -45,7 +45,7 @@ def serialize(db: Session, fiware_service: [str], policies: [Policy]):
 
         if policy.access_to == "default":
             access_to_property = acl.default
-            access_to_iri = URIRef(policy.access_to)
+            access_to_iri = URIRef("*")
         else:
             access_to_property = acl.accessTo
             if default_wac.get(fiware_service) and default_wac[fiware_service]["resourceTypeUrls"].get(
