@@ -1,0 +1,12 @@
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix tenant: <https://tenant.url/> .
+
+tenant:policy1 a acl:Authorization ;
+    acl:agentClass <acl:agentClass:Admin> ;
+    acl:default <*> ;
+    acl:mode <acl:Control> .
+
+tenant:policy2 a acl:Authorization ;
+    acl:agentClass <acl:AuthenticatedAgent> ;
+    acl:default <*> ;
+    acl:mode <acl:Read> .

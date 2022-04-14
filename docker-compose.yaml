@@ -25,7 +25,7 @@ services:
     ports:
       - "8085:8000"
     volumes:
-      - ./config/opa-service/default_policies.yml:/home/apiuser/config/opa-service/default_policies.yml
+      - ./config/opa-service/default_policies.yml:/home/apiuser/config/opa-service/default_policies.ttl
     # depends_on:
     #   - postgresserver
 

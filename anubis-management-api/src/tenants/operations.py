@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 from policies import schemas as policy_schemas
 from policies import operations as policy_operations
+from rdflib import Graph, URIRef, BNode, Literal
+from rdflib import Namespace
 import uuid
 import yaml
 import os
@@ -37,15 +39,26 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.commit()
     db.refresh(new_tenant)
     # creating default policy
-    # TODO: This will eventually read from a non yaml file
-    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.yml'), 'r') as file:
-        default_policies = yaml.load(file, Loader=yaml.FullLoader)
-        for p in default_policies["acl:Authorization"]:
+    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.ttl'), 'r') as file:
+        g = Graph()
+        g.parse(data=file.read())
+        policies = {}
+        for subj, pred, obj in g:
+            policy = str(subj).split("https://tenant.url/")[1]
+            if not policies.get(policy):
+                policies[policy] = {}
+            if "agentClass" in str(pred):
+                policies[policy]["agentClass"] = str(obj)
+            if "mode" in str(pred):
+                policies[policy]["mode"] = str(obj)
+            if "acl#default" in str(pred):
+                policies[policy]["accessTo"] = "default"
+        for p in policies:
             policy = policy_schemas.PolicyCreate(
-                access_to=p["acl:accessTo"]["value"],
-                resource_type=p["acl:accessTo"]["type"],
-                mode=p["acl:mode"],
-                agent=p["acl:agentClass"])
+                access_to=policies[p]["accessTo"],
+                resource_type="*",
+                mode=[policies[p]["mode"]],
+                agent=[policies[p]["agentClass"]])
             policy_operations.create_policy(
                 db=db, service_path_id=default_service_path.id, policy=policy)
     return new_tenant
