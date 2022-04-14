@@ -17,6 +17,7 @@
 
 - Fixes to FIWARE headers
 - Prevented creation of duplicate policies
+- Turtle file for default policies creation
 
 ### Documentation
 
