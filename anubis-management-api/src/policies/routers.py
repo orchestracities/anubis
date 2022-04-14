@@ -139,6 +139,7 @@ def read_policies(
         return Response(
             content=w_serialize(
                 db,
+                fiware_service,
                 db_policies),
             media_type="text/turtle")
     elif accept == 'text/rego':
@@ -176,6 +177,7 @@ def read_policy(
         return Response(
             content=w_serialize(
                 db,
+                fiware_service,
                 [db_policy]),
             media_type="text/turtle")
     elif accept == 'text/rego':

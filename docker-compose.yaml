@@ -22,10 +22,13 @@ services:
       - CORS_ALLOWED_ORIGINS=http://localhost
       - CORS_ALLOWED_METHODS=*
       - CORS_ALLOWED_HEADERS=*
+      - DEFAULT_POLICIES_CONFIG_FILE=/home/apiuser/config/opa-service/default_policies.yml
+      - DEFAULT_WAC_CONFIG_FILE=/home/apiuser/config/opa-service/default_wac_config.yml
     ports:
       - "8085:8000"
     volumes:
       - ./config/opa-service/default_policies.yml:/home/apiuser/config/opa-service/default_policies.ttl
+      - ./config/opa-service/default_wac_config.yml:/home/apiuser/config/opa-service/default_wac_config.yml
     # depends_on:
     #   - postgresserver
 

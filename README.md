@@ -233,6 +233,19 @@ For the policy API, the following env variables are also available:
   (e.g. `GET;POST:DELETE`)
 - `CORS_ALLOWED_HEADERS`: A `;` separated list of the allowed CORS headers
   (e.g. `content-type;some-other-header`)
+- `DEFAULT_POLICIES_CONFIG_FILE`: Specifies the path of the configuration
+  file of the default policies to create upon tenant creation.
+- `DEFAULT_WAC_CONFIG_FILE`: Specifies the path of the configuration file of
+  the wac serialization.
+
+For customising the default policies that are created alongside a tenant, see
+[the configuration file](config/opa-service/default_policies.yml) that's mounted
+as a volume in the policy-api service from the
+[docker-compose file](docker-compose.yaml).
+
+Similarly, a [configuration file](config/opa-service/default_wac_config.yml)
+for the wac serialization is available to configure the prefixes and URIs of
+the various resource types in relation to tenants.
 
 ## Test rego
 

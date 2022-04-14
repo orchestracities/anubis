@@ -2,11 +2,21 @@ from fastapi.testclient import TestClient
 
 from main import app
 from .utils import test_db
+from rdflib import Graph, URIRef, BNode, Literal
+from rdflib import Namespace
 
 client = TestClient(app)
 
 
 def test_policies(test_db):
+    response = client.post(
+        "/v1/tenants/",
+        json={"name": "Tenant1"}
+    )
+    assert response.status_code == 201
+    tenant_id = response.headers["tenant-id"]
+    assert tenant_id
+
     response = client.post(
         "/v1/tenants/",
         json={"name": "test"}
@@ -179,17 +189,51 @@ def test_policies(test_db):
         "service_path": "/",
         "tenant": "test"}
 
+    response = client.post(
+        "/v1/policies/",
+        headers={
+            "fiware-service": "Tenant1",
+            "fiware-servicepath": "/"},
+        json={
+            "access_to": "resource",
+            "resource_type": "entity",
+            "mode": ["acl:Read"],
+            "agent": ["acl:agent:test"]})
+    assert response.status_code == 201
+    policy_id = response.headers["policy-id"]
+
     response = client.get(
         "/v1/policies/" + policy_id,
         headers={
             "accept": "text/turtle",
-            "fiware-service": "test",
+            "fiware-service": "Tenant1",
             "fiware-servicepath": "/"})
     assert response.status_code == 200
+    g = Graph()
+    g.parse(data=response.text)
+    for subj, pred, obj in g:
+        if URIRef("http://www.w3.org/ns/auth/acl#accessTo") == pred:
+            assert URIRef(
+                "https://tenant1.orion.url/v2/entities/resource") == obj
+        elif URIRef("http://www.w3.org/ns/auth/acl#agentClass") == pred:
+            assert URIRef("acl:agent:test") == obj
+        elif URIRef("http://www.w3.org/ns/auth/acl#mode") == pred:
+            assert URIRef("acl:Read") == obj
+
+    response = client.get(
+        "/v1/policies/",
+        headers={
+            "accept": "text/turtle",
+            "fiware-service": "Tenant1",
+            "fiware-servicepath": "/"})
+    assert response.status_code == 200
+    g = Graph()
+    g.parse(data=response.text)
+    assert len(g) == 12
 
     response = client.delete(
         "/v1/policies/" + policy_id,
         headers={
-            "fiware-service": "test",
+            "fiware-service": "Tenant1",
             "fiware-servicepath": "/"})
     assert response.status_code == 204
