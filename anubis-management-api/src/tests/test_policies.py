@@ -88,7 +88,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     assert response.status_code == 200
     body = response.json()
-    assert len(body) == 6
+    assert len(body) == 7
 
     response = client.get(
         "/v1/policies/?agent_type=acl:agent",
@@ -115,7 +115,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 4
+    assert len(body) == 6
 
     response = client.get(
         "/v1/policies/?resource_type=entity&&agent_type=acl:agent",
@@ -229,7 +229,7 @@ def test_policies(test_db):
     assert response.status_code == 200
     g = Graph()
     g.parse(data=response.text)
-    assert len(g) == 12
+    assert len(g) == 20
 
     response = client.delete(
         "/v1/policies/" + policy_id,
