@@ -13,7 +13,11 @@ acl = Namespace("http://www.w3.org/ns/auth/acl#")
 # group urls should be /{realm}/groups/{id}
 
 
-def serialize(db: Session, fiware_service: [str], fiware_servicepath: [str], policies: [Policy]):
+def serialize(
+        db: Session,
+        fiware_service: [str],
+        fiware_servicepath: [str],
+        policies: [Policy]):
     with open(os.environ.get("DEFAULT_WAC_CONFIG_FILE", '../../config/opa-service/default_wac_config.yml'), 'r') as file:
         default_wac = yaml.load(file, Loader=yaml.FullLoader)["wac"]
 
@@ -55,7 +59,8 @@ def serialize(db: Session, fiware_service: [str], fiware_servicepath: [str], pol
                 default_wac[fiware_service]["resourceTypeUrls"][policy.resource_type]["url"])
             access_to_iri = URIRef(access_to_value, resource_namespace)
             g.add((policy_node, access_to_property, access_to_iri))
-            access_to_class_iri = URIRef(policy.resource_type, resource_namespace)
+            access_to_class_iri = URIRef(
+                policy.resource_type, resource_namespace)
             g.add((policy_node, acl.accessToClass, access_to_class_iri))
         else:
             access_to_iri = URIRef(access_to_value, n)
