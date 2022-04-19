@@ -3,10 +3,18 @@
 
 tenant:policy1 a acl:Authorization ;
     acl:agentClass <acl:agentClass:Admin> ;
-    acl:default <*> ;
+    acl:default </> ;
+    acl:accessToClass <entity> ;
     acl:mode <acl:Control> .
 
 tenant:policy2 a acl:Authorization ;
     acl:agentClass <acl:AuthenticatedAgent> ;
-    acl:default <*> ;
+    acl:default </> ;
+    acl:accessToClass <entity> ;
     acl:mode <acl:Read> .
+
+tenant:policy3 a acl:Authorization ;
+    acl:agentClass <acl:agentClass:Admin> ;
+    acl:default </> ;
+    acl:accessToClass <policy> ;
+    acl:mode <acl:Control> .

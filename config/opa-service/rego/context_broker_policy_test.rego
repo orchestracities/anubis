@@ -85,7 +85,7 @@ default_data = {
       {
         "action": "acl:Read",
         "resource": "default",
-        "resource_type": "*",
+        "resource_type": "entity",
         "tenant": "Tenant1",
         "service_path": "/test"
       }
