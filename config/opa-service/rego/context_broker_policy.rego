@@ -15,6 +15,15 @@ path_matches_policy(entry, request) {
   current_path[2] == "entities"
 }
 
+# Checks if the policy is a default
+path_matches_policy(entry, request) {
+  entry.resource == "default"
+  entry.resource_type == "entity"
+  current_path := split(request.resource, "/")
+  current_path[1] == "v2"
+  current_path[2] == "entities"
+}
+
 # Checks if the entity in the policy matches the path
 path_matches_policy(entry, request) {
   entry.resource_type == "entity"
@@ -54,6 +63,15 @@ path_matches_policy(entry, request) {
   current_path[2] == "types"
 }
 
+# Checks if the policy is a default
+path_matches_policy(entry, request) {
+  entry.resource == "default"
+  entry.resource_type == "entity_type"
+  current_path := split(request.resource, "/")
+  current_path[1] == "v2"
+  current_path[2] == "types"
+}
+
 # Checks if the entity type in the policy matches the path
 path_matches_policy(entry, request) {
   entry.resource_type == "entity_type"
@@ -87,6 +105,15 @@ header_link = link {
 # Checks if the policy has the wildcard asterisks, thus matching paths to any subscription or all
 path_matches_policy(entry, request) {
   entry.resource == "*"
+  entry.resource_type == "subscription"
+  current_path := split(request.resource, "/")
+  current_path[1] == "v2"
+  current_path[2] == "subscriptions"
+}
+
+# Checks if the policy is a default
+path_matches_policy(entry, request) {
+  entry.resource == "default"
   entry.resource_type == "subscription"
   current_path := split(request.resource, "/")
   current_path[1] == "v2"

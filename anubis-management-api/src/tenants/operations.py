@@ -44,7 +44,7 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
         g.parse(data=file.read())
         policies = {}
         for subj, pred, obj in g:
-            policy = str(subj).split("https://tenant.url/")[1]
+            policy = str(subj).split("/")[-1]
             if not policies.get(policy):
                 policies[policy] = {}
             if "agentClass" in str(pred):
@@ -53,10 +53,12 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
                 policies[policy]["mode"] = str(obj)
             if "acl#default" in str(pred):
                 policies[policy]["accessTo"] = "default"
+            if "accessToClass" in str(pred):
+                policies[policy]["accessToClass"] = str(obj).split("/")[-1]
         for p in policies:
             policy = policy_schemas.PolicyCreate(
                 access_to=policies[p]["accessTo"],
-                resource_type="*",
+                resource_type=policies[p]["accessToClass"],
                 mode=[policies[p]["mode"]],
                 agent=[policies[p]["agentClass"]])
             policy_operations.create_policy(
