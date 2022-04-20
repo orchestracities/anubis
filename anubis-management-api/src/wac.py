@@ -57,10 +57,12 @@ def serialize(
                 policy.resource_type):
             resource_namespace = Namespace(
                 default_wac[fiware_service]["resourceTypeUrls"][policy.resource_type]["url"])
+            resource_type_namespace = Namespace(
+                default_wac[fiware_service]["resourceTypeUrls"][policy.resource_type]["type_url"])
             access_to_iri = URIRef(access_to_value, resource_namespace)
             g.add((policy_node, access_to_property, access_to_iri))
             access_to_class_iri = URIRef(
-                policy.resource_type, resource_namespace)
+                policy.resource_type, resource_type_namespace)
             g.add((policy_node, acl.accessToClass, access_to_class_iri))
         else:
             access_to_iri = URIRef(access_to_value, n)
