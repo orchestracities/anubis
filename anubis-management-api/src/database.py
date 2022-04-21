@@ -11,7 +11,8 @@ if database_type == "postgres":
     database_password = os.environ.get('POSTGRES_PASSWORD', "password")
     database_name = os.environ.get('POSTGRES_DB', "anubis")
 
-    SQLALCHEMY_DATABASE_URL = "postgresql://{}:{}@{}/{}".format(database_user, database_password, database_host, database_name)
+    SQLALCHEMY_DATABASE_URL = "postgresql://{}:{}@{}/{}".format(
+        database_user, database_password, database_host, database_name)
 
     engine = create_engine(
         SQLALCHEMY_DATABASE_URL

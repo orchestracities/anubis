@@ -42,6 +42,7 @@ p_models.Base.metadata.create_all(bind=engine)
 p_models.insert_initial_agent_type_values()
 p_models.insert_initial_mode_values()
 
+
 @app.get("/v1/")
 async def v1_root():
     return {
