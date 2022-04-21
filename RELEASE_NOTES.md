@@ -11,6 +11,7 @@
 - Support filtering `/policies` by `agentType`
 - Implement `/version` endpoint
 - Added config file for wac serialisation
+- Support for Postgressql database
 
 ### Bug fixes
 

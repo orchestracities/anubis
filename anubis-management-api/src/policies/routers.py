@@ -9,9 +9,6 @@ from wac import serialize as w_serialize
 from rego import serialize as r_serialize
 import default
 
-
-models.Base.metadata.create_all(bind=engine)
-
 router = APIRouter(prefix="/v1/policies",
                    tags=["policies"],
                    responses={404: {"description": "Not found"}},)

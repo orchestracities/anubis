@@ -32,7 +32,7 @@ class ServicePath(Base):
     tenant = relationship("Tenant", back_populates="service_paths")
 #   policies = relationship("Policy")
     parent_id = Column(
-        Integer,
+        String,
         ForeignKey(
             'service_paths.id',
             ondelete="CASCADE"),

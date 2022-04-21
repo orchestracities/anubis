@@ -5,8 +5,6 @@ from dependencies import get_db
 from database import engine
 from sqlalchemy.orm import Session
 
-models.Base.metadata.create_all(bind=engine)
-
 router = APIRouter(prefix="/v1/tenants",
                    tags=["services"],
                    responses={404: {"description": "Not found"}},)

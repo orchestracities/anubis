@@ -3,12 +3,25 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
-# SQLALCHEMY_DATABASE_URL = "postgresql://api:password@postgresserver/policyapi"
+database_type = os.environ.get('DATABASE_TYPE', "sqlite")
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+if database_type == "postgres":
+    database_host = os.environ.get('POSTGRES_HOST', "localhost")
+    database_user = os.environ.get('POSTGRES_USER', "admin")
+    database_password = os.environ.get('POSTGRES_PASSWORD', "password")
+    database_name = os.environ.get('POSTGRES_DB', "anubis")
+
+    SQLALCHEMY_DATABASE_URL = "postgresql://{}:{}@{}/{}".format(database_user, database_password, database_host, database_name)
+
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL
+    )
+else:
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
+
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
 
 # connect_args={"check_same_thread": False} is required only for sqlite!
 
