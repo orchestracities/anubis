@@ -1,8 +1,11 @@
-# Turtle serialization
+# Configuration for Turtle serialization
 
-For serializing the policies as RDF graphs in Turtle (ttl) format a
-configuration file is provided to Anubis that contains the URI prefixes, per
-tenant name and a default, for all resource types supported.
+To serialize the policies as RDF graphs using [Turtle (ttl)](https://www.w3.org/TR/turtle/)
+format, a configuration file needs to be provided to Anubis.
+The configuration file contains the default URI prefixes 
+for all resource types. The URI can be also configured for each single tenant
+as depicted in the [example](https://github.com/orchestracities/anubis/blob/master/config/opa-service/default_wac_config.yml)
+below:
 
 ```yml
 wac:
@@ -34,5 +37,3 @@ wac:
           type_url: https://tenant1.url/policy
 
 ```
-
-See this [example](https://github.com/orchestracities/anubis/blob/master/config/opa-service/default_wac_config.yml).

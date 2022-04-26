@@ -1,11 +1,10 @@
 # Default policies
 
-A set of policies can also be set up to be created upon the creation of
-a Tenant through a file, which represents a series of default policies for the
-root servicepath `/`. The file is turtle (ttl) format, representing an RDF
-graph.
-
-See this [example](https://github.com/orchestracities/anubis/blob/master/config/opa-service/default_policies.yml).
+A set of default policies can be set up upon the creation of
+a Tenant. This can be achieved through a configuration file,
+which includes a series of default policies serialized using turtle (ttl)
+format for the corresponding RDF graph.
+For [example](https://github.com/orchestracities/anubis/blob/master/config/opa-service/default_policies.yml):
 
 ```ttl
 @prefix acl: <http://www.w3.org/ns/auth/acl#> .
@@ -30,7 +29,10 @@ tenant:policy3 a acl:Authorization ;
     acl:mode <acl:Control> .
 ```
 
+`acl:default </>` indicates that the policies is valid for all resources
+contained in the default servicePath `/`.
+
 The path to this file can be set using the
 `DEFAULT_POLICIES_CONFIG_FILE` environment variable.
 
-See [Policies](../user/policies.md) for defining them.
+See [Policies](../user/policies.md) for defining new policies dynamically.

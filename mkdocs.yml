@@ -25,6 +25,6 @@ nav:
       - 'Installing Anubis': 'admin/install.md'
       - 'Data model': 'admin/datemodel.md'
       - 'Default policies': 'admin/default-policies.md'
-      - 'Turtle serialization': 'admin/Turtle-serialization.md'
+      - 'Configuration for Turtle serialization': 'admin/turtle-serialization.md'
       - 'Customize': 'admin/customize.md'
       - 'Logs': 'admin/logs.md'
