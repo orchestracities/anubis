@@ -2,15 +2,12 @@ from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response, Header
 from . import operations, models, schemas
 from dependencies import get_db
-from database import engine
 from sqlalchemy.orm import Session
 from tenants import operations as so
 from wac import serialize as w_serialize
 from rego import serialize as r_serialize
 import default
 
-
-models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/v1/policies",
                    tags=["policies"],

@@ -34,7 +34,7 @@ def get_policies_by_service_path(
                 models.Policy.access_to.contains(resource))
         if resource_type:
             db_policies = db_policies.filter(
-                models.Policy.resource_type.contains(resource))
+                models.Policy.resource_type.contains(resource_type))
         return db_policies.offset(skip).limit(limit).all()
     elif mode is None and agent is not None:
         return get_policies_by_agent(
@@ -168,6 +168,8 @@ def create_policy(
         resource_type=policy.resource_type,
         service_path_id=service_path_id)
     db.add(db_policy)
+    db.commit()
+    db.refresh(db_policy)
     for mode in policy.mode:
         db_mode = get_mode_by_iri(db, mode)
         db.execute(models.policy_to_mode.insert().values(

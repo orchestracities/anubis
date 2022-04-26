@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, backref
 
-from database import Base
+from database import Base, autocommit_engine
 
 
 class Tenant(Base):
@@ -32,7 +32,7 @@ class ServicePath(Base):
     tenant = relationship("Tenant", back_populates="service_paths")
 #   policies = relationship("Policy")
     parent_id = Column(
-        Integer,
+        String,
         ForeignKey(
             'service_paths.id',
             ondelete="CASCADE"),
@@ -43,3 +43,7 @@ class ServicePath(Base):
                           )
 #ServicePath.parent_id = Column(String, ForeignKey(ServicePath.id), nullable=True)
 #ServicePath.children = relationship(ServicePath, cascade = "all, delete")
+
+
+def init_db():
+    Base.metadata.create_all(bind=autocommit_engine)

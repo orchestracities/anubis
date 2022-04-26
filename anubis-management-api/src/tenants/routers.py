@@ -2,10 +2,8 @@ from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response
 from . import operations, models, schemas
 from dependencies import get_db
-from database import engine
 from sqlalchemy.orm import Session
 
-models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/v1/tenants",
                    tags=["services"],
