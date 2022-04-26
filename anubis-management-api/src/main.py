@@ -61,6 +61,7 @@ def on_startup():
 async def pong():
     return {"ping": "pong!"}
 
+
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
