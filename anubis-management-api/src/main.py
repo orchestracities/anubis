@@ -36,12 +36,6 @@ app.add_middleware(
 app.include_router(t.router)
 app.include_router(p.router)
 
-t_models.Base.metadata.create_all(bind=engine)
-p_models.Base.metadata.create_all(bind=engine)
-
-p_models.insert_initial_agent_type_values()
-p_models.insert_initial_mode_values()
-
 
 @app.get("/v1/")
 async def v1_root():
@@ -56,6 +50,16 @@ async def v1_version():
     return {
         "version": ANUBIS_VERSION}
 
+
+@app.on_event("startup")
+def on_startup():
+    t_models.init_db()
+    p_models.init_db()
+
+
+@app.get("/ping")
+async def pong():
+    return {"ping": "pong!"}
 
 def custom_openapi():
     if app.openapi_schema:

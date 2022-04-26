@@ -1,14 +1,12 @@
 from sqlalchemy import Table, Boolean, Column, ForeignKey, Integer, String, UniqueConstraint, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, column_property
 
-from database import Base, SessionLocal
+from database import autocommit_engine, Base, SessionLocal
 from sqlalchemy import event, select, func
 from tenants.models import ServicePath
 from uuid import uuid4
 
 import default
-
-# see https://github.com/solid/web-access-control-spec
 
 
 policy_to_mode = Table('policy_to_mode', Base.metadata,
@@ -59,10 +57,13 @@ class AgentType(Base):
     name = Column(String, index=True, unique=True)
 
 
-def insert_initial_agent_type_values():
+def init_db():
+    Base.metadata.create_all(bind=autocommit_engine)
+
+
+@event.listens_for(AgentType.__table__, 'after_create')
+def insert_initial_agent_type_values(target, connection, **kw):
     db = SessionLocal()
-    if len(db.query(AgentType).all()) > 0:
-        return
     db.add(AgentType(name='agent', iri=default.AGENT_IRI))
     db.add(AgentType(name='group', iri=default.AGENT_GROUP_IRI))
     db.add(AgentType(name='class', iri=default.AGENT_CLASS_IRI))
@@ -78,10 +79,9 @@ def insert_initial_agent_type_values():
     db.close()
 
 
-def insert_initial_mode_values():
+@event.listens_for(Mode.__table__, 'after_create')
+def insert_initial_mode_values(target, connection, **kw):
     db = SessionLocal()
-    if len(db.query(Mode).all()) > 0:
-        return
     db.add(Mode(iri=default.READ_MODE_IRI, name='read'))
     db.add(Mode(iri=default.WRITE_MODE_IRI, name='write'))
     db.add(Mode(iri=default.CONTROL_MODE_IRI, name='control'))

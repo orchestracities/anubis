@@ -11,11 +11,11 @@ if database_type == "postgres":
     database_password = os.environ.get('DB_PASSWORD', "password")
     database_name = os.environ.get('DB_NAME', "anubis")
 
-    SQLALCHEMY_DATABASE_URL = "postgresql://{}:{}@{}/{}".format(
+    SQLALCHEMY_DATABASE_URL = "postgresql+pg8000://{}:{}@{}/{}".format(
         database_user, database_password, database_host, database_name)
 
     engine = create_engine(
-        SQLALCHEMY_DATABASE_URL
+        SQLALCHEMY_DATABASE_URL, echo=True
     )
 else:
     SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
@@ -24,7 +24,7 @@ else:
         SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
     )
 
-# connect_args={"check_same_thread": False} is required only for sqlite!
+autocommit_engine = engine.execution_options(isolation_level="AUTOCOMMIT")
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
