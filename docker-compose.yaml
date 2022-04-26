@@ -25,10 +25,10 @@ services:
       - DEFAULT_POLICIES_CONFIG_FILE=/home/apiuser/config/opa-service/default_policies.yml
       - DEFAULT_WAC_CONFIG_FILE=/home/apiuser/config/opa-service/default_wac_config.yml
       - DATABASE_TYPE=postgres
-      - POSTGRES_HOST=postgresserver
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=anubis
+      - DB_HOST=postgresserver
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - DB_NAME=anubis
     ports:
       - "8085:8000"
     volumes:

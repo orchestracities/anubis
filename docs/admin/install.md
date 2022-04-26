@@ -15,7 +15,7 @@ TBD
 | `DEFAULT_POLICIES_CONFIG_FILE` | Specifies the path of the configuration file of the default policies to create upon tenant creation.|
 | `DEFAULT_WAC_CONFIG_FILE`      | Specifies the path of the configuration file of the wac serialization.|
 | `DATABASE_TYPE`                | The database type to be used by the API. Valid options for now are `postgres` and `sqlite`.|
-| `POSTGRES_HOST`                | The host for the postgres database.|
-| `POSTGRES_USER`                | The postgres user for the database.|
-| `POSTGRES_PASSWORD`            | The password of the postgres user.|
-| `POSTGRES_DB`                  | The name of the postgres database.|
+| `DB_HOST`                      | The host for the database.|
+| `DB_USER`                      | The user for the database.|
+| `DB_PASSWORD`                  | The password of the database user.|
+| `DB_NAME`                      | The name of the database.|

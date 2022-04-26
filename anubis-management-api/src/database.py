@@ -6,10 +6,10 @@ import os
 database_type = os.environ.get('DATABASE_TYPE', "sqlite")
 
 if database_type == "postgres":
-    database_host = os.environ.get('POSTGRES_HOST', "localhost")
-    database_user = os.environ.get('POSTGRES_USER', "admin")
-    database_password = os.environ.get('POSTGRES_PASSWORD', "password")
-    database_name = os.environ.get('POSTGRES_DB', "anubis")
+    database_host = os.environ.get('DB_HOST', "localhost")
+    database_user = os.environ.get('DB_USER', "admin")
+    database_password = os.environ.get('DB_PASSWORD', "password")
+    database_name = os.environ.get('DB_NAME', "anubis")
 
     SQLALCHEMY_DATABASE_URL = "postgresql://{}:{}@{}/{}".format(
         database_user, database_password, database_host, database_name)

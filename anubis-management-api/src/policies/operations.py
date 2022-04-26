@@ -35,7 +35,6 @@ def get_policies_by_service_path(
         if resource_type:
             db_policies = db_policies.filter(
                 models.Policy.resource_type.contains(resource_type))
-        print(db_policies.all())
         return db_policies.offset(skip).limit(limit).all()
     elif mode is None and agent is not None:
         return get_policies_by_agent(

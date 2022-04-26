@@ -243,10 +243,10 @@ For the policy API, the following env variables are also available:
 If postgres is the database being used, the following variables are available
 as well:
 
-- `POSTGRES_HOST`: The host for the postgres database.
-- `POSTGRES_USER`: The postgres user for the database.
-- `POSTGRES_PASSWORD`: The password of the postgres user.
-- `POSTGRES_DB`: The name of the postgres database.
+- `DB_HOST`: The host for the database.
+- `DB_USER`: The user for the database.
+- `DB_PASSWORD`: The password for the database user.
+- `DB_NAME`: The name of the database.
 
 For customising the default policies that are created alongside a tenant, see
 [the configuration file](config/opa-service/default_policies.yml) that's mounted
