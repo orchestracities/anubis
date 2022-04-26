@@ -353,6 +353,19 @@ V1 Version
 | ---- | ----------- |
 | 200 | Successful Response |
 
+### /ping
+
+#### GET
+##### Summary:
+
+Pong
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+
 ### Models
 
 
