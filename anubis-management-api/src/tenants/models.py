@@ -44,5 +44,6 @@ class ServicePath(Base):
 #ServicePath.parent_id = Column(String, ForeignKey(ServicePath.id), nullable=True)
 #ServicePath.children = relationship(ServicePath, cascade = "all, delete")
 
+
 def init_db():
     Base.metadata.create_all(bind=autocommit_engine)
