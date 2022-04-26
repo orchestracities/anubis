@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-database_type = os.environ.get('DATABASE_TYPE', "sqlite")
+database_type = os.environ.get('DB_TYPE', "sqlite")
 
 if database_type == "postgres":
     database_host = os.environ.get('DB_HOST', "localhost")

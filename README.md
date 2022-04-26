@@ -237,7 +237,7 @@ For the policy API, the following env variables are also available:
   file of the default policies to create upon tenant creation.
 - `DEFAULT_WAC_CONFIG_FILE`: Specifies the path of the configuration file of
   the wac serialization.
-- `DATABASE_TYPE`: The database type to be used by the API. Valid options for
+- `DB_TYPE`: The database type to be used by the API. Valid options for
   now are `postgres` and `sqlite`.
 
 If postgres is the database being used, the following variables are available

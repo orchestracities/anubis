@@ -24,7 +24,7 @@ services:
       - CORS_ALLOWED_HEADERS=*
       - DEFAULT_POLICIES_CONFIG_FILE=/home/apiuser/config/opa-service/default_policies.yml
       - DEFAULT_WAC_CONFIG_FILE=/home/apiuser/config/opa-service/default_wac_config.yml
-      - DATABASE_TYPE=postgres
+      - DB_TYPE=postgres
       - DB_HOST=postgresserver
       - DB_USER=admin
       - DB_PASSWORD=password
