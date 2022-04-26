@@ -981,6 +981,22 @@
           }
         }
       }
+    },
+    "/ping": {
+      "get": {
+        "summary": "Pong",
+        "operationId": "pong_ping_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
