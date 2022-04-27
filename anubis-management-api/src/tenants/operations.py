@@ -5,6 +5,7 @@ from policies import schemas as policy_schemas
 from policies import operations as policy_operations
 from rdflib import Graph, URIRef, BNode, Literal
 from rdflib import Namespace
+from wac import parse_rdf_graph as parse_rdf_graph
 import uuid
 import yaml
 import os
@@ -40,21 +41,7 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.refresh(new_tenant)
     # creating default policy
     with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.ttl'), 'r') as file:
-        g = Graph()
-        g.parse(data=file.read())
-        policies = {}
-        for subj, pred, obj in g:
-            policy = str(subj).split("/")[-1]
-            if not policies.get(policy):
-                policies[policy] = {}
-            if "agentClass" in str(pred):
-                policies[policy]["agentClass"] = str(obj)
-            if "mode" in str(pred):
-                policies[policy]["mode"] = str(obj)
-            if "acl#default" in str(pred):
-                policies[policy]["accessTo"] = "default"
-            if "accessToClass" in str(pred):
-                policies[policy]["accessToClass"] = str(obj).split("/")[-1]
+        policies = parse_rdf_graph(file.read())
         for p in policies:
             policy = policy_schemas.PolicyCreate(
                 access_to=policies[p]["accessTo"],

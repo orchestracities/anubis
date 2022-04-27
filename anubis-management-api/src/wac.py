@@ -12,6 +12,23 @@ acl = Namespace("http://www.w3.org/ns/auth/acl#")
 # user urls should be /{realm}/users/{id}
 # group urls should be /{realm}/groups/{id}
 
+def parse_rdf_graph(data):
+    g = Graph()
+    g.parse(data=data)
+    policies = {}
+    for subj, pred, obj in g:
+        policy = str(subj).split("/")[-1]
+        if not policies.get(policy):
+            policies[policy] = {}
+        if "agentClass" in str(pred):
+            policies[policy]["agentClass"] = str(obj)
+        if "mode" in str(pred):
+            policies[policy]["mode"] = str(obj)
+        if "acl#default" in str(pred):
+            policies[policy]["accessTo"] = "default"
+        if "accessToClass" in str(pred):
+            policies[policy]["accessToClass"] = str(obj).split("/")[-1]
+    return policies
 
 def serialize(
         db: Session,
