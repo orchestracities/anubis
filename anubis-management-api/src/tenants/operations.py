@@ -26,6 +26,7 @@ def get_tenants(db: Session, skip: int = 0, limit: int = 100):
 
 def create_tenant(db: Session, tenant: schemas.TenantCreate):
     new_tenant = models.Tenant(id=str(uuid.uuid4()), name=tenant.name)
+    db.add(new_tenant)
     # there is always a `/` path
     service_path = schemas.ServicePathCreate(path='/')
     default_service_path = create_tenant_service_path(
@@ -34,7 +35,6 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
         tenant_id=new_tenant.id,
         parent_id=None,
         scope=None)
-    db.add(new_tenant)
     db.add(default_service_path)
     db.commit()
     db.refresh(new_tenant)

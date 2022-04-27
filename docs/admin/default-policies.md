@@ -30,7 +30,10 @@ tenant:policy3 a acl:Authorization ;
     acl:mode <acl:Control> .
 ```
 
+`acl:default </>` indicates that the policies is valid for all resources
+contained in the default servicePath `/`.
+
 The path to this file can be set using the
 `DEFAULT_POLICIES_CONFIG_FILE` environment variable.
 
-See [Policies](../user/policies.md) for defining them.
+See [Policies](../user/policies.md) for defining new policies dynamically.

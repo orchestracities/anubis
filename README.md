@@ -237,6 +237,16 @@ For the policy API, the following env variables are also available:
   file of the default policies to create upon tenant creation.
 - `DEFAULT_WAC_CONFIG_FILE`: Specifies the path of the configuration file of
   the wac serialization.
+- `DB_TYPE`: The database type to be used by the API. Valid options for
+  now are `postgres` and `sqlite`.
+
+If postgres is the database being used, the following variables are available
+as well:
+
+- `DB_HOST`: The host for the database.
+- `DB_USER`: The user for the database.
+- `DB_PASSWORD`: The password for the database user.
+- `DB_NAME`: The name of the database.
 
 For customising the default policies that are created alongside a tenant, see
 [the configuration file](config/opa-service/default_policies.yml) that's mounted

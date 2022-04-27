@@ -24,13 +24,18 @@ services:
       - CORS_ALLOWED_HEADERS=*
       - DEFAULT_POLICIES_CONFIG_FILE=/home/apiuser/config/opa-service/default_policies.ttl
       - DEFAULT_WAC_CONFIG_FILE=/home/apiuser/config/opa-service/default_wac_config.yml
+      - DB_TYPE=postgres
+      - DB_HOST=postgresserver
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - DB_NAME=anubis
     ports:
       - "8085:8000"
     volumes:
       - ./config/opa-service/default_policies.ttl:/home/apiuser/config/opa-service/default_policies.ttl
       - ./config/opa-service/default_wac_config.yml:/home/apiuser/config/opa-service/default_wac_config.yml
-    # depends_on:
-    #   - postgresserver
+    depends_on:
+      - postgresserver
 
   ext_authz-opa-service:
     image: openpolicyagent/opa:0.38.1-envoy-3
@@ -69,16 +74,16 @@ services:
     networks:
       - envoymesh
 
-  # postgresserver:
-  #   image: postgres:14
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     - POSTGRES_USER=api
-  #     - POSTGRES_PASSWORD=password
-  #     - POSTGRES_DB=policyapi
-  #   networks:
-  #     - envoymesh
+  postgresserver:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=anubis
+    networks:
+      - envoymesh
 
   keycloak:
     image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
