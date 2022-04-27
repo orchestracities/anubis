@@ -17,6 +17,7 @@
 
 - Fixes to FIWARE headers
 - Prevented creation of duplicate policies
+- Revised method mappings, acl:Control behaviour
 
 ### Documentation
 

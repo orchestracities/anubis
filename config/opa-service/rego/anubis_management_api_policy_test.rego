@@ -6,7 +6,7 @@ policy_data = {
 "user_permissions": {
     "admin@mail.com": [
       {
-        "action": "acl:Read",
+        "action": "acl:Control",
         "resource": "*",
         "resource_type": "policy",
         "tenant": "Tenant1",
@@ -34,7 +34,7 @@ tenant_data = {
         "service_path": "/"
       },
       {
-        "action": "acl:Control",
+        "action": "acl:Write",
         "resource": "Tenant1",
         "resource_type": "tenant",
         "tenant": "Tenant1",
@@ -55,7 +55,7 @@ service_path_data = {
         "service_path": "/"
       },
       {
-        "action": "acl:Control",
+        "action": "acl:Write",
         "resource": "/foo/bar",
         "resource_type": "service_path",
         "tenant": "Tenant1",
