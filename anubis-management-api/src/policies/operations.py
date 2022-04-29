@@ -39,7 +39,8 @@ def get_policies_by_service_path(
             db_policies = db_policies.filter(
                 models.Policy.resource_type.contains(resource_type))
         if token:
-            db_policies = filter_policies_by_token_data(db_policies, tenant, token)
+            db_policies = filter_policies_by_token_data(
+                db_policies, tenant, token)
         return db_policies.offset(skip).limit(limit).all()
     elif mode is None and agent is not None:
         return get_policies_by_agent(
@@ -175,13 +176,15 @@ def get_policy_by_access_to(db: Session, access_to: str):
 def get_policies(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Policy).offset(skip).limit(limit).all()
 
+
 def filter_policies_by_token_data(db_policies, tenant, token):
     user = default.AGENT_IRI + ":" + token["email"]
 
     groups = list(filter(lambda t: t["name"] == tenant, token["tenants"]))
     groups = list(map(lambda t: t["groups"], groups))
     groups = list(reduce(lambda a, b: a + b, groups))
-    groups = list(map(lambda t: default.AGENT_GROUP_IRI + ":" + t["name"], groups))
+    groups = list(
+        map(lambda t: default.AGENT_GROUP_IRI + ":" + t["name"], groups))
 
     roles = list(filter(lambda t: t["name"] == tenant, token["tenants"]))
     roles = list(map(lambda t: t["groups"], roles))
@@ -191,12 +194,23 @@ def filter_policies_by_token_data(db_policies, tenant, token):
     roles = list(map(lambda t: default.AGENT_CLASS_IRI + ":" + t, roles))
     roles.append("acl:AuthenticatedAgent")
 
-    db_policies_user = db_policies.join(models.Policy.agent).join(models.Policy.agent).filter(models.Agent.iri.contains(user))
-    db_policies_group = db_policies.join(models.Policy.agent).join(models.Policy.agent).filter(models.Agent.iri.in_(groups))
-    db_policies_roles = db_policies.join(models.Policy.agent).join(models.Policy.agent).filter(models.Agent.iri.in_(roles))
-    db_policies = db_policies_user.union(db_policies_group).union(db_policies_roles)
+    db_policies_user = db_policies.join(
+        models.Policy.agent).join(
+        models.Policy.agent).filter(
+            models.Agent.iri.contains(user))
+    db_policies_group = db_policies.join(
+        models.Policy.agent).join(
+        models.Policy.agent).filter(
+            models.Agent.iri.in_(groups))
+    db_policies_roles = db_policies.join(
+        models.Policy.agent).join(
+        models.Policy.agent).filter(
+            models.Agent.iri.in_(roles))
+    db_policies = db_policies_user.union(
+        db_policies_group).union(db_policies_roles)
 
     return db_policies
+
 
 def create_policy(
         db: Session,
