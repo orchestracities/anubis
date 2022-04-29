@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from . import models, schemas
+from functools import reduce
 import uuid
 import default
 
@@ -13,6 +14,7 @@ def get_policy(db: Session, policy_id: str):
 
 def get_policies_by_service_path(
         db: Session,
+        tenant: str,
         service_path_id: str,
         mode: str = None,
         agent: str = None,
@@ -20,7 +22,8 @@ def get_policies_by_service_path(
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 100):
+        limit: int = 100,
+        token: dict = None):
     if mode is not None and agent is not None:
         db_policies = db.query(
             models.Policy).join(
@@ -35,10 +38,13 @@ def get_policies_by_service_path(
         if resource_type:
             db_policies = db_policies.filter(
                 models.Policy.resource_type.contains(resource_type))
+        if token:
+            db_policies = filter_policies_by_token_data(db_policies, tenant, token)
         return db_policies.offset(skip).limit(limit).all()
     elif mode is None and agent is not None:
         return get_policies_by_agent(
             db=db,
+            tenant=tenant,
             service_path_id=service_path_id,
             agent=agent,
             resource=resource,
@@ -48,6 +54,7 @@ def get_policies_by_service_path(
     elif mode is not None and agent is None:
         return get_policies_by_mode(
             db=db,
+            tenant=tenant,
             service_path_id=service_path_id,
             agent_type=agent_type,
             mode=mode,
@@ -58,16 +65,19 @@ def get_policies_by_service_path(
     else:
         return _get_policies_by_service_path(
             db=db,
+            tenant=tenant,
             service_path_id=service_path_id,
             agent_type=agent_type,
             resource=resource,
             resource_type=resource_type,
             skip=skip,
-            limit=limit)
+            limit=limit,
+            token=token)
 
 
 def get_policies_by_mode(
         db: Session,
+        tenant: str,
         service_path_id: str,
         mode: str,
         agent_type: str = None,
@@ -95,11 +105,14 @@ def get_policies_by_mode(
     if resource_type:
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
+    if token:
+        db_policies = filter_policies_by_token_data(db_policies, tenant, token)
     return db_policies.offset(skip).limit(limit).all()
 
 
 def get_policies_by_agent(
         db: Session,
+        tenant: str,
         service_path_id: str,
         agent: str,
         resource: str = None,
@@ -117,17 +130,21 @@ def get_policies_by_agent(
     if resource_type:
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
+    if token:
+        db_policies = filter_policies_by_token_data(db_policies, tenant, token)
     return db_policies.offset(skip).limit(limit).all()
 
 
 def _get_policies_by_service_path(
         db: Session,
+        tenant: str,
         service_path_id: str,
         agent_type: str = None,
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 100):
+        limit: int = 100,
+        token: dict = None):
     db_policies = db.query(
         models.Policy).filter(
         models.Policy.service_path_id == service_path_id)
@@ -146,6 +163,8 @@ def _get_policies_by_service_path(
     if resource_type:
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
+    if token:
+        db_policies = filter_policies_by_token_data(db_policies, tenant, token)
     return db_policies.offset(skip).limit(limit).all()
 
 
@@ -156,6 +175,28 @@ def get_policy_by_access_to(db: Session, access_to: str):
 def get_policies(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Policy).offset(skip).limit(limit).all()
 
+def filter_policies_by_token_data(db_policies, tenant, token):
+    user = default.AGENT_IRI + ":" + token["email"]
+
+    groups = list(filter(lambda t: t["name"] == tenant, token["tenants"]))
+    groups = list(map(lambda t: t["groups"], groups))
+    groups = list(reduce(lambda a, b: a + b, groups))
+    groups = list(map(lambda t: default.AGENT_GROUP_IRI + ":" + t["name"], groups))
+
+    roles = list(filter(lambda t: t["name"] == tenant, token["tenants"]))
+    roles = list(map(lambda t: t["groups"], roles))
+    roles = list(reduce(lambda a, b: a + b, roles))
+    roles = list(map(lambda t: t["clientRoles"], roles))
+    roles = list(reduce(lambda a, b: a + b, roles))
+    roles = list(map(lambda t: default.AGENT_CLASS_IRI + ":" + t, roles))
+    roles.append("acl:AuthenticatedAgent")
+
+    db_policies_user = db_policies.join(models.Policy.agent).join(models.Policy.agent).filter(models.Agent.iri.contains(user))
+    db_policies_group = db_policies.join(models.Policy.agent).join(models.Policy.agent).filter(models.Agent.iri.in_(groups))
+    db_policies_roles = db_policies.join(models.Policy.agent).join(models.Policy.agent).filter(models.Agent.iri.in_(roles))
+    db_policies = db_policies_user.union(db_policies_group).union(db_policies_roles)
+
+    return db_policies
 
 def create_policy(
         db: Session,

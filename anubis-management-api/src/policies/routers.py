@@ -7,6 +7,7 @@ from tenants import operations as so
 from wac import serialize as w_serialize
 from rego import serialize as r_serialize
 import default
+import jwt
 
 
 router = APIRouter(prefix="/v1/policies",
@@ -99,6 +100,8 @@ policies_not_json_responses = {
             response_model=List[schemas.Policy],
             responses=policies_not_json_responses)
 def read_policies(
+        authorization: Optional[str] = Header(
+            None),
         fiware_service: Optional[str] = Header(
             None),
         fiware_servicepath: Optional[str] = Header(
@@ -113,6 +116,12 @@ def read_policies(
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
+    token = None
+    if authorization:
+        token = authorization.split(" ")
+        if token[0] == "Bearer":
+            token = token[1]
+            token = jwt.decode(token, options={"verify_signature": False})
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,
@@ -124,6 +133,7 @@ def read_policies(
         db, fiware_service, fiware_servicepath)
     db_policies = operations.get_policies_by_service_path(
         db,
+        tenant=fiware_service,
         service_path_id=db_service_path.id,
         mode=mode,
         agent=agent,
@@ -131,7 +141,8 @@ def read_policies(
         resource=resource,
         resource_type=resource_type,
         skip=skip,
-        limit=limit)
+        limit=limit,
+        token=token)
     if accept == 'text/turtle':
         return Response(
             content=w_serialize(

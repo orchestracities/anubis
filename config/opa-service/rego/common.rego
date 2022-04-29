@@ -5,9 +5,10 @@ import future.keywords.in
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
+import input.parsed_body as parsed_body
 
 # Action to method mappings
-scope_method := {"acl:Read": ["GET"], "acl:Append": ["POST", "PATCH"], "acl:Write": ["POST", "PUT", "DELETE", "PATCH"]}
+scope_method := {"acl:Read": ["GET"], "acl:Append": ["POST", "PATCH"], "acl:Write": ["POST", "PUT", "DELETE", "PATCH"], "acl:Control": ["CONTROL"]}
 
 # Extract Bearer Token
 bearer_token = t {
@@ -85,9 +86,16 @@ default allow = {
 # Auth main rule
 allow = response {
 		response := {
-        "allowed": user_permitted,
+        "allowed": check_policy,
         "response_headers_to_add": {"Link": header_link}
     }
+}
+
+# Check policy when accessing resources
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[2] != "policies"
+	user_permitted(request)
 }
 
 # Check for token validity
@@ -136,22 +144,13 @@ arrays_dont_have_same_value(a, b) {
 }
 
 method_matches_action(entry, request) {
-	current_path := split(request.resource, "/")
-	current_path[1] == "v1"
-	current_path[2] == "policies"
-	entry.action == "acl:Control"
-}
-
-method_matches_action(entry, request) {
-	current_path := split(request.resource, "/")
-	current_path[2] != "policies"
 	scope_method[entry.action][_] == request.action
 }
 
-default user_permitted = false
+default user_permitted(request) = false
 
 # User permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   entry := data.user_permissions[request.user][_]
   method_matches_action(entry, request)
@@ -161,7 +160,7 @@ user_permitted {
 }
 
 # Default User permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   entry := data.default_user_permissions[request.user][_]
   method_matches_action(entry, request)
@@ -170,7 +169,7 @@ user_permitted {
 }
 
 # Group permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
@@ -182,7 +181,7 @@ user_permitted {
 }
 
 # Default Group permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
@@ -193,7 +192,7 @@ user_permitted {
 }
 
 # Role permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
@@ -205,7 +204,7 @@ user_permitted {
 }
 
 # Default Role permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
@@ -216,7 +215,7 @@ user_permitted {
 }
 
 # AuthenticatedAgent special permission
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some role
   entry := data.role_permissions[role][_]
@@ -228,7 +227,7 @@ user_permitted {
 }
 
 # Default AuthenticatedAgent special permission
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some role
   entry := data.default_role_permissions[role][_]
@@ -239,7 +238,7 @@ user_permitted {
 }
 
 # Agent special permission
-user_permitted {
+user_permitted(request) {
   some role
   entry := data.role_permissions[role][_]
   role == "Agent"
@@ -250,7 +249,7 @@ user_permitted {
 }
 
 # Default Agent special permission
-user_permitted {
+user_permitted(request) {
   some role
   entry := data.default_role_permissions[role][_]
   role == "Agent"

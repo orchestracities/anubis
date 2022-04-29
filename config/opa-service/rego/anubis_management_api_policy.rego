@@ -5,7 +5,108 @@ import future.keywords.in
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
+import input.parsed_body as parsed_body
 
+
+match_policy_id_or_wildcard(e, policy_id) {
+  e.id == policy_id
+}
+match_policy_id_or_wildcard(e, policy_id) {
+  e.resource == "*"
+}
+
+# Check policy when trying to get all policies (API will filter the ones for the given user)
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action in ["GET"]
+  current_path[3] == ""
+}
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action in ["GET"]
+  not current_path[3]
+}
+
+# Check policy when trying to get an entity acl resource
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action in ["GET", "PUT", "PATCH", "DELETE"]
+  policy_id := current_path[3]
+  e := data[_][_][_]
+  match_policy_id_or_wildcard(e, policy_id)
+  e.resource_type == "entity"
+  control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/entities/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
+  user_permitted(control_request)
+}
+
+# Check policy when trying to create a new entity acl resource
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action == "POST"
+  parsed_body.resource_type == "entity"
+  control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/entities/",parsed_body.access_to]), "tenant":request.tenant, "service_path":request.service_path}
+  user_permitted(control_request)
+}
+
+# Check policy when trying to get an entity type acl resource
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action in ["GET", "PUT", "PATCH", "DELETE"]
+  policy_id := current_path[3]
+  e := data[_][_][_]
+  match_policy_id_or_wildcard(e, policy_id)
+  e.resource_type == "entity_type"
+  control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/types/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
+  user_permitted(control_request)
+}
+
+# Check policy when trying to access a new entity type acl resource
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action == "POST"
+  parsed_body.resource_type == "entity_type"
+  control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/types/",parsed_body.access_to]), "tenant":request.tenant, "service_path":request.service_path}
+  user_permitted(control_request)
+}
+
+# Check policy when trying to get an entity type acl resource
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action in ["GET", "PUT", "PATCH", "DELETE"]
+  policy_id := current_path[3]
+  e := data[_][_][_]
+  match_policy_id_or_wildcard(e, policy_id)
+  e.resource_type == "subscriptions"
+  control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/subscription/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
+  user_permitted(control_request)
+}
+
+# Check policy when trying to access a new subscription acl resource
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action == "POST"
+  parsed_body.resource_type == "subscriptions"
+  control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/subscriptions/",parsed_body.access_to]), "tenant":request.tenant, "service_path":request.service_path}
+  user_permitted(control_request)
+}
+
+######################################################################################################
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any policy or all
 path_matches_policy(entry, request) {

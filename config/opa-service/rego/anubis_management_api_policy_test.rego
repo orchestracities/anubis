@@ -6,16 +6,10 @@ policy_data = {
 "user_permissions": {
     "admin@mail.com": [
       {
-        "action": "acl:Control",
-        "resource": "*",
-        "resource_type": "policy",
-        "tenant": "Tenant1",
-        "service_path": "/"
-      },
-      {
+        "id": "test",
         "action": "acl:Control",
         "resource": "test",
-        "resource_type": "policy",
+        "resource_type": "entity",
         "tenant": "Tenant1",
         "service_path": "/"
       }
@@ -66,11 +60,11 @@ service_path_data = {
 }
 
 test_policy_permissions_all {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/policies/", "tenant":"Tenant1", "service_path":"/"} with data as policy_data with bearer_token as bearer_token with testing as true
+  allow.allowed with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v1/policies/", "tenant":"Tenant1", "service_path":"/"} with input.parsed_body as {"access_to":"test","resource_type":"entity"} with data as policy_data with bearer_token as bearer_token with testing as true
 }
 
 test_policy_permissions_one {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"PUT", "resource":"/v1/policies/test", "tenant":"Tenant1", "service_path":"/"} with data as policy_data with bearer_token as bearer_token with testing as true
+  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/policies/test", "tenant":"Tenant1", "service_path":"/"} with data as policy_data with bearer_token as bearer_token with testing as true
 }
 
 test_tenant_permissions_all {
