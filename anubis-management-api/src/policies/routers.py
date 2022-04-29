@@ -218,6 +218,7 @@ def create_policy(
         for mode in policy.mode:
             db_policies = operations.get_policies_by_service_path(
                 db=db,
+                tenant=fiware_service,
                 service_path_id=db_service_path.id,
                 mode=mode,
                 agent=agent,

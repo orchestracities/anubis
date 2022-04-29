@@ -175,19 +175,18 @@ def test_policies(test_db):
     assert body["agent"] == ["acl:agent:test"]
 
     response = client.get(
-        "/v1/policies/",
+        "/v1/policies/" + policy_id,
         headers={
             "accept": "text/rego",
             "fiware-service": "test",
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert body["user_permissions"]["test"][0] == {
-        "action": "acl:Read",
-        "resource": "resource",
-        "resource_type": "entity",
-        "service_path": "/",
-        "tenant": "test"}
+    assert "acl:Write" in body["user_permissions"]["test"][0].values()
+    assert "resource" in body["user_permissions"]["test"][0].values()
+    assert "entity" in body["user_permissions"]["test"][0].values()
+    assert "/" in body["user_permissions"]["test"][0].values()
+    assert "test" in body["user_permissions"]["test"][0].values()
 
     response = client.post(
         "/v1/policies/",
