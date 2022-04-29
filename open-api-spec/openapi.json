@@ -661,6 +661,15 @@
           {
             "required": false,
             "schema": {
+              "title": "Authorization",
+              "type": "string"
+            },
+            "name": "authorization",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
               "title": "Fiware-Service",
               "type": "string"
             },
