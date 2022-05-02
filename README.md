@@ -278,31 +278,8 @@ To test the rego policy locally:
 
 ## Status and Roadmap
 
-The current PoC provides already a quite complete validation of the
-overall goals. For additional planned features you can
-check either the text below, or the pending [issues](issues).
-
-- [ ] Design an API that allow to record policies for tenant.
-  - [x] Store a policy as a tuple: *who* can access *which* resource to do
-    *what* (eventually in future also when and how).
-    A prototype is available, see [anubis-management-api](anubis-management-api).
-  - [x] Allow to create and manage "service_paths" for tenants.
-    A prototype is available, see [anubis-management-api](anubis-management-api).
-  - [x] Have way to define who can define policy for which resource
-    (it could be based on the same approach)
-  - [ ] Allows to test policies calling OPA validator
-- [ ] Design a translator that
-  - [x] Coverts the abstract policy who / whom / what
-  into a OPA compatible format.
-  A prototype is available, see [anubis-management-api](anubis-management-api).
-  - [x] Define a set of rules that enforce policies on a specific API.
-     A prototype is available, see [policy.rego](config/opa-service/policy.rego).
-  - [ ] Store policies in OPA, instead of retrieve them.
-  - [ ] Record additional data in the OPA data API as needed
-    (may not be required)
-
-The [anubis-management-api](anubis-management-api) is a prototype, it needs some
-work to be more configurable, e.g. in term of db.
+For additional planned features you can
+check the pending [issues](https://github.com/orchestracities/anubis/issues).
 
 ## Credits
 
