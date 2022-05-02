@@ -1,5 +1,7 @@
 # Anubis
 
+
+[![FIWARE Security](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/security.svg)](https://www.fiware.org/developers/catalogue/)
 [![License: APACHE-2.0](https://img.shields.io/github/license/orchestracities/anubis.svg)](https://opensource.org/licenses/APACHE-2.0)
 [![Docker Status](https://img.shields.io/docker/pulls/orchestracities/anubis-management-api.svg)](https://hub.docker.com/r/orchestracities/anubis-management-api)
 [![Support](https://img.shields.io/badge/support-ask-yellowgreen.svg)](https://github.com/orchestracities/anubis/issues)
@@ -7,6 +9,10 @@
 [![Documentation badge](https://img.shields.io/readthedocs/anubis-pep.svg)](https://anubis-pep.readthedocs.io/en/latest/)
 
 Welcome to Anubis!
+
+
+| :books: [Documentation](https://anubis-pep.readthedocs.io/en/latest/) | :whale: [Docker Hub](https://hub.docker.com/r/orchestracities/anubis-management-api) |
+| ------------- | ---------------|
 
 ## What is the project about?
 
