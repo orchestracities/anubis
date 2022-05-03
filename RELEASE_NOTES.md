@@ -17,6 +17,8 @@
 
 - Fixes to FIWARE headers
 - Prevented creation of duplicate policies
+- Fixed potential issue with retrieving policies from rego that causes 403
+  responses
 
 ### Documentation
 
