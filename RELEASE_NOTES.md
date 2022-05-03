@@ -28,6 +28,7 @@
 ### Continuous Integration
 
 - Update openapi specs automatically
+- Introduce matrix test for different db type
 
 ### Technical debt
 
