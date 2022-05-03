@@ -26,6 +26,6 @@ else:
 
 autocommit_engine = engine.execution_options(isolation_level="AUTOCOMMIT")
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 
 Base = declarative_base()
