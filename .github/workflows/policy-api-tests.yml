@@ -9,9 +9,9 @@ on:
 jobs:
   python:
     env:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: anubis
+      DB_USER: admin
+      DB_PASSWORD: password
+      DB_NAME: anubis
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,11 +34,11 @@ jobs:
         run: |
           pipenv install --dev
           export DB_TYPE=${{ matrix.database-version }}
-          docker run --name db -p 5455:5432 -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB -d postgres:14
+          docker run --name db -p 5432:5432 -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASSWORD -e POSTGRES_DB=$DB_NAME -d postgres:14
           pipenv run pytest
       - name: Stop db
         working-directory: ./anubis-management-api
-        run: docker stop db
+        run: docker rm db
   e2e:
     runs-on: ubuntu-latest
     steps:
