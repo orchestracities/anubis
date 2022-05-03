@@ -23,6 +23,26 @@ static_resources:
                 route:
                   cluster: upstream-service
           http_filters:
+          - name: envoy.filters.http.lua
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+              inline_code: |
+                function envoy_on_request(request_handle)
+                  local policies_headers, policies_body = request_handle:httpCall(
+                  "policyapi-service",
+                  {
+                    [":method"] = "GET",
+                    [":path"] = "/v1/policies/",
+                    [":authority"] = request_handle:headers():get(":authority"),
+                    ["accept"] = "text/rego",
+                    ["fiware-service"] = request_handle:headers():get("fiware-service"),
+                    ["fiware-servicepath"] = request_handle:headers():get("fiware-servicepath"),
+                  },
+                  nil,
+                  5000,
+                  false)
+                  request_handle:headers():add("policies", policies_body)
+                end
           - name: envoy.ext_authz
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
@@ -78,6 +98,26 @@ static_resources:
                 function envoy_on_request(request_handle)
                   request_handle:headers():add("fiware_service", request_handle:headers():get("fiware-Service"))
                   request_handle:headers():add("fiware_service_path", request_handle:headers():get("fiware-Servicepath"))
+                end
+          - name: envoy.filters.http.lua
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+              inline_code: |
+                function envoy_on_request(request_handle)
+                  local policies_headers, policies_body = request_handle:httpCall(
+                  "policyapi-service",
+                  {
+                    [":method"] = "GET",
+                    [":path"] = "/v1/policies/",
+                    [":authority"] = request_handle:headers():get(":authority"),
+                    ["accept"] = "text/rego",
+                    ["fiware-service"] = request_handle:headers():get("fiware-service"),
+                    ["fiware-servicepath"] = request_handle:headers():get("fiware-servicepath"),
+                  },
+                  nil,
+                  5000,
+                  false)
+                  request_handle:headers():add("policies", policies_body)
                 end
           - name: envoy.filters.http.ext_authz
             typed_config:

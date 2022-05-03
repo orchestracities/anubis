@@ -5,6 +5,7 @@ import future.keywords.in
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
+import input.attributes.request.http.headers.policies as input_policies
 
 # Action to method mappings
 scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
@@ -54,7 +55,8 @@ jwks_request(url) = http.send({
 })
 
 # Grab data from API
-data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware-service": request.tenant, "fiware-servicepath": request.service_path}}).body
+# data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware-service": request.tenant, "fiware-servicepath": request.service_path}}).body
+data = json.unmarshal(input_policies)
 
 # The user/subject
 subject := p {
