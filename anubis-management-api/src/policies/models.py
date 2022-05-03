@@ -12,17 +12,17 @@ import default
 policy_to_mode = Table(
     'policy_to_mode', Base.metadata, Column(
         'policy_id', String, ForeignKey(
-            'policies.id', onupdate="CASCADE", ondelete="SET NULL")), Column(
+            'policies.id', onupdate="CASCADE", ondelete="CASCADE")), Column(
                 'mode_iri', String, ForeignKey(
-                    'modes.iri', onupdate="CASCADE", ondelete="SET NULL")))
+                    'modes.iri', onupdate="CASCADE", ondelete="CASCADE")))
 
 
 policy_to_agent = Table(
     'policy_to_agent', Base.metadata, Column(
         'policy_id', String, ForeignKey(
-            'policies.id', onupdate="CASCADE", ondelete="SET NULL")), Column(
+            'policies.id', onupdate="CASCADE", ondelete="CASCADE")), Column(
                 'agent_iri', String, ForeignKey(
-                    'agents.iri', onupdate="CASCADE", ondelete="SET NULL")))
+                    'agents.iri', onupdate="CASCADE", ondelete="CASCADE")))
 
 
 class Policy(Base):
