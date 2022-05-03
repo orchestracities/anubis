@@ -21,12 +21,14 @@
 ### Documentation
 
 - Documentation structure and first content
+- Update links and follow FIWARE structure
 - Fix code block formatting
 - Fix architecture figure display
 
 ### Continuous Integration
 
 - Update openapi specs automatically
+- Introduce matrix test for different db type
 
 ### Technical debt
 

@@ -9,16 +9,20 @@ from uuid import uuid4
 import default
 
 
-policy_to_mode = Table('policy_to_mode', Base.metadata,
-                       Column('policy_id', String, ForeignKey('policies.id')),
-                       Column('mode_iri', String, ForeignKey('modes.iri'))
-                       )
+policy_to_mode = Table(
+    'policy_to_mode', Base.metadata, Column(
+        'policy_id', String, ForeignKey(
+            'policies.id', onupdate="CASCADE", ondelete="CASCADE")), Column(
+                'mode_iri', String, ForeignKey(
+                    'modes.iri', onupdate="CASCADE", ondelete="CASCADE")))
 
 
 policy_to_agent = Table(
     'policy_to_agent', Base.metadata, Column(
-        'policy_id', String, ForeignKey('policies.id')), Column(
-            'agent_iri', String, ForeignKey('agents.iri')))
+        'policy_id', String, ForeignKey(
+            'policies.id', onupdate="CASCADE", ondelete="CASCADE")), Column(
+                'agent_iri', String, ForeignKey(
+                    'agents.iri', onupdate="CASCADE", ondelete="CASCADE")))
 
 
 class Policy(Base):
