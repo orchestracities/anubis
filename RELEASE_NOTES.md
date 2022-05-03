@@ -23,6 +23,7 @@
 ### Documentation
 
 - Documentation structure and first content
+- Update links and follow FIWARE structure
 - Fix code block formatting
 - Fix architecture figure display
 

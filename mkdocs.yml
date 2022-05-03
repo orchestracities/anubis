@@ -1,5 +1,5 @@
 site_name: Anubis
-site_url: https://anubis.readthedocs.org
+site_url: https://anubis-pep.readthedocs.io
 repo_url: https://github.com/orchestracities/anubis
 site_description: Anubis
 docs_dir: docs
@@ -12,7 +12,7 @@ markdown_extensions:
       use_pygments: False
 use_directory_urls: false
 theme: readthedocs
-extra_css: ["https://www.fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_core.css"]
+extra_css: ["https://www.fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_security.css"]
 nav:
   - Home: index.md
   - 'Getting Started': 'quick_start_guide.md'
