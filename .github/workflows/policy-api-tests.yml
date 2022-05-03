@@ -28,7 +28,7 @@ jobs:
             anubis-management-api/Pipfile.lock
       - name: Start db
         working-directory: ./anubis-management-api
-        run: docker run --name db -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB -d postgres:14
+        run: docker run --name db -p 5455:5432 -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB -d postgres:14
       - name: Install pipenv
         working-directory: ./anubis-management-api
         run: pip install pipenv
