@@ -29,4 +29,4 @@ WORKDIR ./anubis-management-api/src
 
 EXPOSE 8000
 
-ENTRYPOINT ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug", "--access-log"]
+ENTRYPOINT ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000", "--log-config", "../logging.yaml", "--access-log"]
