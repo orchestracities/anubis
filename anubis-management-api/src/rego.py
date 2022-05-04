@@ -31,6 +31,7 @@ def serialize(db: Session, policies: [Policy]):
                         db, policy.service_path_id)
                     tenant = to.get_tenant(db, service_path.tenant_id)
                     policy_element = {
+                        "id": policy.id,
                         "action": action,
                         "resource": resource,
                         "resource_type": resource_type,

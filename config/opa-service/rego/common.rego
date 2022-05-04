@@ -5,9 +5,10 @@ import future.keywords.in
 import input.attributes.request.http.method as method
 import input.attributes.request.http.path as path
 import input.attributes.request.http.headers.authorization as authorization
+import input.parsed_body as parsed_body
 
 # Action to method mappings
-scope_method := {"acl:Read": ["GET"], "acl:Write": ["POST"], "acl:Control": ["PUT", "DELETE"]}
+scope_method := {"acl:Read": ["GET"], "acl:Append": ["POST", "PATCH"], "acl:Write": ["POST", "PUT", "DELETE", "PATCH"], "acl:Control": ["CONTROL"]}
 
 # Extract Bearer Token
 bearer_token = t {
@@ -85,9 +86,16 @@ default allow = {
 # Auth main rule
 allow = response {
 		response := {
-        "allowed": user_permitted,
+        "allowed": check_policy,
         "response_headers_to_add": {"Link": header_link}
     }
+}
+
+# Check policy when accessing resources
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[2] != "policies"
+	user_permitted(request)
 }
 
 # Check for token validity
@@ -135,113 +143,117 @@ arrays_dont_have_same_value(a, b) {
 	a[i] != b[i]
 }
 
-default user_permitted = false
+method_matches_action(entry, request) {
+	scope_method[entry.action][_] == request.action
+}
+
+default user_permitted(request) = false
 
 # User permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   entry := data.user_permissions[request.user][_]
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Default User permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   entry := data.default_user_permissions[request.user][_]
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
 
 # Group permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Default Group permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.default_group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
 
 # Role permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Default Role permissions
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some tenant_i
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.default_role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
 
 # AuthenticatedAgent special permission
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some role
   entry := data.role_permissions[role][_]
   role == "AuthenticatedAgent"
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Default AuthenticatedAgent special permission
-user_permitted {
+user_permitted(request) {
   is_token_valid
   some role
   entry := data.default_role_permissions[role][_]
   role == "AuthenticatedAgent"
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
 
 # Agent special permission
-user_permitted {
+user_permitted(request) {
   some role
   entry := data.role_permissions[role][_]
   role == "Agent"
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_policy(entry.service_path, request.service_path)
 }
 
 # Default Agent special permission
-user_permitted {
+user_permitted(request) {
   some role
   entry := data.default_role_permissions[role][_]
   role == "Agent"
-  scope_method[entry.action][_] == request.action
+  method_matches_action(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
