@@ -21,14 +21,17 @@ def parse_rdf_graph(data):
         policy = str(subj).split("/")[-1]
         if not policies.get(policy):
             policies[policy] = {}
-        if "agentClass" in str(pred):
+        if pred == acl.agentClass:
             policies[policy]["agentClass"] = str(obj)
-        if "mode" in str(pred):
+        if pred == acl.mode:
             policies[policy]["mode"] = str(obj)
-        if "acl#default" in str(pred):
+        if pred == acl.accessTo:
+            policies[policy]["accessTo"] = str(obj).split("://")[-1]
+        if pred == acl.default:
             policies[policy]["accessTo"] = "default"
-        if "accessToClass" in str(pred):
+        if pred == acl.accessToClass:
             policies[policy]["accessToClass"] = str(obj).split("/")[-1]
+    print(policies)
     return policies
 
 
