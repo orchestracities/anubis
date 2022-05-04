@@ -2,7 +2,7 @@
 
 This document guides you through Anubis usage.
 We will demonstrate how to protect an instance of [Orion Context Broker](https://fiware-orion.rtfd.io/)
-using Anubis and ODIC provider ([Keycloak](https://www.keycloak.org/)
+using Anubis and OIDC provider ([Keycloak](https://www.keycloak.org/)
 in our case).
 
 Basically, you will create a policy in Anubis, and see it's effects

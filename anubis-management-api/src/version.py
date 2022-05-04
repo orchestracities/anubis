@@ -1,1 +1,1 @@
-ANUBIS_VERSION = '0.2.0'
+ANUBIS_VERSION = '0.3.0-dev'
