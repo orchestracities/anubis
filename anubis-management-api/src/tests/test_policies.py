@@ -201,35 +201,6 @@ def test_policies(test_db):
     assert response.status_code == 201
     policy_id = response.headers["policy-id"]
 
-    response = client.get(
-        "/v1/policies/" + policy_id,
-        headers={
-            "accept": "text/turtle",
-            "fiware-service": "Tenant1",
-            "fiware-servicepath": "/"})
-    assert response.status_code == 200
-    g = Graph()
-    g.parse(data=response.text)
-    for subj, pred, obj in g:
-        if URIRef("http://www.w3.org/ns/auth/acl#accessTo") == pred:
-            assert URIRef(
-                "https://tenant1.orion.url/v2/entities/resource") == obj
-        elif URIRef("http://www.w3.org/ns/auth/acl#agentClass") == pred:
-            assert URIRef("acl:agent:test") == obj
-        elif URIRef("http://www.w3.org/ns/auth/acl#mode") == pred:
-            assert URIRef("acl:Read") == obj
-
-    response = client.get(
-        "/v1/policies/",
-        headers={
-            "accept": "text/turtle",
-            "fiware-service": "Tenant1",
-            "fiware-servicepath": "/"})
-    assert response.status_code == 200
-    g = Graph()
-    g.parse(data=response.text)
-    assert len(g) == 25
-
     response = client.delete(
         "/v1/policies/" + policy_id,
         headers={

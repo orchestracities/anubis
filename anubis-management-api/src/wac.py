@@ -53,6 +53,7 @@ def serialize(
     else:
         n = Namespace(default_wac["default"]["baseUrl"])
         g.bind(default_wac["default"]["prefix"], n)
+        fiware_service = "default"
 
     for policy in policies:
         policy_node = URIRef(policy.id, n.policy)
