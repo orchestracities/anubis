@@ -15,7 +15,7 @@ if database_type == "postgres":
         database_user, database_password, database_host, database_name)
 
     engine = create_engine(
-        SQLALCHEMY_DATABASE_URL, echo=True
+        SQLALCHEMY_DATABASE_URL
     )
 else:
     SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"

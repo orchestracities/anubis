@@ -1,6 +1,6 @@
 # Anubis Release Notes
 
-## 0.2-dev
+## 0.2
 
 ### New features
 
@@ -18,6 +18,7 @@
 - Fixes to FIWARE headers
 - Prevented creation of duplicate policies
 - Revised method mappings, acl:Control behaviour
+- Fix API logging
 
 ### Documentation
 
