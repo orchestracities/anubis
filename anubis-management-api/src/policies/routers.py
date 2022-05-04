@@ -40,6 +40,17 @@ def serialize_policy(policy: models.Policy):
         mode=modes,
         agent=agents)
 
+def parse_auth_token(auth_string: str):
+    token = auth_string.split(" ")
+    if token[0] == "Bearer":
+        token = token[1]
+        token = jwt.decode(token, options={"verify_signature": False})
+        user_info = {}
+        user_info["email"] = token["email"]
+        user_info["tenants"] = token["tenants"]
+        return user_info
+    return None
+
 
 @router.get("/access-modes", response_model=List[schemas.Mode])
 def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -116,12 +127,9 @@ def read_policies(
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
-    token = None
+    user_info = None
     if authorization:
-        token = authorization.split(" ")
-        if token[0] == "Bearer":
-            token = token[1]
-            token = jwt.decode(token, options={"verify_signature": False})
+        user_info = parse_auth_token(authorization)
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,
@@ -142,7 +150,7 @@ def read_policies(
         resource_type=resource_type,
         skip=skip,
         limit=limit,
-        token=token)
+        user_info=user_info)
     if accept == 'text/turtle':
         return Response(
             content=w_serialize(
