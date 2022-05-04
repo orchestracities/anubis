@@ -1,5 +1,19 @@
 # Anubis Release Notes
 
+## 0.3-dev
+
+### New features
+
+- Turtle parsing for default policies creation
+
+### Bug fixes
+
+### Documentation
+
+### Continuous Integration
+
+### Technical debt
+
 ## 0.2
 
 ### New features
@@ -17,7 +31,6 @@
 
 - Fixes to FIWARE headers
 - Prevented creation of duplicate policies
-- Turtle file for default policies creation
 - Fix API logging
 
 ### Documentation
