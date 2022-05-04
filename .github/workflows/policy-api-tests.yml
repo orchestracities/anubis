@@ -1,13 +1,22 @@
 name: Policy API Tests
 
-on: [push]
+on:
+  pull_request:
+  push:
+    branches:
+    - master
 
 jobs:
   python:
+    env:
+      DB_USER: admin
+      DB_PASSWORD: password
+      DB_NAME: anubis
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ['3.9']
+        database-type: ['sqlite', 'postgres']
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python
@@ -20,11 +29,18 @@ jobs:
       - name: Install pipenv
         working-directory: ./anubis-management-api
         run: pip install pipenv
+      - name: Start db
+        if: ${{ matrix.database-type == 'postgres' }}
+        run: docker run --name db -p 5432:5432 -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASSWORD -e POSTGRES_DB=$DB_NAME -d postgres:14
       - name: Run python tests
         working-directory: ./anubis-management-api/src
         run: |
           pipenv install --dev
+          export DB_TYPE=${{ matrix.database-type }}
           pipenv run pytest
+      - name: Stop db
+        if: ${{ matrix.database-type == 'postgres' }}
+        run: docker rm db -f
   e2e:
     runs-on: ubuntu-latest
     steps:

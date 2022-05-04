@@ -15,7 +15,7 @@ if database_type == "postgres":
         database_user, database_password, database_host, database_name)
 
     engine = create_engine(
-        SQLALCHEMY_DATABASE_URL, echo=True
+        SQLALCHEMY_DATABASE_URL
     )
 else:
     SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
@@ -26,6 +26,6 @@ else:
 
 autocommit_engine = engine.execution_options(isolation_level="AUTOCOMMIT")
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 
 Base = declarative_base()

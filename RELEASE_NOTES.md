@@ -1,6 +1,6 @@
 # Anubis Release Notes
 
-## 0.2-dev
+## 0.2
 
 ### New features
 
@@ -18,16 +18,19 @@
 - Fixes to FIWARE headers
 - Prevented creation of duplicate policies
 - Turtle file for default policies creation
+- Fix API logging
 
 ### Documentation
 
 - Documentation structure and first content
+- Update links and follow FIWARE structure
 - Fix code block formatting
 - Fix architecture figure display
 
 ### Continuous Integration
 
 - Update openapi specs automatically
+- Introduce matrix test for different db type
 
 ### Technical debt
 

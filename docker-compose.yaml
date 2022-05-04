@@ -16,6 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: orchestracities/anubis-management-api:test
     networks:
       - envoymesh
     environment:
