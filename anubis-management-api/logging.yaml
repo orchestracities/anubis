@@ -4,11 +4,11 @@ formatters:
   default:
     "()": uvicorn.logging.DefaultFormatter
     datefmt: "%Y-%m-%dT%H:%M:%S"
-    format: 'time=%(asctime)s.%(msecs)03dZ  | lvl=%(levelprefix)s | comp=%(name)s | msg="%(msg)s'
+    format: 'time=%(asctime)s.%(msecs)03dZ  | lvl=%(levelprefix)s | comp=%(name)s | msg="%(message)s'
   access:
     "()": uvicorn.logging.AccessFormatter
     datefmt: "%Y-%m-%dT%H:%M:%S"
-    format: 'time=%(asctime)s.%(msecs)03dZ  | lvl=%(levelprefix)s | comp=%(name)s | msg="%(msg)s'
+    format: 'time=%(asctime)s.%(msecs)03dZ  | lvl=%(levelprefix)s | comp=%(name)s | msg="%(message)s'
 handlers:
   default:
     formatter: default
