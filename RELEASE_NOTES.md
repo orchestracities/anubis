@@ -4,6 +4,8 @@
 
 ### New features
 
+- Turtle parsing for default policies creation
+
 ### Bug fixes
 
 ### Documentation
@@ -29,7 +31,6 @@
 
 - Fixes to FIWARE headers
 - Prevented creation of duplicate policies
-- Turtle file for default policies creation
 - Fix API logging
 
 ### Documentation
