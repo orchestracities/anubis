@@ -17,6 +17,7 @@ uuid = "~=1.30"
 uvicorn = "~=0.17.1"
 pyyaml = "~=6.0"
 pg8000 = "~=1.26.1"
+pyjwt = "~=2.3.0"
 
 [dev-packages]
 pytest = "~=6.2.5"

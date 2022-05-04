@@ -87,6 +87,10 @@ static_resources:
                   cluster_name: ext_authz-opa-service
                 timeout: 0.250s
               transport_api_version: V3
+              with_request_body:
+                max_request_bytes: 8192
+                allow_partial_message: true
+              failure_mode_allow: false
           - name: envoy.filters.http.lua
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua

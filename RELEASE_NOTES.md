@@ -8,6 +8,8 @@
 
 ### Bug fixes
 
+- Revised method mappings, acl:Control behaviour
+
 ### Documentation
 
 ### Continuous Integration

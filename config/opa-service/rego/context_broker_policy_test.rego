@@ -28,7 +28,7 @@ group_data = {
     "Group1": [
       {
         "action": "acl:Write",
-        "resource": "*",
+        "resource": "test",
         "resource_type": "entity",
         "tenant": "Tenant1",
         "service_path": "/"
@@ -41,8 +41,8 @@ role_data = {
 "role_permissions": {
     "role1": [
       {
-        "action": "acl:Control",
-        "resource": "*",
+        "action": "acl:Write",
+        "resource": "test",
         "resource_type": "entity",
         "tenant": "Tenant1",
         "service_path": "/"
@@ -98,7 +98,7 @@ test_user_permissions {
 }
 
 test_user_permissions_unathorized {
-  not allow.allowed with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as user_data with bearer_token as bearer_token with testing as true
+  not allow.allowed with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as user_data with bearer_token as bearer_token with testing as true
 }
 
 test_user_permissions_entity_type {
@@ -110,7 +110,7 @@ test_group_permissions {
 }
 
 test_group_permissions_unathorized {
-  not allow.allowed with request as {"user":"admin@mail.com", "action":"PUT", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as group_data with bearer_token as bearer_token with testing as true
+  not allow.allowed with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test2", "tenant":"Tenant1", "service_path":"/"} with data as group_data with bearer_token as bearer_token with testing as true
 }
 
 test_role_permissions {
@@ -118,7 +118,7 @@ test_role_permissions {
 }
 
 test_role_permissions_unathorized {
-  not allow.allowed with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as role_data with bearer_token as bearer_token with testing as true
+  not allow.allowed with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test2", "tenant":"Tenant1", "service_path":"/"} with data as role_data with bearer_token as bearer_token with testing as true
 }
 
 test_authenticated_agent_permissions {
