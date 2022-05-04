@@ -7,6 +7,7 @@
 ### Bug fixes
 
 - Revised method mappings, acl:Control behaviour
+- Fix readme
 
 ### Documentation
 
