@@ -107,7 +107,8 @@ def get_policies_by_mode(
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
     if user_info:
-        db_policies = filter_policies_by_user_profile(db_policies, tenant, user_info)
+        db_policies = filter_policies_by_user_profile(
+            db_policies, tenant, user_info)
     return db_policies.offset(skip).limit(limit).all()
 
 
@@ -132,7 +133,8 @@ def get_policies_by_agent(
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
     if user_info:
-        db_policies = filter_policies_by_user_profile(db_policies, tenant, user_info)
+        db_policies = filter_policies_by_user_profile(
+            db_policies, tenant, user_info)
     return db_policies.offset(skip).limit(limit).all()
 
 
@@ -165,7 +167,8 @@ def _get_policies_by_service_path(
         db_policies = db_policies.filter(
             models.Policy.resource_type.contains(resource_type))
     if user_info:
-        db_policies = filter_policies_by_user_profile(db_policies, tenant, user_info)
+        db_policies = filter_policies_by_user_profile(
+            db_policies, tenant, user_info)
     return db_policies.offset(skip).limit(limit).all()
 
 

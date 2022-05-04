@@ -40,6 +40,7 @@ def serialize_policy(policy: models.Policy):
         mode=modes,
         agent=agents)
 
+
 def parse_auth_token(auth_string: str):
     token = auth_string.split(" ")
     if token[0] == "Bearer":
