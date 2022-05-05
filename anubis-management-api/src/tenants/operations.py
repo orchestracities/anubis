@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 from policies import schemas as policy_schemas
 from policies import operations as policy_operations
+from rdflib import Graph, URIRef, BNode, Literal
+from rdflib import Namespace
+from wac import parse_rdf_graph as parse_rdf_graph
 import uuid
 import yaml
 import os
@@ -37,15 +40,14 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.commit()
     db.refresh(new_tenant)
     # creating default policy
-    # TODO: This will eventually read from a non yaml file
-    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.yml'), 'r') as file:
-        default_policies = yaml.load(file, Loader=yaml.FullLoader)
-        for p in default_policies["acl:Authorization"]:
+    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.ttl'), 'r') as file:
+        policies = parse_rdf_graph(file.read())
+        for p in policies:
             policy = policy_schemas.PolicyCreate(
-                access_to=p["acl:accessTo"]["value"],
-                resource_type=p["acl:accessTo"]["type"],
-                mode=p["acl:mode"],
-                agent=p["acl:agentClass"])
+                access_to=policies[p]["accessTo"],
+                resource_type=policies[p]["accessToClass"],
+                mode=[policies[p]["mode"]],
+                agent=[policies[p]["agentClass"]])
             policy_operations.create_policy(
                 db=db, service_path_id=default_service_path.id, policy=policy)
     return new_tenant

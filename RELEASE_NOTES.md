@@ -4,6 +4,8 @@
 
 ### New features
 
+- Turtle parsing for default policies creation
+
 ### Bug fixes
 
 - Revised method mappings, acl:Control behaviour

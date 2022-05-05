@@ -13,7 +13,33 @@ acl = Namespace("http://www.w3.org/ns/auth/acl#")
 # group urls should be /{realm}/groups/{id}
 
 
-def serialize(db: Session, fiware_service: [str], policies: [Policy]):
+def parse_rdf_graph(data):
+    g = Graph()
+    g.parse(data=data)
+    policies = {}
+    for subj, pred, obj in g:
+        policy = str(subj).split("/")[-1]
+        if not policies.get(policy):
+            policies[policy] = {}
+        if pred == acl.agentClass:
+            policies[policy]["agentClass"] = str(obj)
+        if pred == acl.mode:
+            policies[policy]["mode"] = str(obj)
+        if pred == acl.accessTo:
+            policies[policy]["accessTo"] = str(obj).split("://")[-1]
+        if pred == acl.default:
+            policies[policy]["accessTo"] = "default"
+        if pred == acl.accessToClass:
+            policies[policy]["accessToClass"] = str(obj).split("/")[-1]
+    print(policies)
+    return policies
+
+
+def serialize(
+        db: Session,
+        fiware_service: [str],
+        fiware_servicepath: [str],
+        policies: [Policy]):
     with open(os.environ.get("DEFAULT_WAC_CONFIG_FILE", '../../config/opa-service/default_wac_config.yml'), 'r') as file:
         default_wac = yaml.load(file, Loader=yaml.FullLoader)["wac"]
 
@@ -27,6 +53,7 @@ def serialize(db: Session, fiware_service: [str], policies: [Policy]):
     else:
         n = Namespace(default_wac["default"]["baseUrl"])
         g.bind(default_wac["default"]["prefix"], n)
+        fiware_service = "default"
 
     for policy in policies:
         policy_node = URIRef(policy.id, n.policy)
@@ -45,15 +72,25 @@ def serialize(db: Session, fiware_service: [str], policies: [Policy]):
 
         if policy.access_to == "default":
             access_to_property = acl.default
-            access_to_iri = URIRef("*")
+            access_to_value = fiware_servicepath
         else:
             access_to_property = acl.accessTo
-            if default_wac.get(fiware_service) and default_wac[fiware_service]["resourceTypeUrls"].get(
-                    policy.resource_type):
-                resource_namespace = Namespace(
-                    default_wac[fiware_service]["resourceTypeUrls"][policy.resource_type]["url"])
-                access_to_iri = URIRef(policy.access_to, resource_namespace)
-            else:
-                access_to_iri = URIRef(policy.access_to, n)
-        g.add((policy_node, access_to_property, access_to_iri))
+            access_to_value = policy.access_to
+        if default_wac.get(fiware_service) and default_wac[fiware_service]["resourceTypeUrls"].get(
+                policy.resource_type):
+            resource_namespace = Namespace(
+                default_wac[fiware_service]["resourceTypeUrls"][policy.resource_type]["url"])
+            resource_type_namespace = Namespace(
+                default_wac[fiware_service]["resourceTypeUrls"][policy.resource_type]["type_url"])
+            access_to_iri = URIRef(access_to_value, resource_namespace)
+            g.add((policy_node, access_to_property, access_to_iri))
+            access_to_class_iri = URIRef(
+                policy.resource_type, resource_type_namespace)
+            g.add((policy_node, acl.accessToClass, access_to_class_iri))
+        else:
+            access_to_iri = URIRef(access_to_value, n)
+            g.add((policy_node, access_to_property, access_to_iri))
+            access_to_class_iri = URIRef(policy.resource_type, n)
+            g.add((policy_node, acl.accessToClass, access_to_class_iri))
+
     return g.serialize()

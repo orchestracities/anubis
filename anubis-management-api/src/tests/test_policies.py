@@ -88,7 +88,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     assert response.status_code == 200
     body = response.json()
-    assert len(body) == 6
+    assert len(body) == 8
 
     response = client.get(
         "/v1/policies/?agent_type=acl:agent",
@@ -106,7 +106,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 0
+    assert len(body) == 1
 
     response = client.get(
         "/v1/policies/?resource_type=entity",
@@ -115,7 +115,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 4
+    assert len(body) == 7
 
     response = client.get(
         "/v1/policies/?resource_type=entity&&agent_type=acl:agent",
@@ -133,7 +133,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 0
+    assert len(body) == 1
 
     response = client.get(
         "/v1/policies/?resource_type=entity&&agent_type=acl:agent&&resource=resource",
@@ -200,35 +200,6 @@ def test_policies(test_db):
             "agent": ["acl:agent:test"]})
     assert response.status_code == 201
     policy_id = response.headers["policy-id"]
-
-    response = client.get(
-        "/v1/policies/" + policy_id,
-        headers={
-            "accept": "text/turtle",
-            "fiware-service": "Tenant1",
-            "fiware-servicepath": "/"})
-    assert response.status_code == 200
-    g = Graph()
-    g.parse(data=response.text)
-    for subj, pred, obj in g:
-        if URIRef("http://www.w3.org/ns/auth/acl#accessTo") == pred:
-            assert URIRef(
-                "https://tenant1.orion.url/v2/entities/resource") == obj
-        elif URIRef("http://www.w3.org/ns/auth/acl#agentClass") == pred:
-            assert URIRef("acl:agent:test") == obj
-        elif URIRef("http://www.w3.org/ns/auth/acl#mode") == pred:
-            assert URIRef("acl:Read") == obj
-
-    response = client.get(
-        "/v1/policies/",
-        headers={
-            "accept": "text/turtle",
-            "fiware-service": "Tenant1",
-            "fiware-servicepath": "/"})
-    assert response.status_code == 200
-    g = Graph()
-    g.parse(data=response.text)
-    assert len(g) == 12
 
     response = client.delete(
         "/v1/policies/" + policy_id,
