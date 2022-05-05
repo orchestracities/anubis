@@ -1,0 +1,32 @@
+@prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix tenant: <https://tenant.url/> .
+
+tenant:policy1 a acl:Authorization ;
+    acl:agentClass <acl:agent:Pippo@mail.com> ;
+    acl:default </> ;
+    acl:accessToClass <entity> ;
+    acl:mode <acl:Control> .
+
+tenant:policy2 a acl:Authorization ;
+    acl:agentClass <acl:agentGroup:People> ;
+    acl:default </> ;
+    acl:accessToClass <entity> ;
+    acl:mode <acl:Read> .
+
+tenant:policy3 a acl:Authorization ;
+    acl:agentClass <acl:agentClass:Member> ;
+    acl:default </> ;
+    acl:accessToClass <entity> ;
+    acl:mode <acl:Write> .
+
+tenant:policy4 a acl:Authorization ;
+    acl:agentClass <acl:AuthenticatedAgent> ;
+    acl:default </> ;
+    acl:accessToClass <subscription> ;
+    acl:mode <acl:Read> .
+
+tenant:policy5 a acl:Authorization ;
+    acl:agentClass <acl:agent:Gina@mail.com> ;
+    acl:accessTo </v2/entities/test> ;
+    acl:accessToClass <entity> ;
+    acl:mode <acl:Read> .

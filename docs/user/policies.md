@@ -90,6 +90,7 @@ Policies can be serialized in different formats.
         @prefix example: <http://example.org/> .
         example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
             acl:accessTo <http://example.org/*> ;
+            acl:accessToClass <http://example.org/resource_type/entity> ;
             acl:agentClass <acl:AuthenticatedAgent> ;
             acl:mode <acl:Write> .
 

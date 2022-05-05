@@ -164,6 +164,7 @@ user_permitted(request) {
   is_token_valid
   entry := data.default_user_permissions[request.user][_]
   method_matches_action(entry, request)
+	path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
@@ -187,6 +188,7 @@ user_permitted(request) {
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.default_group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
   method_matches_action(entry, request)
+	path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
@@ -210,6 +212,7 @@ user_permitted(request) {
   token.payload.tenants[tenant_i].name == request.tenant
   entry := data.default_role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
   method_matches_action(entry, request)
+	path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
@@ -233,6 +236,7 @@ user_permitted(request) {
   entry := data.default_role_permissions[role][_]
   role == "AuthenticatedAgent"
   method_matches_action(entry, request)
+	path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
@@ -254,6 +258,7 @@ user_permitted(request) {
   entry := data.default_role_permissions[role][_]
   role == "Agent"
   method_matches_action(entry, request)
+	path_matches_policy(entry, request)
   entry.tenant == request.tenant
   service_path_matches_default_policy(entry.service_path, request.service_path)
 }
