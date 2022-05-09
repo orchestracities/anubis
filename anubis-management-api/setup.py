@@ -8,6 +8,7 @@ Modified by Madoshakalaka@Github (dependency links added)
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 from os import path
+from src.version import ANUBIS_VERSION
 
 # io.open is needed for projects that support Python 2.7
 # It ensures open() defaults to text mode with universal newlines,
@@ -43,7 +44,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version="0.2.0",  # Required
+    version=ANUBIS_VERSION,  # Required
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
