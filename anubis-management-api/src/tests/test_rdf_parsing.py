@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from main import app
+from ..main import app
 from .utils import test_db
 from rdflib import Graph, URIRef, BNode, Literal
 from rdflib import Namespace

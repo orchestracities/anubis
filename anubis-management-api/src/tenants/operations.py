@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 
 from . import models, schemas
-from policies import schemas as policy_schemas
-from policies import operations as policy_operations
+from ..policies import schemas as policy_schemas
+from ..policies import operations as policy_operations
 from rdflib import Graph, URIRef, BNode, Literal
 from rdflib import Namespace
-from wac import parse_rdf_graph as parse_rdf_graph
+from ..wac import parse_rdf_graph as parse_rdf_graph
 import uuid
 import yaml
 import os

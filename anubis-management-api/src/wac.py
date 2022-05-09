@@ -1,7 +1,7 @@
 from rdflib import Graph, URIRef, BNode, Literal
 from rdflib import Namespace
 from rdflib.namespace import FOAF, RDF
-from policies.models import Policy
+from src.policies.models import Policy
 from sqlalchemy.orm import Session
 import yaml
 import os

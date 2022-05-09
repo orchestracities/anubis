@@ -1,0 +1,41 @@
+name: Build Python Package
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+
+jobs:
+  build-and-publish:
+    env:
+      DB_USER: admin
+      DB_PASSWORD: password
+      DB_NAME: anubis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9']
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pipenv'
+          cache-dependency-path: |
+            anubis-management-api/Pipfile.lock
+      - name: Install pipenv
+        working-directory: ./anubis-management-api
+        run: pip install pipenv
+      - name: Build distribution
+        working-directory: ./anubis-management-api
+        run: |
+          pipenv run python setup.py bdist_wheel
+      - name: Publish package
+        working-directory: ./anubis-management-api
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/

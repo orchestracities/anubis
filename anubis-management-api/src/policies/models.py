@@ -1,12 +1,12 @@
 from sqlalchemy import Table, Boolean, Column, ForeignKey, Integer, String, UniqueConstraint, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, column_property
 
-from database import autocommit_engine, Base, SessionLocal
+from ..database import autocommit_engine, Base, SessionLocal
 from sqlalchemy import event, select, func
-from tenants.models import ServicePath
+from ..tenants.models import ServicePath
 from uuid import uuid4
 
-import default
+import src.default as default
 
 
 policy_to_mode = Table(

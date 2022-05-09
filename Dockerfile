@@ -25,8 +25,8 @@ COPY ./anubis-management-api ./anubis-management-api
 RUN chown -R apiuser:apiuser /home/apiuser
 USER apiuser
 
-WORKDIR ./anubis-management-api/src
+WORKDIR ./anubis-management-api
 
 EXPOSE 8000
 
-ENTRYPOINT ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000", "--log-config", "../logging.yaml", "--access-log"]
+ENTRYPOINT ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000", "--log-config", "./logging.yaml", "--access-log"]

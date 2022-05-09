@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response
 from . import operations, models, schemas
-from dependencies import get_db
+from ..dependencies import get_db
 from sqlalchemy.orm import Session
 
 

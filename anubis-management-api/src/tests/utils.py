@@ -1,7 +1,7 @@
-from database import Base
-from database import autocommit_engine
-from tenants import models as t_models
-from policies import models as p_models
+from ..database import Base
+from ..database import autocommit_engine
+from ..tenants import models as t_models
+from ..policies import models as p_models
 import pytest
 
 
