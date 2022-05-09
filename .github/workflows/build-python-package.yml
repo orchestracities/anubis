@@ -29,8 +29,8 @@ jobs:
         run: |
           pipenv run python setup.py bdist_wheel
       - name: Publish package
-        working-directory: ./anubis-management-api
         uses: pypa/gh-action-pypi-publish@release/v1
+        working-directory: ./anubis-management-api
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
