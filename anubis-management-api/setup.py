@@ -1,4 +1,8 @@
 """A setuptools based setup module.
+See:
+https://packaging.python.org/guides/distributing-packages-using-setuptools/
+https://github.com/pypa/sampleproject
+Modified by Madoshakalaka@Github (dependency links added)
 """
 
 # Always prefer setuptools over distutils
@@ -6,17 +10,10 @@ from setuptools import setup, find_packages
 from os import path
 from src.version import ANUBIS_VERSION
 
-# io.open is needed for projects that support Python 2.7
-# It ensures open() defaults to text mode with universal newlines,
-# and accepts an argument to specify the text encoding
-# Python 3 only projects can skip this import
-from io import open
-
-here = path.abspath(path.dirname(__file__))
-
-# Get the long description from the README file
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
+long_description = """
+This package contains the Anubis Policy Management API. For more information,
+visit the [Github Page](https://github.com/orchestracities/anubis).
+"""
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
@@ -25,8 +22,8 @@ setup(
     name="anubis-policy-api",  # Required
     version=ANUBIS_VERSION,  # Required
     description="The main module of anubis",  # Optional
-    # long_description=long_description,  # Optional
-    # long_description_content_type="text/markdown",  # Optional
+    long_description=long_description,  # Optional
+    long_description_content_type="text/markdown",  # Optional
     url="https://github.com/orchestracities/anubis",  # Optional
     author="Martel-Innovate",  # Optional
     author_email="gabriele.cerfoglio@martel-innovate.com",  # Optional
