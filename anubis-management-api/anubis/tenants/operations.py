@@ -40,7 +40,7 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.commit()
     db.refresh(new_tenant)
     # creating default policy
-    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../config/opa-service/default_policies.ttl'), 'r') as file:
+    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../../config/opa-service/default_policies.ttl'), 'r') as file:
         policies = parse_rdf_graph(file.read())
         for p in policies:
             policy = policy_schemas.PolicyCreate(
