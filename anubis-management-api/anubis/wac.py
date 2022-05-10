@@ -1,7 +1,7 @@
 from rdflib import Graph, URIRef, BNode, Literal
 from rdflib import Namespace
 from rdflib.namespace import FOAF, RDF
-from src.policies.models import Policy
+from anubis.policies.models import Policy
 from sqlalchemy.orm import Session
 import yaml
 import os
@@ -40,7 +40,7 @@ def serialize(
         fiware_service: [str],
         fiware_servicepath: [str],
         policies: [Policy]):
-    with open(os.environ.get("DEFAULT_WAC_CONFIG_FILE", '../../config/opa-service/default_wac_config.yml'), 'r') as file:
+    with open(os.environ.get("DEFAULT_WAC_CONFIG_FILE", '../config/opa-service/default_wac_config.yml'), 'r') as file:
         default_wac = yaml.load(file, Loader=yaml.FullLoader)["wac"]
 
     g = Graph()

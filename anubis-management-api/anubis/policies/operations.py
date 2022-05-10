@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 from functools import reduce
 import uuid
-import src.default as default
+import anubis.default as default
 
 
 def get_policy(db: Session, policy_id: str):

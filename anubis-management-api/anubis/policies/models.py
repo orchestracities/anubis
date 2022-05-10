@@ -6,7 +6,7 @@ from sqlalchemy import event, select, func
 from ..tenants.models import ServicePath
 from uuid import uuid4
 
-import src.default as default
+import anubis.default as default
 
 
 policy_to_mode = Table(

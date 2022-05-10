@@ -3,7 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel, ValidationError, validator
 from rfc3987 import parse
 import re
-import src.default as default
+import anubis.default as default
 
 
 class ModeBase(BaseModel):

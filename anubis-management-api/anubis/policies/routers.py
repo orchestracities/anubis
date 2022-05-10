@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from ..tenants import operations as so
 from ..wac import serialize as w_serialize
 from ..rego import serialize as r_serialize
-import src.default as default
+import anubis.default as default
 import jwt
 
 

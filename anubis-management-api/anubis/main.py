@@ -1,11 +1,11 @@
 from fastapi import Depends, FastAPI
-from src.tenants import routers as t
-from src.tenants import models as t_models
-from src.policies import routers as p
-from src.policies import models as p_models
-from src.version import ANUBIS_VERSION
+from anubis.tenants import routers as t
+from anubis.tenants import models as t_models
+from anubis.policies import routers as p
+from anubis.policies import models as p_models
+from anubis.version import ANUBIS_VERSION
 from fastapi.openapi.utils import get_openapi
-from src.database import engine
+from anubis.database import engine
 
 from fastapi.middleware.cors import CORSMiddleware
 
