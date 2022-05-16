@@ -1,8 +1,10 @@
 # Welcome to Anubis
 
-Anubis is a flexible Policy Enforcement solution that makes easier to reuse
-security policies across different services, assuming the policies entail the
-same resource.
+Anubis is a flexible Policy Enforcement solution
+that makes easier to reuse security policies across different services,
+assuming the policies entail the same resource.
+In short we are dealing with policy portability :) What do you mean by policy
+portability?
 
 Let's think of a user that register some data in platform A.
 To control who can access his data he develops a set of policies.
@@ -10,7 +12,8 @@ If he move the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
 Anubis aims to avoid that :) or at least simplify this as much as possible
-for the data owner.
+for the data owner. How? Leveraging open source solutions (Envoy, OPA) and
+reference standards (e.g. W3C WAC, W3C ODRL, OAUTH2).
 
 ## Why this project?
 
@@ -40,7 +43,10 @@ The project is looking into
 - Translation from the security & privacy data policies vocabulary to other
     policy languages or APIs that are actually used for PEP.
 
-## Why Anubis?
+While Anubis is not subject to GDPR per se, it allows API owners to implement
+effective GDPR in their solutions.
+
+## Why did you pick Anubis as name?
 
 [Anubis](https://en.wikipedia.org/wiki/Anubis) is an ancient Egyptian god,
 that has multiple roles in the mythology of ancient Egypt. In particular,

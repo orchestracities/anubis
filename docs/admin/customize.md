@@ -1,12 +1,39 @@
 # How to customize Anubis
 
-## Adding new actions
+## Adding new action types
 
-TBD
+At the time being we support the actions defined by Web Access Control ontology
+and the custom action `oc-acl:Delete`.
+
+To add additional action types, you need to:
+1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl).
+1. Extend `default` values in the Anubis Management API [code](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/default.py)
+and the default database population in the policy [model](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/models.py#L87).
+1. In case special validation is required, you should also modify the policy [schema](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/schemas.py).
+1. Customize the rego action to http method [mapping](https://github.com/orchestracities/anubis/blob/master/config/opa-service/rego/common.rego#L11)
+
+## Adding new actor types
+
+At the time being we support the actor types defined by Web Access Control ontology
+and the custom actor `oc-acl:ResourceTenantAgent`.
+
+To add additional actor types, you need to:
+1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl).
+1. Extend `default` values in the Anubis Management API [code](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/default.py).
+1. Modify the policy [operations](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/operations.py) and [model](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/models.py#L69).
+1. Customize [rego serialization](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/rego.py) as needed.
+1. Customize [WAC parsing and serialization](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/wac.py) as needed.
+1. Customize rego rules as needed.
 
 ## Protecting new APIs
 
-TBD
+To protect a new API, you need to:
+
+1. Develop a rego document that maps access control policies to the specs of
+the API.
+
+1. Develop a custom lua script that automates the creation of policies at
+resource creation time.
 
 ### Creating a custom rego
 
@@ -40,6 +67,6 @@ access policies, the request is allowed.
 
 TBD
 
-### Customize authentication
+## Customize authentication
 
 TBD

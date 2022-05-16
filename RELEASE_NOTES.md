@@ -17,6 +17,8 @@
 
 ### Documentation
 
+- Improve documentation and provide ttl version of the vocabulary.
+
 ### Continuous Integration
 
 ### Technical debt

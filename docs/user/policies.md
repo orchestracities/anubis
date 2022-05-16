@@ -10,6 +10,9 @@ In general, a policy is defined by:
 - *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
 - *resource_type*: The type of the resource.
 
+The Anubis extended version of the Web Access Control vocabulary,
+is available on [github](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl#).
+
 For the authorisation rules currently in place, the supported resource types
 are:
 
@@ -104,6 +107,7 @@ e.g.:
 - `acl:Read`-> GET
 - `acl:Write` -> PUT, POST, PATCH, DELETE
 - `acl:Append` -> POST, PATCH
+- `oc-acl:Delete` -> DELETE
 
 While `acl:Control` is used to define who can control the resource,
 i.e. define policies for the resource.

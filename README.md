@@ -25,7 +25,8 @@ If he move the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
 Anubis aims to avoid that :) or at least simplify this as much as possible
-for the data owner.
+for the data owner. How? Leveraging open source solutions (Envoy, OPA) and
+reference standards (e.g. W3C WAC, W3C ODRL, OAUTH2).
 
 ## Why this project?
 
@@ -55,7 +56,10 @@ The project is looking into
 - Translation from the security & privacy data policies vocabulary to other
     policy languages or APIs that are actually used for PEP.
 
-## Why Anubis?
+While Anubis is not subject to GDPR per se, it allows API owners to implement
+effective GDPR in their solutions.
+
+## Why did you pick Anubis as name?
 
 [Anubis](https://en.wikipedia.org/wiki/Anubis) is an ancient Egyptian god,
 that has multiple roles in the mythology of ancient Egypt. In particular,
@@ -63,13 +67,6 @@ we opted for this name, because he decides the fate of souls:
 based on their weights he allows the souls to ascend to a heavenly existence,
 or condemn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
 system for souls :)
-
-## Status
-
-The project is currently a Proof of Concept (POC) that explores how policy
-expressed using [Web Access control](https://solid.github.io/web-access-control-spec/)
-can be enforced via [OPA](https://www.openpolicyagent.org/) in the context of
-NGSIv2 APIs.
 
 ## Architecture
 
@@ -132,7 +129,8 @@ Anubis management, and JWT-based authentication. You can see Orion rules in this
 
 The policy internal data format is inspired by
 [Web Access control](https://solid.github.io/web-access-control-spec/).
-See [policy management api](anubis-management-api) for details.
+See [policy management api](anubis-management-api) for details, and
+[anubis acl vocabulary](oc-acl.ttl) for formal definition.
 
 In general, a policy is defined by:
 
@@ -281,9 +279,18 @@ To test the rego policy locally:
 
 ## Status and Roadmap
 
+[Release Notes](RELEASE_NOTES.md) provide a summary of implemented features and
+fixed bugs.
+
 For additional planned features you can
-check the pending [issues](https://github.com/orchestracities/anubis/issues).
+check the pending [issues](https://github.com/orchestracities/anubis/issues)
+and their mapping to [milestones](https://github.com/orchestracities/anubis/milestones).
 
 ## Credits
 
 - [JSON.lua package](config/opa-service/lua/JSON.lua) by Jeffrey Friedl
+
+## Sponsors
+
+- Anubis received funding as part of the Cascade Funding mechanisms of the EC
+  project [DAPSI](https://dapsi.ngi.eu/) - GA 871498.
