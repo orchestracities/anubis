@@ -29,14 +29,14 @@ jobs:
           pipenv run python setup.py bdist_wheel
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: github.event_name == 'release' && github.event.action == 'created'
+        if: github.event_name == 'release' && github.event.action == 'published'
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
           packages_dir: ./anubis-management-api/dist/
       - name: Test package
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: github.event_name != 'release' && github.event.action != 'created'
+        if: github.event_name != 'release' && github.event.action != 'published'
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
