@@ -6,6 +6,7 @@ At the time being we support the actions defined by Web Access Control ontology
 and the custom action `oc-acl:Delete`.
 
 To add additional action types, you need to:
+
 1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl).
 1. Extend `default` values in the Anubis Management API [code](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/default.py)
 and the default database population in the policy [model](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/models.py#L87).
@@ -18,11 +19,15 @@ At the time being we support the actor types defined by Web Access Control ontol
 and the custom actor `oc-acl:ResourceTenantAgent`.
 
 To add additional actor types, you need to:
+
 1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl).
 1. Extend `default` values in the Anubis Management API [code](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/default.py).
-1. Modify the policy [operations](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/operations.py) and [model](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/models.py#L69).
-1. Customize [rego serialization](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/rego.py) as needed.
-1. Customize [WAC parsing and serialization](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/wac.py) as needed.
+1. Modify the policy [operations](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/operations.py)
+    and [model](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/models.py#L69).
+1. Customize [rego serialization](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/rego.py)
+    as needed.
+1. Customize [WAC parsing and serialization](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/wac.py)
+    as needed.
 1. Customize rego rules as needed.
 
 ## Protecting new APIs
