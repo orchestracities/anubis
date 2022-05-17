@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, backref
 
-from database import Base, autocommit_engine
+from ..database import Base, autocommit_engine
 
 
 class Tenant(Base):

@@ -1,2 +1,5 @@
 keycloak/oc-custom.jar
 anubis-management-api/sql_app.db
+anubis-management-api/anubis_policy_api.egg-info/*
+anubis-management-api/build/*
+anubis-management-api/dist/*

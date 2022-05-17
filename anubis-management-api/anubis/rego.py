@@ -1,8 +1,8 @@
-from policies.models import Policy
-from policies import operations as po
-from tenants import operations as to
+from .policies.models import Policy
+from .policies import operations as po
+from .tenants import operations as to
 from sqlalchemy.orm import Session
-from default import AUTHENTICATED_AGENT_ID
+from .default import AUTHENTICATED_AGENT_ID
 import json
 
 

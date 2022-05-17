@@ -1,4 +1,4 @@
-from database import SessionLocal
+from anubis.database import SessionLocal
 
 # Dependency
 

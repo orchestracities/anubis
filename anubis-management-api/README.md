@@ -106,7 +106,7 @@ The following activities need to be implemented as next steps:
 ```bash
 $ pipenv install --dev
 $ pipenv shell
-$ cd src
+$ cd anubis
 $ uvicorn main:app --reload
 ```
 

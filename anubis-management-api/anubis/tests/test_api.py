@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
-from main import app
-from version import ANUBIS_VERSION
+from ..main import app
+from ..version import ANUBIS_VERSION
 from .utils import test_db
 
 client = TestClient(app)

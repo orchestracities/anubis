@@ -5,6 +5,7 @@
 ### New features
 
 - Turtle parsing for default policies creation
+- Python package for the API built and pushed onto PyPi
 
 ### Bug fixes
 
