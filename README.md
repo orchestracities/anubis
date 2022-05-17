@@ -21,7 +21,7 @@ portability?
 
 Let's think of a user that register some data in platform A.
 To control who can access his data he develops a set of policies.
-If he move the data to platform B, most probably he will have to define again
+If he moves the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
 Anubis aims to avoid that :) or at least simplify this as much as possible
@@ -31,7 +31,7 @@ reference standards (e.g. W3C WAC, W3C ODRL, OAUTH2).
 ## Why this project?
 
 Data portability often focuses on the mechanisms to exchange data and the
-formalisation of dat representation: the accent is rarely put
+formalisation of data representation: the accent is rarely put
 on the portability of security & privacy data policies.
 Enabling security and privacy data policy portability is clearly
 a step forward in enabling data sovereignty across different services.
