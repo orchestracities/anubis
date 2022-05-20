@@ -11,6 +11,9 @@ To control who can access his data he develops a set of policies.
 If he moves the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
+Of course, the support for distributed policies management may be of value
+also for a single platform deployed distributely.
+
 Anubis aims to avoid that :) or at least simplify this as much as possible
 for the data owner. How? Leveraging open source solutions (Envoy, OPA) and
 reference standards (e.g. W3C WAC, W3C ODRL, OAUTH2).
