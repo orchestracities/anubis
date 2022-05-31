@@ -11,12 +11,16 @@ To control who can access his data he develops a set of policies.
 If he moves the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
-Of course, the support for distributed policies management may be of value
-also for a single platform deployed distributely.
-
 Anubis aims to avoid that :) or at least simplify this as much as possible
-for the data owner. How? Leveraging open source solutions (Envoy, OPA) and
-reference standards (e.g. W3C WAC, W3C ODRL, OAUTH2).
+for the data owner. How? Leveraging open source solutions (e.g.
+[Envoy](https://www.envoyproxy.io/),
+[OPA](https://www.openpolicyagent.org/)) and reference standards
+(e.g. [W3C WAC](https://solid.github.io/web-access-control-spec/),
+[W3C ODRL](https://www.w3.org/TR/odrl-model/), [OAUTH2](https://oauth.net/2/)).
+
+Of course, the support for distributed policies management may be of value
+also for a single platform deployed distributedly, e.g. to synch policies
+across the cloud-edge.
 
 ## Why this project?
 
@@ -99,7 +103,7 @@ The figure below shows the current architecture.
     specific API to be protected
 1. In combination with the policies stored in the Policy Management API,
     that acts as PAP (Policy Administration Point);
-1. If the evaluation of the policies return 'allowed', then the request is
+1. If the evaluation of the policies returns `allowed`, then the request is
     forwarded to the API.
 
 ## Manuals
