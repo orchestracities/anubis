@@ -11,7 +11,8 @@ In general, a policy is defined by:
 - *resource_type*: The type of the resource.
 
 The Anubis extended version of the Web Access Control vocabulary,
-is available on [github](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl#).
+is available on [github](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl),
+and can referenced using the following uri: [http://voc.orchestracities.io/oc-acl](http://voc.orchestracities.io/oc-acl).
 
 For the authorisation rules currently in place, the supported resource types
 are:

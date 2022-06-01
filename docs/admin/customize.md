@@ -20,7 +20,7 @@ and the custom actor `oc-acl:ResourceTenantAgent`.
 
 To add additional actor types, you need to:
 
-1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl).
+1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl).
 1. Extend `default` values in the Anubis Management API [code](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/default.py).
 1. Modify the policy [operations](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/operations.py)
     and [model](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/models.py#L69).
