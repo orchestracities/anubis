@@ -137,7 +137,8 @@ Anubis management, and JWT-based authentication. You can see Orion rules in this
 The policy internal data format is inspired by
 [Web Access control](https://solid.github.io/web-access-control-spec/).
 See [policy management api](anubis-management-api) for details, and
-[anubis acl vocabulary](oc-acl.ttl) for formal definition.
+[anubis acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
+for the formal definition.
 
 In general, a policy is defined by:
 

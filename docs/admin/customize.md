@@ -7,7 +7,7 @@ and the custom action `oc-acl:Delete`.
 
 To add additional action types, you need to:
 
-1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis/blob/master/oc-acl.ttl).
+1. Extend the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl).
 1. Extend `default` values in the Anubis Management API [code](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/default.py)
 and the default database population in the policy [model](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/models.py#L87).
 1. In case special validation is required, you should also modify the policy [schema](https://github.com/orchestracities/anubis/blob/master/anubis-management-api/src/policies/schemas.py).
