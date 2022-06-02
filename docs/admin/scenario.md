@@ -23,7 +23,6 @@ Anubis is designed with the following scenarios in mind:
   purposes, may be accessible across different APIs. Usually policies mimic
   the API format, and this implies that for the same data, different policies
   may be required for each API where they are accessible, by decoupling API
-  format and access control policies, it is possible to avoid that. 
+  format and access control policies, it is possible to avoid that.
   Suppose that Data 1 is stored in API A and in API B, Anubis allow you
   to define a single set of policies to access Data 1 across both APIs.
-
