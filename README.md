@@ -134,29 +134,29 @@ Anubis management, and JWT-based authentication. You can see Orion rules in this
 
 ### Policy format
 
-The policy internal data format is inspired by
-[Web Access control](https://solid.github.io/web-access-control-spec/).
-See [policy management api](anubis-management-api) for details, and
-[anubis acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
-for the formal definition.
+The formal policy specification is defined by the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
+as en extension to [Web Access control](https://solid.github.io/web-access-control-spec/).
+The internal representation is json-based, see [policy management api](anubis-management-api)
+for details.
 
 In general, a policy is defined by:
 
 - *actor*: The user, group or role, that is linked to the policy
-- *action*: The action allowed on this resource (e.g. acl:Read for GET requests)
-- *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
+- *action*: The action allowed on this resource (e.g. `acl:Read`
+  for GET requests)
+- *resource*: The urn of the resource being targeted (e.g. `urn:entity:x`)
 - *resource_type*: The type of the resource.
+- *constraint* (to be implemented): The constraint that has to be satisfied to
+  authorize access.
 
-For the authorisation rules currently in place, the supported resource types
-are:
+The authorization rules currently in place supports the following resource
+types:
 
 - *entity*: NGSI entity
 - *entity_type*: NGSI entity type
 - *subscription*: NGSI subscription
 - *policy*: A policy of the Anubis Management API (to allow users to have
   control over the policies that are created)
-- *tenant*: A tenant (or Fiware service)
-- *service_path*: A Fiware service path under a given tenant.
 
 This can be extended by creating new
 [authorisation rules](config/opa-service/rego), and setting up the necessary
@@ -257,7 +257,7 @@ as well:
 - `DB_PASSWORD`: The password for the database user.
 - `DB_NAME`: The name of the database.
 
-For customising the default policies that are created alongside a tenant, see
+For customizing the default policies that are created alongside a tenant, see
 [the configuration file](config/opa-service/default_policies.yml) that's mounted
 as a volume in the policy-api service from the
 [docker-compose file](docker-compose.yaml).

@@ -1,29 +1,32 @@
 # Policies
 
-The policy internal data format is inspired by
-[Web Access control](https://solid.github.io/web-access-control-spec/).
+The formal policy specification is defined by the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
+as en extension to [Web Access control](https://solid.github.io/web-access-control-spec/).
+The internal representation is json-based (see [policy management api](anubis-management-api)
+for details).
 
 In general, a policy is defined by:
 
 - *actor*: The user, group or role, that is linked to the policy
-- *action*: The action allowed on this resource (e.g. acl:Read for GET requests)
-- *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
+- *action*: The action allowed on this resource (e.g. `acl:Read`
+  for GET requests)
+- *resource*: The urn of the resource being targeted (e.g. `urn:entity:x`)
 - *resource_type*: The type of the resource.
+- *constraint* (to be implemented): The constraint that has to be satisfied to
+  authorize access.
 
 The Anubis extended version of the Web Access Control vocabulary,
 is available on [github](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl),
 and can referenced using the following uri: [http://voc.orchestracities.io/oc-acl](http://voc.orchestracities.io/oc-acl).
 
-For the authorisation rules currently in place, the supported resource types
-are:
+The authorization rules currently in place supports the following resource
+types:
 
 - *entity*: NGSI entity
 - *entity_type*: NGSI entity type
 - *subscription*: NGSI subscription
 - *policy*: A policy of the Anubis Management API (to allow users to have
   control over the policies that are created)
-- *tenant*: A tenant (or Fiware service)
-- *service_path*: A Fiware service path under a given tenant.
 
 Additionally, in relation to FIWARE APIs, a policy may include also:
 
@@ -95,8 +98,8 @@ Policies can be serialized in different formats.
         example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
             acl:accessTo <http://example.org/*> ;
             acl:accessToClass <http://example.org/resource_type/entity> ;
-            acl:agentClass <acl:AuthenticatedAgent> ;
-            acl:mode <acl:Write> .
+            acl:agentClass acl:AuthenticatedAgent ;
+            acl:mode acl:Write .
 
 ## Access modes and RESTful APIs
 
