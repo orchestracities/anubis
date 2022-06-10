@@ -6,11 +6,14 @@
 
 - Turtle parsing for default policies creation
 - Python package for the API built and pushed onto PyPi
+- Support `#` as wild char to return all policies within a service path tree
+- Support policy update
 
 ### Bug fixes
 
 - Revised method mappings, acl:Control behaviour
 - Fix readme
+- Fix policy filter queries with mode and agent
 
 ### Documentation
 
