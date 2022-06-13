@@ -307,6 +307,27 @@ Read Policy
 | 404 | Not found |
 | 422 | Validation Error |
 
+#### PUT
+##### Summary:
+
+Update
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| policy_id | path |  | Yes | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
 #### DELETE
 ##### Summary:
 

@@ -680,7 +680,8 @@
             "required": false,
             "schema": {
               "title": "Fiware-Servicepath",
-              "type": "string"
+              "type": "string",
+              "default": "/#"
             },
             "name": "fiware-servicepath",
             "in": "header"
@@ -689,7 +690,8 @@
             "required": false,
             "schema": {
               "title": "Accept",
-              "type": "string"
+              "type": "string",
+              "default": "application/json"
             },
             "name": "accept",
             "in": "header"
@@ -761,7 +763,8 @@
             "required": false,
             "schema": {
               "title": "Fiware-Servicepath",
-              "type": "string"
+              "type": "string",
+              "default": "/"
             },
             "name": "fiware-servicepath",
             "in": "header"
@@ -847,7 +850,8 @@
             "required": false,
             "schema": {
               "title": "Fiware-Servicepath",
-              "type": "string"
+              "type": "string",
+              "default": "/#"
             },
             "name": "fiware-servicepath",
             "in": "header"
@@ -888,6 +892,71 @@
                 ]
               }
             }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "Update",
+        "operationId": "update_v1_policies__policy_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "404": {
             "description": "Not found"
