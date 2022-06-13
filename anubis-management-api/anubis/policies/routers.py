@@ -253,7 +253,9 @@ def create_policy(
     response.status_code = status.HTTP_201_CREATED
     return response
 
-@router.put("/{policy_id}", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
+
+@router.put("/{policy_id}", response_class=Response,
+            status_code=status.HTTP_204_NO_CONTENT)
 def update(
         response: Response,
         policy_id: str,
@@ -293,9 +295,10 @@ def update(
             status_code=422,
             detail="a policy with those modes/agents already exists for that resource")
     response.headers["Policy-ID"] = operations.update_policy(
-        db=db, policy_id=policy_id, policy = policy)
+        db=db, policy_id=policy_id, policy=policy)
     response.status_code = status.HTTP_204_NO_CONTENT
     return response
+
 
 @router.delete("/{policy_id}", response_class=Response,
                status_code=status.HTTP_204_NO_CONTENT)
