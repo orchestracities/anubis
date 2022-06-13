@@ -267,7 +267,7 @@ def test_policies(test_db):
             "resource_type": "entity",
             "mode": ["acl:Read"],
             "agent": ["acl:agent:test"]})
-    assert response.status_code == 201
+    assert response.status_code == 204
     policy_id = response.headers["policy-id"]
 
 
