@@ -249,13 +249,13 @@ def update_policy(
         db: Session,
         policy_id: str,
         policy: schemas.PolicyCreate):
-    db.query(models.Policy).filter(models.Policy.id == policy_id).\
-        update({"access_to": policy.access_to, "resource_type": policy.resource_type})
+    db.query(models.Policy).filter(models.Policy.id == policy_id). update(
+        {"access_to": policy.access_to, "resource_type": policy.resource_type})
     db.commit()
-    db.query(models.policy_to_mode).filter(models.policy_to_mode.c.policy_id == policy_id).\
-        delete()
-    db.query(models.policy_to_agent).filter(models.policy_to_agent.c.policy_id == policy_id).\
-        delete()
+    db.query(models.policy_to_mode).filter(
+        models.policy_to_mode.c.policy_id == policy_id). delete()
+    db.query(models.policy_to_agent).filter(
+        models.policy_to_agent.c.policy_id == policy_id). delete()
     for mode in policy.mode:
         db_mode = get_mode_by_iri(db, mode)
         db.execute(models.policy_to_mode.insert().values(

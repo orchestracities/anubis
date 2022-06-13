@@ -79,7 +79,7 @@ def test_policies(test_db):
     response = client.post(
         "/v1/policies/",
         headers={
-            "fiware-service": "test" },
+            "fiware-service": "test"},
         json={
             "access_to": "resource",
             "resource_type": "entity",
@@ -256,7 +256,6 @@ def test_policies(test_db):
     assert response.status_code == 201
     policy_id = response.headers["policy-id"]
 
-
     response = client.put(
         "/v1/policies/" + policy_id,
         headers={
@@ -270,7 +269,6 @@ def test_policies(test_db):
     assert response.status_code == 204
     policy_id = response.headers["policy-id"]
 
-
     response = client.get(
         "/v1/policies/" + policy_id,
         headers={
@@ -282,7 +280,6 @@ def test_policies(test_db):
     assert body["resource_type"] == "entity"
     assert body["mode"] == ["acl:Read"]
     assert body["agent"] == ["acl:agent:test"]
-
 
     response = client.delete(
         "/v1/policies/" + policy_id,

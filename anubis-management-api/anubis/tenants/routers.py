@@ -159,7 +159,7 @@ def read_service_path(
     service_path = operations.get_tenant_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
     # Federico commented these lines because he is not sure what's the purpose.
-    #if not service_path:
+    # if not service_path:
     #    service_path = operations.get_tenant_service_path_by_path(
     #        db, tenant_id=tenant_id, path="/" + service_path_id)
     return service_path
