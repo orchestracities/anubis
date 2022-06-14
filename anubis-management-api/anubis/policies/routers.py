@@ -57,13 +57,17 @@ def compute_policy_id(policy: models.Policy):
     return policy.id
 
 
-@router.get("/access-modes", response_model=List[schemas.Mode], summary="List supported Access Modes")
+@router.get("/access-modes",
+            response_model=List[schemas.Mode],
+            summary="List supported Access Modes")
 def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     modes = operations.get_modes(db, skip=skip, limit=limit)
     return modes
 
 
-@router.get("/agent-types", response_model=List[schemas.AgentType], summary="List supported Agent Types")
+@router.get("/agent-types",
+            response_model=List[schemas.AgentType],
+            summary="List supported Agent Types")
 def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     types = operations.get_agent_types(db, skip=skip, limit=limit)
     return types
@@ -114,7 +118,8 @@ policies_not_json_responses = {
 
 @router.get("/",
             response_model=List[schemas.Policy],
-            responses=policies_not_json_responses, summary="List policies for a given Tenant and Service Path")
+            responses=policies_not_json_responses,
+            summary="List policies for a given Tenant and Service Path")
 def read_policies(
         authorization: Optional[str] = Header(
             None),
@@ -227,7 +232,10 @@ def read_policy(
         return serialize_policy(db_policy)
 
 
-@router.post("/", response_class=Response, status_code=status.HTTP_201_CREATED, summary="Create a policy for a given Tenant and Service Path")
+@router.post("/",
+             response_class=Response,
+             status_code=status.HTTP_201_CREATED,
+             summary="Create a policy for a given Tenant and Service Path")
 def create_policy(
         response: Response,
         policy: schemas.PolicyCreate,
@@ -267,8 +275,10 @@ def create_policy(
     return response
 
 
-@router.put("/{policy_id}", response_class=Response,
-            status_code=status.HTTP_204_NO_CONTENT, summary="Update a policy for a given Tenant and Service Path")
+@router.put("/{policy_id}",
+            response_class=Response,
+            status_code=status.HTTP_204_NO_CONTENT,
+            summary="Update a policy for a given Tenant and Service Path")
 def update(
         response: Response,
         policy_id: str,
@@ -313,8 +323,10 @@ def update(
     return response
 
 
-@router.delete("/{policy_id}", response_class=Response,
-               status_code=status.HTTP_204_NO_CONTENT, summary="Delete a policy for a given Tenant and Service Path")
+@router.delete("/{policy_id}",
+               response_class=Response,
+               status_code=status.HTTP_204_NO_CONTENT,
+               summary="Delete a policy for a given Tenant and Service Path")
 def delete_policy(
         response: Response,
         policy_id: str,
