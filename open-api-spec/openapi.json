@@ -11,7 +11,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Read Service Paths",
+        "summary": "List all Service Paths",
         "operationId": "read_service_paths_v1_tenants_service_paths_get",
         "parameters": [
           {
@@ -71,7 +71,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Read Tenants",
+        "summary": "List all Tenants",
         "operationId": "read_tenants_v1_tenants__get",
         "parameters": [
           {
@@ -129,7 +129,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Create Tenant",
+        "summary": "Create a new Tenant",
         "operationId": "create_tenant_v1_tenants__post",
         "requestBody": {
           "content": {
@@ -166,7 +166,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Read Tenant",
+        "summary": "Get a Tenant",
         "operationId": "read_tenant_v1_tenants__tenant_id__get",
         "parameters": [
           {
@@ -209,7 +209,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Delete Service",
+        "summary": "Delete a Tenant",
         "operationId": "delete_service_v1_tenants__tenant_id__delete",
         "parameters": [
           {
@@ -247,7 +247,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Read Tenant Service Paths",
+        "summary": "List Service Paths inside a Tenant",
         "operationId": "read_tenant_service_paths_v1_tenants__tenant_id__service_paths_get",
         "parameters": [
           {
@@ -323,7 +323,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Create Service Path",
+        "summary": "Create a new Service Path inside a Tenant",
         "operationId": "create_service_path_v1_tenants__tenant_id__service_paths_post",
         "parameters": [
           {
@@ -371,7 +371,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Read Service Path",
+        "summary": "Get a Service Path inside a Tenant",
         "operationId": "read_service_path_v1_tenants__tenant_id__service_paths__service_path_id__get",
         "parameters": [
           {
@@ -423,7 +423,7 @@
         "tags": [
           "services"
         ],
-        "summary": "Delete Service Path",
+        "summary": "Delete a Service Path inside a Tenant",
         "operationId": "delete_service_path_v1_tenants__tenant_id__service_paths__service_path_id__delete",
         "parameters": [
           {
@@ -470,7 +470,7 @@
         "tags": [
           "policies"
         ],
-        "summary": "Read Modes",
+        "summary": "List supported Access Modes",
         "operationId": "read_modes_v1_policies_access_modes_get",
         "parameters": [
           {
@@ -530,7 +530,7 @@
         "tags": [
           "policies"
         ],
-        "summary": "Read Modes",
+        "summary": "List supported Agent Types",
         "operationId": "read_modes_v1_policies_agent_types_get",
         "parameters": [
           {
@@ -590,7 +590,8 @@
         "tags": [
           "policies"
         ],
-        "summary": "Read Policies",
+        "summary": "List policies for a given Tenant and Service Path",
+        "description": "Policies can be filtered by:\n  - Access Mode\n  - Agent\n  - Agent Type\n  - Resource\n  - Resource Type\nIn case an JWT token is passed over, user id, roles and groups are used to\nfilter policies that are only valid for him.\nTo return policies from a service path tree, you can used the wildchar \"#\".\nFor example, using `/Path1/#` you will obtain policies for all subpaths,\nsuch as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.",
         "operationId": "read_policies_v1_policies__get",
         "parameters": [
           {
@@ -747,7 +748,7 @@
         "tags": [
           "policies"
         ],
-        "summary": "Create Policy",
+        "summary": "Create a policy for a given Tenant and Service Path",
         "operationId": "create_policy_v1_policies__post",
         "parameters": [
           {
@@ -805,7 +806,7 @@
         "tags": [
           "policies"
         ],
-        "summary": "Read Policy",
+        "summary": "Get a policy",
         "operationId": "read_policy_v1_policies__policy_id__get",
         "parameters": [
           {
@@ -912,7 +913,7 @@
         "tags": [
           "policies"
         ],
-        "summary": "Update",
+        "summary": "Update a policy for a given Tenant and Service Path",
         "operationId": "update_v1_policies__policy_id__put",
         "parameters": [
           {
@@ -977,7 +978,7 @@
         "tags": [
           "policies"
         ],
-        "summary": "Delete Policy",
+        "summary": "Delete a policy for a given Tenant and Service Path",
         "operationId": "delete_policy_v1_policies__policy_id__delete",
         "parameters": [
           {
@@ -1030,7 +1031,7 @@
     },
     "/v1/": {
       "get": {
-        "summary": "V1 Root",
+        "summary": "Return Anubis API endpoints",
         "operationId": "v1_root_v1__get",
         "responses": {
           "200": {
@@ -1046,7 +1047,7 @@
     },
     "/version/": {
       "get": {
-        "summary": "V1 Version",
+        "summary": "Return the version of the Anubis API",
         "operationId": "v1_version_version__get",
         "responses": {
           "200": {
@@ -1062,7 +1063,7 @@
     },
     "/ping": {
       "get": {
-        "summary": "Pong",
+        "summary": "Simple healthcheck endpoint",
         "operationId": "pong_ping_get",
         "responses": {
           "200": {
@@ -1319,5 +1320,15 @@
         }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "services",
+      "description": "Manage Tenants and Service Paths"
+    },
+    {
+      "name": "policies",
+      "description": "Manage Policies for each Tenant and Service Path within a Tenant."
+    }
+  ]
 }
