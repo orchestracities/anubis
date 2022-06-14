@@ -9,7 +9,7 @@ Anubis is a flexible Policy Enforcement solution that makes easier to reuse secu
 #### GET
 ##### Summary:
 
-Read Service Paths
+List all Service Paths
 
 ##### Parameters
 
@@ -31,7 +31,7 @@ Read Service Paths
 #### GET
 ##### Summary:
 
-Read Tenants
+List all Tenants
 
 ##### Parameters
 
@@ -51,7 +51,7 @@ Read Tenants
 #### POST
 ##### Summary:
 
-Create Tenant
+Create a new Tenant
 
 ##### Responses
 
@@ -66,7 +66,7 @@ Create Tenant
 #### GET
 ##### Summary:
 
-Read Tenant
+Get a Tenant
 
 ##### Parameters
 
@@ -85,7 +85,7 @@ Read Tenant
 #### DELETE
 ##### Summary:
 
-Delete Service
+Delete a Tenant
 
 ##### Parameters
 
@@ -106,7 +106,7 @@ Delete Service
 #### GET
 ##### Summary:
 
-Read Tenant Service Paths
+List Service Paths inside a Tenant
 
 ##### Parameters
 
@@ -128,7 +128,7 @@ Read Tenant Service Paths
 #### POST
 ##### Summary:
 
-Create Service Path
+Create a new Service Path inside a Tenant
 
 ##### Parameters
 
@@ -149,7 +149,7 @@ Create Service Path
 #### GET
 ##### Summary:
 
-Read Service Path
+Get a Service Path inside a Tenant
 
 ##### Parameters
 
@@ -169,7 +169,7 @@ Read Service Path
 #### DELETE
 ##### Summary:
 
-Delete Service Path
+Delete a Service Path inside a Tenant
 
 ##### Parameters
 
@@ -191,7 +191,7 @@ Delete Service Path
 #### GET
 ##### Summary:
 
-Read Modes
+List supported Access Modes
 
 ##### Parameters
 
@@ -213,7 +213,7 @@ Read Modes
 #### GET
 ##### Summary:
 
-Read Modes
+List supported Agent Types
 
 ##### Parameters
 
@@ -235,7 +235,21 @@ Read Modes
 #### GET
 ##### Summary:
 
-Read Policies
+List policies for a given Tenant and Service Path
+
+##### Description:
+
+Policies can be filtered by:
+  - Access Mode
+  - Agent
+  - Agent Type
+  - Resource
+  - Resource Type
+In case an JWT token is passed over, user id, roles and groups are used to
+filter policies that are only valid for him.
+To return policies from a service path tree, you can used the wildchar "#".
+For example, using `/Path1/#` you will obtain policies for all subpaths,
+such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
 
 ##### Parameters
 
@@ -264,7 +278,7 @@ Read Policies
 #### POST
 ##### Summary:
 
-Create Policy
+Create a policy for a given Tenant and Service Path
 
 ##### Parameters
 
@@ -286,7 +300,7 @@ Create Policy
 #### GET
 ##### Summary:
 
-Read Policy
+Get a policy
 
 ##### Parameters
 
@@ -310,7 +324,7 @@ Read Policy
 #### PUT
 ##### Summary:
 
-Update
+Update a policy for a given Tenant and Service Path
 
 ##### Parameters
 
@@ -331,7 +345,7 @@ Update
 #### DELETE
 ##### Summary:
 
-Delete Policy
+Delete a policy for a given Tenant and Service Path
 
 ##### Parameters
 
@@ -354,7 +368,7 @@ Delete Policy
 #### GET
 ##### Summary:
 
-V1 Root
+Return Anubis API endpoints
 
 ##### Responses
 
@@ -367,7 +381,7 @@ V1 Root
 #### GET
 ##### Summary:
 
-V1 Version
+Return the version of the Anubis API
 
 ##### Responses
 
@@ -380,7 +394,7 @@ V1 Version
 #### GET
 ##### Summary:
 
-Pong
+Simple healthcheck endpoint
 
 ##### Responses
 
