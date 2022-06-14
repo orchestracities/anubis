@@ -11,7 +11,18 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import os
 
-app = FastAPI()
+tags_metadata = [
+    {
+        "name": "services",
+        "description": "Manage Tenants and Service Paths",
+    },
+    {
+        "name": "policies",
+        "description": "Manage policies for each tenant and service path within a tenant. At creation time the defaul service path is `/`, while at query time is `/#`. `/#` queries policies in all service paths.",
+    },
+]
+
+app = FastAPI(openapi_tags=tags_metadata)
 
 allowed_origins = os.environ.get(
     'CORS_ALLOWED_ORIGINS', "*").replace(" ", "").split(";")
