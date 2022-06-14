@@ -77,10 +77,17 @@ def get_tenant_service_paths(
 
 
 def get_tenant_service_path_by_path(db: Session, tenant_id: str, path: str):
-    return db.query(
-        models.ServicePath).filter(
-        models.ServicePath.tenant_id == tenant_id).filter(
-            models.ServicePath.path == path).first()
+    if path.endswith('/#'):
+        queryPath = path.replace('#', '%')
+        return db.query(
+            models.ServicePath).filter(
+            models.ServicePath.tenant_id == tenant_id).filter(
+                models.ServicePath.path.like(queryPath)).all()
+    else:
+        return db.query(
+            models.ServicePath).filter(
+            models.ServicePath.tenant_id == tenant_id).filter(
+                models.ServicePath.path == path).all()
 
 
 def get_tenant_service_path(db: Session, service_path_id: str, tenant_id: str):

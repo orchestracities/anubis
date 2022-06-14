@@ -15,7 +15,7 @@ def get_policy(db: Session, policy_id: str):
 def get_policies_by_service_path(
         db: Session,
         tenant: str,
-        service_path_id: str,
+        service_path_id: [str],
         mode: str = None,
         agent: str = None,
         agent_type: str = None,
@@ -31,7 +31,7 @@ def get_policies_by_service_path(
             models.Agent.iri == agent).join(
                 models.Policy.mode).filter(
                     models.Mode.iri == mode).filter(
-                        models.Policy.service_path_id == service_path_id)
+                        models.Policy.service_path_id.in_(service_path_id))
         if resource:
             db_policies = db_policies.filter(
                 models.Policy.access_to.contains(resource))
@@ -79,18 +79,19 @@ def get_policies_by_service_path(
 def get_policies_by_mode(
         db: Session,
         tenant: str,
-        service_path_id: str,
+        service_path_id: [str],
         mode: str,
         agent_type: str = None,
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 100):
+        limit: int = 100,
+        user_info: dict = None):
     db_policies = db.query(
         models.Policy).join(
         models.Policy.mode).filter(
             models.Mode.iri == mode).filter(
-                models.Policy.service_path_id == service_path_id)
+                models.Policy.service_path_id.in_(service_path_id))
     if agent_type:
         if agent_type in default.DEFAULT_AGENTS:
             db_policies = db_policies.join(
@@ -115,17 +116,18 @@ def get_policies_by_mode(
 def get_policies_by_agent(
         db: Session,
         tenant: str,
-        service_path_id: str,
+        service_path_id: [str],
         agent: str,
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 100):
+        limit: int = 100,
+        user_info: dict = None):
     db_policies = db.query(
         models.Policy).join(
         models.Policy.agent).filter(
             models.Agent.iri == agent).filter(
-                models.Policy.service_path_id == service_path_id)
+                models.Policy.service_path_id.in_(service_path_id))
     if resource:
         db_policies = db_policies.filter(
             models.Policy.access_to.contains(resource))
@@ -141,7 +143,7 @@ def get_policies_by_agent(
 def _get_policies_by_service_path(
         db: Session,
         tenant: str,
-        service_path_id: str,
+        service_path_id: [str],
         agent_type: str = None,
         resource: str = None,
         resource_type: str = None,
@@ -150,7 +152,7 @@ def _get_policies_by_service_path(
         user_info: dict = None):
     db_policies = db.query(
         models.Policy).filter(
-        models.Policy.service_path_id == service_path_id)
+        models.Policy.service_path_id.in_(service_path_id))
     if agent_type:
         if agent_type in default.DEFAULT_AGENTS:
             db_policies = db_policies.join(
@@ -241,6 +243,31 @@ def create_policy(
     db.commit()
     db.refresh(db_policy)
     return db_policy
+
+
+def update_policy(
+        db: Session,
+        policy_id: str,
+        policy: schemas.PolicyCreate):
+    db.query(models.Policy).filter(models.Policy.id == policy_id). update(
+        {"access_to": policy.access_to, "resource_type": policy.resource_type})
+    db.commit()
+    db.query(models.policy_to_mode).filter(
+        models.policy_to_mode.c.policy_id == policy_id). delete()
+    db.query(models.policy_to_agent).filter(
+        models.policy_to_agent.c.policy_id == policy_id). delete()
+    for mode in policy.mode:
+        db_mode = get_mode_by_iri(db, mode)
+        db.execute(models.policy_to_mode.insert().values(
+            [(policy_id, db_mode.iri)]))
+    for agent in policy.agent:
+        db_agent = get_agent_by_iri(db, agent)
+        if not db_agent:
+            db_agent = create_agent(db, agent)
+        db.execute(models.policy_to_agent.insert().values(
+            [(policy_id, db_agent.iri)]))
+    db.commit()
+    return policy_id
 
 
 def delete_policy(db: Session, policy: schemas.PolicyCreate):

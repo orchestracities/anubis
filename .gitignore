@@ -3,3 +3,5 @@ anubis-management-api/sql_app.db
 anubis-management-api/anubis_policy_api.egg-info/*
 anubis-management-api/build/*
 anubis-management-api/dist/*
+anubis-management-api/.idea/*
+.python-version

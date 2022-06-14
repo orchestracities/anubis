@@ -104,7 +104,7 @@ def create_service_path(
             raise HTTPException(
                 status_code=404,
                 detail="The service path parent {} not found. Service subpath cannot be created".format(service_path_parent))
-        service_path_parent_id = db_service_path_parent.id
+        service_path_parent_id = db_service_path_parent[0].id
     db_service_path = operations.get_tenant_service_path_by_path(
         db, tenant_id=tenant_id, path=service_path.path)
     if db_service_path:
@@ -158,9 +158,10 @@ def read_service_path(
     tenant_id = db_tenant.id
     service_path = operations.get_tenant_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
-    if not service_path:
-        service_path = operations.get_tenant_service_path_by_path(
-            db, tenant_id=tenant_id, path="/" + service_path_id)
+    # Federico commented these lines because he is not sure what's the purpose.
+    # if not service_path:
+    #    service_path = operations.get_tenant_service_path_by_path(
+    #        db, tenant_id=tenant_id, path="/" + service_path_id)
     return service_path
 
 # TODO how to handle changes on the tree? either path is dynamically computed, or this is cumbersome
@@ -184,9 +185,10 @@ def delete_service_path(
     tenant_id = db_tenant.id
     db_service_path = operations.get_tenant_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
-    if not db_service_path:
-        db_service_path = operations.get_tenant_service_path_by_path(
-            db, tenant_id=tenant_id, path="/" + service_path_id)
+    # Federico commented these lines because he is not sure what's the purpose.
+    # if not db_service_path:
+    #     db_service_path = operations.get_tenant_service_path_by_path(
+    #         db, tenant_id=tenant_id, path="/" + service_path_id)
     if not db_service_path:
         raise HTTPException(status_code=404, detail="ServicePath not found")
     if db_service_path.path == '/':
