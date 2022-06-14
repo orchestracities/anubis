@@ -3,8 +3,7 @@
 Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
-In short we are dealing with policy portability :) What do you mean by policy
-portability?
+In short we are dealing with policy portability :) What do you mean by that?
 
 Let's think of a user that register some data in platform A.
 To control who can access his data he develops a set of policies.
@@ -25,7 +24,7 @@ across the cloud-edge.
 ## Why this project?
 
 Data portability often focuses on the mechanisms to exchange data and the
-formalisation of data representation: the accent is rarely put
+formalisation of data representation: the emphasis is rarely put
 on the portability of security & privacy data policies.
 Enabling security and privacy data policy portability is clearly
 a step forward in enabling data sovereignty across different services.
