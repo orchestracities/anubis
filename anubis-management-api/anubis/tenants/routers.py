@@ -10,7 +10,7 @@ router = APIRouter(prefix="/v1/tenants",
                    responses={404: {"description": "Not found"}},)
 
 
-@router.get("/service_paths", response_model=List[schemas.ServicePath])
+@router.get("/service_paths", response_model=List[schemas.ServicePath], summary="List all Service Paths")
 def read_service_paths(
         skip: int = 0,
         limit: int = 100,
@@ -19,13 +19,13 @@ def read_service_paths(
     return service_paths
 
 
-@router.get("/", response_model=List[schemas.Tenant])
+@router.get("/", response_model=List[schemas.Tenant], summary="List all Tenants")
 async def read_tenants(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     services = operations.get_tenants(db, skip=skip, limit=limit)
     return services
 
 
-@router.post("/", response_class=Response, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_class=Response, status_code=status.HTTP_201_CREATED, summary="Create a new Tenant")
 def create_tenant(
         response: Response,
         tenant: schemas.TenantCreate,
@@ -41,7 +41,7 @@ def create_tenant(
     return response
 
 
-@router.get("/{tenant_id}", response_model=schemas.Tenant)
+@router.get("/{tenant_id}", response_model=schemas.Tenant, summary="Get a Tenant")
 def read_tenant(tenant_id: str, db: Session = Depends(get_db)):
     db_tenant = operations.get_tenant(db, tenant_id=tenant_id)
     if not db_tenant:
@@ -55,7 +55,7 @@ def read_tenant(tenant_id: str, db: Session = Depends(get_db)):
 
 
 @router.delete("/{tenant_id}", response_class=Response,
-               status_code=status.HTTP_204_NO_CONTENT)
+               status_code=status.HTTP_204_NO_CONTENT, summary="Delete a Tenant")
 def delete_service(
         response: Response,
         tenant_id: str,
@@ -73,7 +73,7 @@ def delete_service(
 
 @router.post("/{tenant_id}/service_paths",
              response_class=Response,
-             status_code=status.HTTP_201_CREATED)
+             status_code=status.HTTP_201_CREATED, summary="Create a new Service Path inside a Tenant")
 def create_service_path(
         response: Response,
         tenant_id: str,
@@ -122,7 +122,7 @@ def create_service_path(
 
 
 @router.get("/{tenant_id}/service_paths",
-            response_model=List[schemas.ServicePath])
+            response_model=List[schemas.ServicePath], summary="List Service Paths inside a Tenant")
 def read_tenant_service_paths(
         tenant_id: str,
         name: Optional[str] = None,
@@ -145,7 +145,7 @@ def read_tenant_service_paths(
 
 
 @router.get("/{tenant_id}/service_paths/{service_path_id}",
-            response_model=schemas.ServicePath)
+            response_model=schemas.ServicePath, summary="Get a Service Path inside a Tenant")
 def read_service_path(
         tenant_id: str,
         service_path_id: str,
@@ -171,7 +171,7 @@ def read_service_path(
 
 
 @router.delete("/{tenant_id}/service_paths/{service_path_id}",
-               response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
+               response_class=Response, status_code=status.HTTP_204_NO_CONTENT, summary="Delete a Service Path inside a Tenant")
 def delete_service_path(
         response: Response,
         tenant_id: str,
