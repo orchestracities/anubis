@@ -14,6 +14,7 @@
 - Revised method mappings, acl:Control behaviour
 - Fix readme
 - Fix policy filter queries with mode and agent
+- Bump pyjwt from 2.3.0 to 2.4.0 in /anubis-management-api
 
 ### Documentation
 
