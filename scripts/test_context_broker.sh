@@ -18,6 +18,19 @@ fi
 
 echo ""
 
+echo "Can I read all entities in all servicepaths?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /#" 'http://localhost:8000/v2/entities'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't read entities"
+  exit 1
+fi
+
+echo ""
+
 echo "Can I get link to policies?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" -D - 'http://localhost:8000/v2/entities' | grep -i 'link'`
@@ -76,7 +89,7 @@ echo "Can I create an entity at /Path1 in Tenant1? (Shouldn't be able to here)"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8000/v2/entities' \
 --header 'Content: application/json' \
---header 'fiware-Service: EKZ' \
+--header 'fiware-Service: Tenant1' \
 --header 'fiware-ServicePath: /Path1' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $token" \
