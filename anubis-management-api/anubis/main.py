@@ -11,6 +11,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import os
 
+tags_metadata = [
+    {
+        "name": "services",
+        "description": "Manage Tenants and Service Paths",
+    },
+    {
+        "name": "policies",
+        "description": "Manage Policies for each Tenant and Service Path within a Tenant.",
+    },
+]
+
 app = FastAPI()
 
 allowed_origins = os.environ.get(
@@ -37,7 +48,7 @@ app.include_router(t.router)
 app.include_router(p.router)
 
 
-@app.get("/v1/")
+@app.get("/v1/", summary="Return Anubis API endpoints")
 async def v1_root():
     return {
         "tenants_url": "/v1/tenants",
@@ -45,7 +56,7 @@ async def v1_root():
         "resources_url": "/v1/resources"}
 
 
-@app.get("/version/")
+@app.get("/version/", summary="Return the version of the Anubis API")
 async def v1_version():
     return {
         "version": ANUBIS_VERSION}
@@ -57,7 +68,7 @@ def on_startup():
     p_models.init_db()
 
 
-@app.get("/ping")
+@app.get("/ping", summary="Simple healthcheck endpoint")
 async def pong():
     return {"ping": "pong!"}
 
@@ -71,6 +82,7 @@ def custom_openapi():
         description="Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.",
         routes=app.routes,
     )
+    openapi_schema['tags'] = tags_metadata
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 

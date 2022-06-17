@@ -8,7 +8,6 @@ AGENT_CLASS_IRI = 'acl:agentClass'
 AGENT_IRI = 'acl:agent'
 AGENT_GROUP_IRI = 'acl:agentGroup'
 # custom
-AGENT_ROLE_IRI = 'oc-acl:agentRole'
 DELETE_MODE_IRI = 'oc-acl:Delete'
 SAME_TENANT_AS_RESOURCE_AGENT_ID = 'oc-acl:ResourceTenantAgent'
 DEFAULT = 'default'

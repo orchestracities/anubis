@@ -16,21 +16,28 @@ Welcome to Anubis!
 Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
-In short we are dealing with policy portability :) What do you mean by policy
-portability?
+In short we are dealing with policy portability :)  What do you mean by that?
 
 Let's think of a user that register some data in platform A.
 To control who can access his data he develops a set of policies.
-If he move the data to platform B, most probably he will have to define again
+If he moves the data to platform B, most probably he will have to define again
 the control access policies for that data also in platform B.
 
 Anubis aims to avoid that :) or at least simplify this as much as possible
-for the data owner.
+for the data owner. How? Leveraging open source solutions (e.g.
+[Envoy](https://www.envoyproxy.io/),
+[OPA](https://www.openpolicyagent.org/)) and reference standards
+(e.g. [W3C WAC](https://solid.github.io/web-access-control-spec/),
+[W3C ODRL](https://www.w3.org/TR/odrl-model/), [OAUTH2](https://oauth.net/2/)).
+
+Of course, the support for distributed policies management may be of value
+also for a single platform deployed distributedly, e.g. to synch policies
+across the cloud-edge.
 
 ## Why this project?
 
 Data portability often focuses on the mechanisms to exchange data and the
-formalisation of dat representation: the accent is rarely put
+formalisation of data representation: the emphasis is rarely put
 on the portability of security & privacy data policies.
 Enabling security and privacy data policy portability is clearly
 a step forward in enabling data sovereignty across different services.
@@ -55,7 +62,10 @@ The project is looking into
 - Translation from the security & privacy data policies vocabulary to other
     policy languages or APIs that are actually used for PEP.
 
-## Why Anubis?
+While Anubis is not subject to GDPR per se, it allows API owners to implement
+effective GDPR in their solutions.
+
+## Why did you pick Anubis as name?
 
 [Anubis](https://en.wikipedia.org/wiki/Anubis) is an ancient Egyptian god,
 that has multiple roles in the mythology of ancient Egypt. In particular,
@@ -63,13 +73,6 @@ we opted for this name, because he decides the fate of souls:
 based on their weights he allows the souls to ascend to a heavenly existence,
 or condemn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
 system for souls :)
-
-## Status
-
-The project is currently a Proof of Concept (POC) that explores how policy
-expressed using [Web Access control](https://solid.github.io/web-access-control-spec/)
-can be enforced via [OPA](https://www.openpolicyagent.org/) in the context of
-NGSIv2 APIs.
 
 ## Architecture
 
@@ -112,7 +115,7 @@ The figure below shows the current architecture.
     specific API to be protected
 1. In combination with the policies stored in the Policy Management API,
     that acts as PAP (Policy Administration Point);
-1. If the evaluation of the policies return 'allowed', then the request is
+1. If the evaluation of the policies returns `allowed`, then the request is
     forwarded to the API.
 
 ## Policy management
@@ -130,27 +133,29 @@ Anubis management, and JWT-based authentication. You can see Orion rules in this
 
 ### Policy format
 
-The policy internal data format is inspired by
-[Web Access control](https://solid.github.io/web-access-control-spec/).
-See [policy management api](anubis-management-api) for details.
+The formal policy specification is defined by the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
+as en extension to [Web Access control](https://solid.github.io/web-access-control-spec/).
+The internal representation is json-based, see [policy management api](anubis-management-api)
+for details.
 
 In general, a policy is defined by:
 
 - *actor*: The user, group or role, that is linked to the policy
-- *action*: The action allowed on this resource (e.g. acl:Read for GET requests)
-- *resource*: The urn of the resource being targeted (e.g. urn:entity:x)
+- *action*: The action allowed on this resource (e.g. `acl:Read`
+  for GET requests)
+- *resource*: The urn of the resource being targeted (e.g. `urn:entity:x`)
 - *resource_type*: The type of the resource.
+- *constraint* (to be implemented): The constraint that has to be satisfied to
+  authorize access.
 
-For the authorisation rules currently in place, the supported resource types
-are:
+The authorization rules currently in place supports the following resource
+types:
 
 - *entity*: NGSI entity
 - *entity_type*: NGSI entity type
 - *subscription*: NGSI subscription
 - *policy*: A policy of the Anubis Management API (to allow users to have
   control over the policies that are created)
-- *tenant*: A tenant (or Fiware service)
-- *service_path*: A Fiware service path under a given tenant.
 
 This can be extended by creating new
 [authorisation rules](config/opa-service/rego), and setting up the necessary
@@ -251,7 +256,7 @@ as well:
 - `DB_PASSWORD`: The password for the database user.
 - `DB_NAME`: The name of the database.
 
-For customising the default policies that are created alongside a tenant, see
+For customizing the default policies that are created alongside a tenant, see
 [the configuration file](config/opa-service/default_policies.yml) that's mounted
 as a volume in the policy-api service from the
 [docker-compose file](docker-compose.yaml).
@@ -281,9 +286,18 @@ To test the rego policy locally:
 
 ## Status and Roadmap
 
+[Release Notes](RELEASE_NOTES.md) provide a summary of implemented features and
+fixed bugs.
+
 For additional planned features you can
-check the pending [issues](https://github.com/orchestracities/anubis/issues).
+check the pending [issues](https://github.com/orchestracities/anubis/issues)
+and their mapping to [milestones](https://github.com/orchestracities/anubis/milestones).
 
 ## Credits
 
 - [JSON.lua package](config/opa-service/lua/JSON.lua) by Jeffrey Friedl
+
+## Sponsors
+
+- Anubis received funding as part of the Cascade Funding mechanisms of the EC
+  project [DAPSI](https://dapsi.ngi.eu/) - GA 871498.

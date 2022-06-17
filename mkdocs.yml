@@ -22,6 +22,7 @@ nav:
       - 'API Walkthrough': 'user/walkthrough.md'
   - 'Installation & Administration Manual':
       - 'Introduction': 'admin/index.md'
+      - 'Usage Scenarios': 'admin/scenario.md'
       - 'Installing Anubis': 'admin/install.md'
       - 'Data model': 'admin/datemodel.md'
       - 'Default policies': 'admin/default-policies.md'

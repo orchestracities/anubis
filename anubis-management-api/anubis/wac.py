@@ -7,6 +7,7 @@ import yaml
 import os
 
 acl = Namespace("http://www.w3.org/ns/auth/acl#")
+oc_acl = Namespace("http://voc.orchestracities.io/oc-acl#")
 
 # follow keycloak scheme
 # user urls should be /{realm}/users/{id}
@@ -46,6 +47,7 @@ def serialize(
     g = Graph()
     g.bind("foaf", FOAF)
     g.bind("acl", acl)
+    g.bind("oc_acl", oc_acl)
 
     if default_wac.get(fiware_service):
         n = Namespace(default_wac[fiware_service]["baseUrl"])
