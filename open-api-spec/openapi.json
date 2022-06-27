@@ -1029,6 +1029,208 @@
         }
       }
     },
+    "/v1/audit/logs": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "List all Access Logs",
+        "description": "TODO:\nLogs can be filtered by:\nIn case an JWT token is passed over ...",
+        "operationId": "read_access_logs_v1_audit_logs_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            },
+            "name": "user",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource",
+              "type": "string"
+            },
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Method",
+              "type": "string"
+            },
+            "name": "method",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Decision",
+              "type": "string"
+            },
+            "name": "decision",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Type",
+              "type": "string"
+            },
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Service",
+              "type": "string"
+            },
+            "name": "service",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fromdate",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "fromDate",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Todate",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "toDate",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Authorization",
+              "type": "string"
+            },
+            "name": "authorization",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Access Logs V1 Audit Logs Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccessLog"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Create Access Logs",
+        "operationId": "create_access_log_v1_audit_logs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Opa Logs",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OpaDecisionLogBase"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/": {
       "get": {
         "summary": "Return Anubis API endpoints",
@@ -1080,6 +1282,53 @@
   },
   "components": {
     "schemas": {
+      "AccessLog": {
+        "title": "AccessLog",
+        "required": [
+          "id",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "service": {
+            "title": "Service",
+            "type": "string"
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "user": {
+            "title": "User",
+            "type": "string"
+          },
+          "remote_ip": {
+            "title": "Remote Ip",
+            "type": "string"
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "AgentType": {
         "title": "AgentType",
         "required": [
@@ -1126,6 +1375,45 @@
           "name": {
             "title": "Name",
             "type": "string"
+          }
+        }
+      },
+      "OpaDecisionLogBase": {
+        "title": "OpaDecisionLogBase",
+        "required": [
+          "decision_id",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "decision_id": {
+            "title": "Decision Id",
+            "type": "string"
+          },
+          "input": {
+            "title": "Input",
+            "type": "object"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "labels": {
+            "title": "Labels",
+            "type": "object"
+          },
+          "metrics": {
+            "title": "Metrics",
+            "type": "object"
+          },
+          "result": {
+            "title": "Result",
+            "type": "object"
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
