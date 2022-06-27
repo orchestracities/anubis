@@ -78,6 +78,9 @@ request = {"user":subject, "action": method, "resource":path, "tenant":fiware_se
 # Compute link
 default header_link = ""
 
+# Compute service
+default service = "None"
+
 # Auth defaults to false
 default allow = {
     "allowed": false,
