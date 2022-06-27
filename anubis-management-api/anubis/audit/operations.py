@@ -60,3 +60,13 @@ def create_access_log(
     db.commit()
     db.refresh(db_access_log)
     return db_access_log
+
+
+def update_access_log(
+        db: Session,
+        access_log_id: str,
+        access_log: schemas.AccessLogCreate):
+    db.query(models.AccessLog).filter(models.AccessLog.id == access_log_id).update(
+        {"type": access_log.type, "service": access_log.service, "resource": access_log.resource, "method": access_log.method, "decision": access_log.decision, "user": access_log.user, "remote_ip": access_log.remote_ip, "timestamp": access_log.timestamp })
+    db.commit()
+    return access_log_id
