@@ -37,7 +37,7 @@ This feature could leverage a json query languages such as:
 
 ## Short overview
 
-The API is composed by two main paths:
+The API is composed by three main paths:
 
 * `/v1/tenants` supporting definition of tenants (FIWARE Services) and paths
     (FIWARE Service Paths).
@@ -48,6 +48,10 @@ The API is composed by two main paths:
     information linked to policies:
 
   * Agents (i.e. user or user groups definitions);
+
+  * Modes (i.e. type of action requested on the resource);
+
+* `/v1/audits` providing access logs, i.e. reports of policies' evaluations.
 
 ## Current status
 
@@ -106,8 +110,8 @@ The following activities need to be implemented as next steps:
 ```bash
 $ pipenv install --dev
 $ pipenv shell
-$ cd anubis
-$ uvicorn main:app --reload
+$ export DEFAULT_POLICIES_CONFIG_FILE=../config/opa-service/default_policies.ttl
+$ uvicorn anubis.main:app --reload
 ```
 
 ## Test the API

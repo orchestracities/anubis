@@ -6,24 +6,13 @@ from sqlalchemy.orm import Session
 from ..tenants import operations as so
 from ..wac import serialize as w_serialize
 from ..rego import serialize as r_serialize
+from ..utils import parse_auth_token
 import anubis.default as default
-import jwt
 
 
 router = APIRouter(prefix="/v1/policies",
                    tags=["policies"],
                    responses={404: {"description": "Not found"}},)
-
-
-def get_db_service_path(db: Session, tenant: str, service_path: str):
-    db_tenant = so.get_tenant_by_name(db, name=tenant)
-    if not db_tenant:
-        raise HTTPException(status_code=404, detail="Tenant not found")
-    db_service_path = so.get_tenant_service_path_by_path(
-        db, tenant_id=db_tenant.id, path=service_path)
-    if not db_service_path:
-        raise HTTPException(status_code=404, detail="Service Path not found")
-    return db_service_path
 
 
 def serialize_policy(policy: models.Policy):
@@ -41,20 +30,8 @@ def serialize_policy(policy: models.Policy):
         agent=agents)
 
 
-def parse_auth_token(auth_string: str):
-    token = auth_string.split(" ")
-    if token[0] == "Bearer":
-        token = token[1]
-        token = jwt.decode(token, options={"verify_signature": False})
-        user_info = {}
-        user_info["email"] = token["email"]
-        user_info["tenants"] = token["tenants"]
-        return user_info
-    return None
-
-
-def compute_policy_id(policy: models.Policy):
-    return policy.id
+#def compute_policy_id(policy: models.Policy):
+#    return policy.id
 
 
 @router.get("/access-modes",
@@ -160,9 +137,9 @@ def read_policies(
                 agent_type,
                 default.DEFAULT_AGENTS,
                 default.DEFAULT_AGENT_TYPES))
-    db_service_path = get_db_service_path(
+    db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
-    db_service_path_id = list(map(compute_policy_id, db_service_path))
+    db_service_path_id = list(map(so.compute_id, db_service_path))
     db_policies = operations.get_policies_by_service_path(
         db,
         tenant=fiware_service,
@@ -209,7 +186,7 @@ def read_policy(
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)):
-    db_service_path = get_db_service_path(
+    db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_policy = operations.get_policy(db, policy_id=policy_id)
     if not db_policy or db_service_path[0].id != db_policy.service_path_id:
@@ -248,9 +225,9 @@ def create_policy(
         raise HTTPException(
             status_code=422,
             detail="access_to field needs to be the same as fiware_service when using type tenant")
-    db_service_path = get_db_service_path(
+    db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
-    db_service_path_id = list(map(compute_policy_id, db_service_path))
+    db_service_path_id = list(map(so.compute_id, db_service_path))
     policies = []
     for agent in policy.agent:
         for mode in policy.mode:
@@ -292,9 +269,9 @@ def update(
         raise HTTPException(
             status_code=422,
             detail="access_to field needs to be the same as fiware_service when using type tenant")
-    db_service_path = get_db_service_path(
+    db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
-    db_service_path_id = list(map(compute_policy_id, db_service_path))
+    db_service_path_id = list(map(so.compute_id, db_service_path))
     db_policy = operations.get_policy(db, policy_id=policy_id)
     if not db_policy:
         raise HTTPException(status_code=404, detail="Policy not found")
@@ -335,7 +312,7 @@ def delete_policy(
     fiware_servicepath: Optional[str] = Header(
             None),
         db: Session = Depends(get_db)):
-    db_service_path = get_db_service_path(
+    db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_policy = operations.get_policy(db, policy_id=policy_id)
     if not db_policy:
