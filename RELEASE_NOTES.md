@@ -4,6 +4,8 @@
 
 ### New features
 
+- Implement access logs via OPA decision log collection (#17)
+
 ### Bug fixes
 
 ### Documentation
