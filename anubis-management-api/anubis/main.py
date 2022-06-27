@@ -1,6 +1,4 @@
-import gzip
-from fastapi import Depends, FastAPI, Body, Request, Response
-from fastapi.routing import APIRoute
+from fastapi import Depends, FastAPI, Response
 from anubis.tenants import routers as t
 from anubis.tenants import models as t_models
 from anubis.policies import routers as p
@@ -26,29 +24,7 @@ tags_metadata = [
     },
 ]
 
-class GzipRequest(Request):
-    async def body(self) -> bytes:
-        if not hasattr(self, "_body"):
-            body = await super().body()
-            if "gzip" in self.headers.getlist("Content-Encoding"):
-                body = gzip.decompress(body)
-            self._body = body
-        return self._body
-
-
-class GzipRoute(APIRoute):
-    def get_route_handler(self) -> Callable:
-        original_route_handler = super().get_route_handler()
-
-        async def custom_route_handler(request: Request) -> Response:
-            request = GzipRequest(request.scope, request.receive)
-            return await original_route_handler(request)
-
-        return custom_route_handler
-
-
 app = FastAPI()
-app.router.route_class = GzipRoute
 
 allowed_origins = os.environ.get(
     'CORS_ALLOWED_ORIGINS', "*").replace(" ", "").split(";")

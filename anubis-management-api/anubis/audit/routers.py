@@ -1,5 +1,7 @@
-from typing import List, Optional
-from fastapi import Depends, APIRouter, HTTPException, status, Response, Header
+import gzip
+from typing import Callable, List, Optional
+from fastapi import Depends, Body, Request, APIRouter, HTTPException, status, Response, Header
+from fastapi.routing import APIRoute
 from . import operations, models, schemas
 from ..tenants import operations as so
 from ..utils import parse_auth_token
@@ -7,12 +9,34 @@ import anubis.default as default
 from ..dependencies import get_db
 from sqlalchemy.orm import Session
 from datetime import datetime
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, PendingRollbackError
 import json
+
+
+class GzipRequest(Request):
+    async def body(self) -> bytes:
+        if not hasattr(self, "_body"):
+            body = await super().body()
+            if "gzip" in self.headers.getlist("Content-Encoding"):
+                body = gzip.decompress(body)
+            self._body = body
+        return self._body
+
+
+class GzipRoute(APIRoute):
+    def get_route_handler(self) -> Callable:
+        original_route_handler = super().get_route_handler()
+
+        async def custom_route_handler(request: Request) -> Response:
+            request = GzipRequest(request.scope, request.receive)
+            return await original_route_handler(request)
+
+        return custom_route_handler
+
 
 router = APIRouter(prefix="/v1/audit",
                    tags=["audit"],
-                   responses={404: {"description": "Not found"}},)
+                   responses={404: {"description": "Not found"}}, route_class=GzipRoute)
 
 
 @router.get("/logs",
@@ -65,7 +89,7 @@ def read_access_logs(
 
 @router.post("/logs",
             response_class=Response,
-            status_code=status.HTTP_201_CREATED,
+            status_code=status.HTTP_200_OK,
             summary="Create Access Logs")
 def create_access_log(
         response: Response,
@@ -134,15 +158,16 @@ def create_access_log(
                 timestamp = opa_log.timestamp
             )
             operations.create_access_log(db, access_log, service_path_id)
-        except Exception as e:
-            error = { 'id': opa_log.decision_id, 'errorType': type(e).__name__}
-            if isinstance(e,IntegrityError):
-                error['errorMessage'] = e._message()
-            if isinstance(e,HTTPException):
-                error['errorMessage'] = e.detail
+        except IntegrityError:
+            db.rollback()
+            operations.update_access_log(db, opa_log.decision_id, access_log)
+        except HTTPException as e:
+            error = { 'id': opa_log.decision_id, 'errorType': type(e).__name__, 'errorMessage': e.detail}
             errors.append(error)
+        except Exception as e:
+            print(e)
     if errors and len(errors) > 0:
-        raise HTTPException(status_code=422, detail=errors)
+        raise HTTPException(status_code=200, detail=errors)
     else:
-        response.status_code = status.HTTP_201_CREATED
+        response.status_code = status.HTTP_200_OK
     return response
