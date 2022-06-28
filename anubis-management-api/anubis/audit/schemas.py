@@ -17,7 +17,11 @@ class OpaDecisionLogBase(BaseModel):
     timestamp: datetime
 
 
-class AccessLogBase(BaseModel):
+class OpaDecisionLog(OpaDecisionLogBase):
+    pass
+
+
+class AuditLogBase(BaseModel):
     id: str
     type: str = None
     service: str = None
@@ -29,14 +33,14 @@ class AccessLogBase(BaseModel):
     timestamp: datetime
 
 
-class AccessLogCreate(AccessLogBase):
+class AuditLogCreate(AuditLogBase):
     pass
 
 
-class AccessLog(AccessLogBase):
+class AuditLog(AuditLogBase):
 
     class Config:
         orm_mode = True
 
 
-AccessLog.update_forward_refs()
+AuditLog.update_forward_refs()

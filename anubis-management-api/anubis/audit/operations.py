@@ -19,65 +19,82 @@ def get_logs_by_service_path(
         limit: int = 100,
         user_info: dict = None):
     db_logs = db.query(
-        models.AccessLog).filter(
-        models.AccessLog.service_path_id.in_(service_path_id))
+        models.AuditLog).filter(
+        models.AuditLog.service_path_id.in_(service_path_id))
     if resource:
         db_logs = db_logs.filter(
-            models.AccessLog.resource.contains(resource))
+            models.AuditLog.resource.contains(resource))
     if method:
         db_logs = db_logs.filter(
-            models.AccessLog.method.contains(method))
+            models.AuditLog.method.contains(method))
     if user:
         db_logs = db_logs.filter(
-            models.AccessLog.user.contains(user))
+            models.AuditLog.user.contains(user))
     if decision:
         db_logs = db_logs.filter(
-            models.AccessLog.decision.contains(decision))
+            models.AuditLog.decision.contains(decision))
     if type:
         db_logs = db_logs.filter(
-            models.AccessLog.type.contains(type))
+            models.AuditLog.type.contains(type))
     if service:
         db_logs = db_logs.filter(
-            models.AccessLog.service.contains(service))
+            models.AuditLog.service.contains(service))
     if fromDate:
         db_logs = db_logs.filter(
-            models.AccessLog.timestamp > fromDate)
+            models.AuditLog.timestamp > fromDate)
     if toDate:
         db_logs = db_logs.filter(
-            models.AccessLog.timestamp < toDate)
+            models.AuditLog.timestamp < toDate)
     if user_info:
         db_logs = None
     return db_logs.offset(skip).limit(limit).all()
 
 
-def create_access_log(
+def get_log_by_id_and_service_path(
         db: Session,
-        access_log: schemas.AccessLogCreate,
+        audit_id: str,
+        service_path_id: str,
+        user_info: dict = None):
+    db_logs = db.query(
+        models.AuditLog).filter(
+        models.AuditLog.service_path_id.in_(service_path_id)).filter(
+        models.AuditLog.id == audit_id)
+    return db_logs.first()
+
+
+def create_audit_log(
+        db: Session,
+        audit_log: schemas.AuditLogCreate,
         service_path_id: str):
-    db_access_log = models.AccessLog(
-        **access_log.dict(),
+    db_audit_log = models.AuditLog(
+        **audit_log.dict(),
         service_path_id=service_path_id)
-    db.add(db_access_log)
+    db.add(db_audit_log)
     db.commit()
-    db.refresh(db_access_log)
-    return db_access_log
+    db.refresh(db_audit_log)
+    return db_audit_log
 
 
-def update_access_log(
+def update_audit_log(
         db: Session,
-        access_log_id: str,
-        access_log: schemas.AccessLogCreate):
+        audit_log_id: str,
+        audit_log: schemas.AuditLogCreate):
     db.query(
-        models.AccessLog).filter(
-        models.AccessLog.id == access_log_id).update(
+        models.AuditLog).filter(
+        models.AuditLog.id == audit_log_id).update(
             {
-                "type": access_log.type,
-                "service": access_log.service,
-                "resource": access_log.resource,
-                "method": access_log.method,
-                "decision": access_log.decision,
-                "user": access_log.user,
-                "remote_ip": access_log.remote_ip,
-                "timestamp": access_log.timestamp})
+                "type": audit_log.type,
+                "service": audit_log.service,
+                "resource": audit_log.resource,
+                "method": audit_log.method,
+                "decision": audit_log.decision,
+                "user": audit_log.user,
+                "remote_ip": audit_log.remote_ip,
+                "timestamp": audit_log.timestamp})
     db.commit()
-    return access_log_id
+    return audit_log_id
+
+
+def delete_log(db: Session, log: schemas.AuditLogCreate):
+    db.delete(log)
+    db.commit()

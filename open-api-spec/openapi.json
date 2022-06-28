@@ -1036,7 +1036,7 @@
         ],
         "summary": "List all Access Logs",
         "description": "TODO:\nLogs can be filtered by:\nIn case an JWT token is passed over ...",
-        "operationId": "read_access_logs_v1_audit_logs_get",
+        "operationId": "read_audit_logs_v1_audit_logs_get",
         "parameters": [
           {
             "required": false,
@@ -1170,7 +1170,7 @@
                   "title": "Response Read Access Logs V1 Audit Logs Get",
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AccessLog"
+                    "$ref": "#/components/schemas/AuditLog"
                   }
                 }
               }
@@ -1196,7 +1196,7 @@
           "audit"
         ],
         "summary": "Create Access Logs",
-        "operationId": "create_access_log_v1_audit_logs_post",
+        "operationId": "create_audit_log_v1_audit_logs_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1204,7 +1204,7 @@
                 "title": "Opa Logs",
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/OpaDecisionLogBase"
+                  "$ref": "#/components/schemas/OpaDecisionLog"
                 }
               }
             }
@@ -1282,8 +1282,8 @@
   },
   "components": {
     "schemas": {
-      "AccessLog": {
-        "title": "AccessLog",
+      "AuditLog": {
+        "title": "AuditLog",
         "required": [
           "id",
           "timestamp"
@@ -1378,8 +1378,8 @@
           }
         }
       },
-      "OpaDecisionLogBase": {
-        "title": "OpaDecisionLogBase",
+      "OpaDecisionLog": {
+        "title": "OpaDecisionLog",
         "required": [
           "decision_id",
           "timestamp"
