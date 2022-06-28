@@ -64,20 +64,20 @@ def test_audit_logs(test_db):
                         }
                     }
                 },
-                "parsed_body": null,
+                "parsed_body": None,
                 "parsed_path": [
                     "v2",
                     "entities"
                 ],
                 "parsed_query": {},
-                "truncated_body": false,
+                "truncated_body": False,
                 "version": {
                     "encoding": "protojson",
                     "ext_authz": "v3"
                 }
             },
             "result": {
-                "allowed": true,
+                "allowed": True,
                 "response_headers_to_add": {
                     "Link": "<http://policy-api:8000/v1/policies/?resource=*&&type=entity>; rel=\"acl\""
                 }
