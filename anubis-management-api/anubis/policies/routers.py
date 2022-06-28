@@ -30,7 +30,7 @@ def serialize_policy(policy: models.Policy):
         agent=agents)
 
 
-#def compute_policy_id(policy: models.Policy):
+# def compute_policy_id(policy: models.Policy):
 #    return policy.id
 
 
