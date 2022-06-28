@@ -382,7 +382,8 @@ In case an JWT token is passed over ...
 | ---- | ---------- | ----------- | -------- | ---- |
 | user | query |  | No | string |
 | resource | query |  | No | string |
-| method | query |  | No | string |
+| resource_type | query |  | No | string |
+| mode | query |  | No | string |
 | decision | query |  | No | string |
 | type | query |  | No | string |
 | service | query |  | No | string |
@@ -517,7 +518,8 @@ Simple healthcheck endpoint
 | type | string |  | No |
 | service | string |  | No |
 | resource | string |  | No |
-| method | string |  | No |
+| resource_type | string |  | No |
+| mode | string |  | No |
 | decision | string |  | No |
 | user | string |  | No |
 | remote_ip | string |  | No |
