@@ -8,6 +8,14 @@ client = TestClient(app)
 
 def test_audit_logs(test_db):
     response = client.post(
+     "/v1/tenants/",
+     json={"name": "test"}
+    )
+    assert response.status_code == 201
+    tenant_id = response.headers["tenant-id"]
+    assert tenant_id
+
+    response = client.post(
         "/v1/audit/logs",
         json=[{
             "labels": {
