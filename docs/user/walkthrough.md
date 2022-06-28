@@ -368,7 +368,7 @@ Delete a policy for a given Tenant and Service Path
 #### GET
 ##### Summary:
 
-List all Access Logs
+List all Audit Logs
 
 ##### Description:
 
@@ -405,13 +405,58 @@ In case an JWT token is passed over ...
 #### POST
 ##### Summary:
 
-Create Access Logs
+Create Audit Logs
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+### /v1/audit/logs/{audit_id}
+
+#### GET
+##### Summary:
+
+Get an Audit Log
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| audit_id | path |  | Yes | string |
+| authorization | header |  | No | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+#### DELETE
+##### Summary:
+
+Delete an Audit Log for a given Tenant and Service Path
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| audit_id | path |  | Yes | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | Successful Response |
 | 404 | Not found |
 | 422 | Validation Error |
 
@@ -457,6 +502,13 @@ Simple healthcheck endpoint
 ### Models
 
 
+#### AgentType
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| iri | string |  | Yes |
+| name | string |  | Yes |
+
 #### AuditLog
 
 | Name | Type | Description | Required |
@@ -470,13 +522,6 @@ Simple healthcheck endpoint
 | user | string |  | No |
 | remote_ip | string |  | No |
 | timestamp | dateTime |  | Yes |
-
-#### AgentType
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| iri | string |  | Yes |
-| name | string |  | Yes |
 
 #### HTTPValidationError
 

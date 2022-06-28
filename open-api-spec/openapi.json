@@ -1034,7 +1034,7 @@
         "tags": [
           "audit"
         ],
-        "summary": "List all Access Logs",
+        "summary": "List all Audit Logs",
         "description": "TODO:\nLogs can be filtered by:\nIn case an JWT token is passed over ...",
         "operationId": "read_audit_logs_v1_audit_logs_get",
         "parameters": [
@@ -1167,7 +1167,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Access Logs V1 Audit Logs Get",
+                  "title": "Response Read Audit Logs V1 Audit Logs Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/AuditLog"
@@ -1195,7 +1195,7 @@
         "tags": [
           "audit"
         ],
-        "summary": "Create Access Logs",
+        "summary": "Create Audit Logs",
         "operationId": "create_audit_log_v1_audit_logs_post",
         "requestBody": {
           "content": {
@@ -1213,6 +1213,134 @@
         },
         "responses": {
           "200": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/audit/logs/{audit_id}": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Get an Audit Log",
+        "operationId": "read_audit_log_v1_audit_logs__audit_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Audit Id",
+              "type": "string"
+            },
+            "name": "audit_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Authorization",
+              "type": "string"
+            },
+            "name": "authorization",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLog"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Delete an Audit Log for a given Tenant and Service Path",
+        "operationId": "delete_log_v1_audit_logs__audit_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Audit Id",
+              "type": "string"
+            },
+            "name": "audit_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "Successful Response"
           },
           "404": {
@@ -1282,6 +1410,24 @@
   },
   "components": {
     "schemas": {
+      "AgentType": {
+        "title": "AgentType",
+        "required": [
+          "iri",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "iri": {
+            "title": "Iri",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        }
+      },
       "AuditLog": {
         "title": "AuditLog",
         "required": [
@@ -1326,24 +1472,6 @@
             "title": "Timestamp",
             "type": "string",
             "format": "date-time"
-          }
-        }
-      },
-      "AgentType": {
-        "title": "AgentType",
-        "required": [
-          "iri",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "iri": {
-            "title": "Iri",
-            "type": "string"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string"
           }
         }
       },
