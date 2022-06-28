@@ -28,4 +28,4 @@ nav:
       - 'Default policies': 'admin/default-policies.md'
       - 'Turtle serialization': 'admin/Turtle-serialization.md'
       - 'Customize': 'admin/customize.md'
-      - 'Logs': 'admin/logs.md'
+      - 'Audit': 'admin/audit.md'

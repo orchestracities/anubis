@@ -26,7 +26,8 @@ class AuditLogBase(BaseModel):
     type: str = None
     service: str = None
     resource: str = None
-    method: str = None
+    resource_type: str = None
+    mode: str = None
     decision: str = None
     user: Optional[str] = None
     remote_ip: str = None

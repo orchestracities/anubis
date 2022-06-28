@@ -149,5 +149,3 @@ header_link = link {
   not current_path[3]
   link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","subscription"])
 }
-
-service = "orion"
