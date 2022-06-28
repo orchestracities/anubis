@@ -92,32 +92,34 @@ def read_audit_logs(
     return db_logs
 
 
-
 @router.get("/logs/{audit_id}",
             response_model=schemas.AuditLog,
             summary="Get an Audit Log")
 def read_audit_log(audit_id: str,
-        authorization: Optional[str] = Header(
-            None),
-        fiware_service: Optional[str] = Header(
-            None),
-        fiware_servicepath: Optional[str] = Header(
-            '/#'),
-        db: Session = Depends(get_db)):
+                   authorization: Optional[str] = Header(
+                       None),
+                   fiware_service: Optional[str] = Header(
+                       None),
+                   fiware_servicepath: Optional[str] = Header(
+                       '/#'),
+                   db: Session = Depends(get_db)):
     db_tenant = so.get_tenant_by_name(db, name=fiware_service)
     if not db_tenant:
-        raise HTTPException(status_code=404, detail="Tenant {} not found".format(fiware_service))
-    db_service_path = so.get_db_service_path(db, fiware_service, fiware_servicepath)
+        raise HTTPException(
+            status_code=404,
+            detail="Tenant {} not found".format(fiware_service))
+    db_service_path = so.get_db_service_path(
+        db, fiware_service, fiware_servicepath)
     if not db_service_path:
         raise HTTPException(
             status_code=404,
             detail="Service Path {} not found".format(fiware_servicepath))
     db_service_path_id = list(map(so.compute_id, db_service_path))
     db_log = operations.get_log_by_id_and_service_path(
-            db,
-            audit_id,
-            db_service_path_id,
-            None)
+        db,
+        audit_id,
+        db_service_path_id,
+        None)
     if not db_log:
         raise HTTPException(
             status_code=404,
@@ -205,15 +207,15 @@ def create_audit_log(
                         detail="Service Path {} not found".format(service_path))
                 service_path_id = service_path_db[0].id
             audit_log = schemas.AuditLogCreate(id=opa_log.decision_id,
-                                                 type="access",
-                                                 service=service,
-                                                 resource=resource,
-                                                 method=method,
-                                                 decision=decision,
-                                                 user=user,
-                                                 remote_ip=remote_ip,
-                                                 timestamp=opa_log.timestamp
-                                                 )
+                                               type="access",
+                                               service=service,
+                                               resource=resource,
+                                               method=method,
+                                               decision=decision,
+                                               user=user,
+                                               remote_ip=remote_ip,
+                                               timestamp=opa_log.timestamp
+                                               )
             operations.create_audit_log(db, audit_log, service_path_id)
         except IntegrityError:
             db.rollback()
@@ -247,18 +249,21 @@ def delete_log(
         db: Session = Depends(get_db)):
     db_tenant = so.get_tenant_by_name(db, name=fiware_service)
     if not db_tenant:
-        raise HTTPException(status_code=404, detail="Tenant {} not found".format(fiware_service))
-    db_service_path = so.get_db_service_path(db, fiware_service, fiware_servicepath)
+        raise HTTPException(
+            status_code=404,
+            detail="Tenant {} not found".format(fiware_service))
+    db_service_path = so.get_db_service_path(
+        db, fiware_service, fiware_servicepath)
     if not db_service_path:
         raise HTTPException(
             status_code=404,
             detail="Service Path {} not found".format(fiware_servicepath))
     db_service_path_id = list(map(so.compute_id, db_service_path))
     db_log = operations.get_log_by_id_and_service_path(
-            db,
-            audit_id,
-            db_service_path_id,
-            None)
+        db,
+        audit_id,
+        db_service_path_id,
+        None)
     if not db_log:
         raise HTTPException(
             status_code=404,
