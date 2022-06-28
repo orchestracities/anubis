@@ -44,9 +44,9 @@ router = APIRouter(
 
 
 @router.get("/logs",
-            response_model=List[schemas.AccessLog],
-            summary="List all Access Logs")
-def read_access_logs(
+            response_model=List[schemas.AuditLog],
+            summary="List all Audit Logs")
+def read_audit_logs(
         authorization: Optional[str] = Header(
             None),
         fiware_service: Optional[str] = Header(
@@ -92,13 +92,49 @@ def read_access_logs(
     return db_logs
 
 
+
+@router.get("/logs/{audit_id}",
+            response_model=schemas.AuditLog,
+            summary="Get an Audit Log")
+def read_audit_log(audit_id: str,
+        authorization: Optional[str] = Header(
+            None),
+        fiware_service: Optional[str] = Header(
+            None),
+        fiware_servicepath: Optional[str] = Header(
+            '/#'),
+        db: Session = Depends(get_db)):
+    db_tenant = so.get_tenant_by_name(db, name=fiware_service)
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant {} not found".format(fiware_service))
+    db_service_path = so.get_db_service_path(db, fiware_service, fiware_servicepath)
+    if not db_service_path:
+        raise HTTPException(
+            status_code=404,
+            detail="Service Path {} not found".format(fiware_servicepath))
+    db_service_path_id = list(map(so.compute_id, db_service_path))
+    db_log = operations.get_log_by_id_and_service_path(
+            db,
+            audit_id,
+            db_service_path_id,
+            None)
+    if not db_log:
+        raise HTTPException(
+            status_code=404,
+            detail="Audit Log {} not found".format(audit_id))
+    return db_log
+
+
+#  Opa expects HTTP_200_OK HTTP_201_CREATED and other status will not be
+#  considered valid and will cause infinite retries.
+#  TODO see issue https://github.com/open-policy-agent/opa/issues/4820
 @router.post("/logs",
              response_class=Response,
              status_code=status.HTTP_200_OK,
-             summary="Create Access Logs")
-def create_access_log(
+             summary="Create Audit Logs")
+def create_audit_log(
         response: Response,
-        opa_logs: List[schemas.OpaDecisionLogBase],
+        opa_logs: List[schemas.OpaDecisionLog],
         db: Session = Depends(get_db)):
     errors = []
     for opa_log in opa_logs:
@@ -166,11 +202,9 @@ def create_access_log(
                 if not service_path_db:
                     raise HTTPException(
                         status_code=404,
-                        detail="Service Path " +
-                        service_path +
-                        " not found")
+                        detail="Service Path {} not found".format(service_path))
                 service_path_id = service_path_db[0].id
-            access_log = schemas.AccessLogCreate(id=opa_log.decision_id,
+            audit_log = schemas.AuditLogCreate(id=opa_log.decision_id,
                                                  type="access",
                                                  service=service,
                                                  resource=resource,
@@ -180,10 +214,10 @@ def create_access_log(
                                                  remote_ip=remote_ip,
                                                  timestamp=opa_log.timestamp
                                                  )
-            operations.create_access_log(db, access_log, service_path_id)
+            operations.create_audit_log(db, audit_log, service_path_id)
         except IntegrityError:
             db.rollback()
-            operations.update_access_log(db, opa_log.decision_id, access_log)
+            operations.update_audit_log(db, opa_log.decision_id, audit_log)
         except HTTPException as e:
             error = {
                 'id': opa_log.decision_id,
@@ -196,4 +230,40 @@ def create_access_log(
         raise HTTPException(status_code=200, detail=errors)
     else:
         response.status_code = status.HTTP_200_OK
+    return response
+
+
+@router.delete("/logs/{audit_id}",
+               response_class=Response,
+               status_code=status.HTTP_204_NO_CONTENT,
+               summary="Delete an Audit Log for a given Tenant and Service Path")
+def delete_log(
+        response: Response,
+        audit_id: str,
+        fiware_service: Optional[str] = Header(
+            None),
+        fiware_servicepath: Optional[str] = Header(
+            "/#"),
+        db: Session = Depends(get_db)):
+    db_tenant = so.get_tenant_by_name(db, name=fiware_service)
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant {} not found".format(fiware_service))
+    db_service_path = so.get_db_service_path(db, fiware_service, fiware_servicepath)
+    if not db_service_path:
+        raise HTTPException(
+            status_code=404,
+            detail="Service Path {} not found".format(fiware_servicepath))
+    db_service_path_id = list(map(so.compute_id, db_service_path))
+    db_log = operations.get_log_by_id_and_service_path(
+            db,
+            audit_id,
+            db_service_path_id,
+            None)
+    if not db_log:
+        raise HTTPException(
+            status_code=404,
+            detail="Audit Log {} not found".format(audit_id))
+    operations.delete_log(db=db, log=db_log)
+    response.headers["Audit-ID"] = audit_id
+    response.status_code = status.HTTP_204_NO_CONTENT
     return response

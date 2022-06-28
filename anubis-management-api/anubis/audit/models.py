@@ -2,8 +2,8 @@ from sqlalchemy import Column, ForeignKey, String, DateTime
 from ..database import Base, autocommit_engine
 
 
-class AccessLog(Base):
-    __tablename__ = "access_log"
+class AuditLog(Base):
+    __tablename__ = "audit_log"
 
     id = Column(String, primary_key=True, index=True)
     type = Column(String, index=True)

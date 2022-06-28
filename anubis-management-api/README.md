@@ -51,7 +51,7 @@ The API is composed by three main paths:
 
   * Modes (i.e. type of action requested on the resource);
 
-* `/v1/audits` providing access logs, i.e. reports of policies' evaluations.
+* `/v1/audits` providing audit logs, i.e. reports of policies' evaluations.
 
 ## Current status
 

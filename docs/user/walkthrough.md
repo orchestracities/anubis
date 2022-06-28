@@ -457,7 +457,7 @@ Simple healthcheck endpoint
 ### Models
 
 
-#### AccessLog
+#### AuditLog
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -491,7 +491,7 @@ Simple healthcheck endpoint
 | iri | string |  | Yes |
 | name | string |  | Yes |
 
-#### OpaDecisionLogBase
+#### OpaDecisionLog
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
