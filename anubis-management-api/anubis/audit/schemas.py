@@ -15,7 +15,7 @@ class OpaDecisionLogBase(BaseModel):
     metrics: dict = None
     result: dict = None
     timestamp: datetime
-    
+
 
 class AccessLogBase(BaseModel):
     id: str
