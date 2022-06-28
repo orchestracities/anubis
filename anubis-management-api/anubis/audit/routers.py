@@ -55,7 +55,8 @@ def read_audit_logs(
             '/#'),
         user: Optional[str] = None,
         resource: Optional[str] = None,
-        method: Optional[str] = None,
+        resource_type: Optional[str] = None,
+        mode: Optional[str] = None,
         decision: Optional[str] = None,
         type: Optional[str] = None,
         service: Optional[str] = None,
@@ -80,7 +81,8 @@ def read_audit_logs(
         service_path_id=db_service_path_id,
         user=user,
         resource=resource,
-        method=method,
+        resource_type=resource_type,
+        mode=mode,
         decision=decision,
         type=type,
         service=service,
@@ -149,26 +151,29 @@ def create_audit_log(
                 raise HTTPException(
                     status_code=422,
                     detail="Decision cannot be none")
-            # at the time being we simplify logging the method and not the mode
-            method = None
-            if opa_log.input['attributes']['request']['http']['method']:
-                method = opa_log.input['attributes']['request']['http']['method']
-            if not method:
+            mode = None
+            if opa_log.input['mode']:
+                mode = opa_log.input['mode']
+            if not mode:
                 raise HTTPException(
-                    status_code=422, detail="Method cannot be none")
-            # at the time being we simplify logging as resource the request
-            # path
+                    status_code=422, detail="Mode cannot be none")
             resource = None
-            if opa_log.input['attributes']['request']['http']['path']:
-                resource = opa_log.input['attributes']['request']['http']['path']
+            if opa_log.input['resource']:
+                resource = opa_log.input['resource']
             if not resource:
                 raise HTTPException(
                     status_code=422,
                     detail="Resource cannot be none")
-            # at the time being we simplify logging as service the host
+            resource_type = None
+            if opa_log.input['resource_type']:
+                resource_type = opa_log.input['resource_type']
+            if not resource_type:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Resource Type cannot be none")
             service = None
-            if opa_log.input['attributes']['request']['http']['host']:
-                service = opa_log.input['attributes']['request']['http']['host']
+            if opa_log.input['service']:
+                service = opa_log.input['service']
             if not service:
                 raise HTTPException(
                     status_code=422,
@@ -208,7 +213,8 @@ def create_audit_log(
                                                  type="access",
                                                  service=service,
                                                  resource=resource,
-                                                 method=method,
+                                                 resource_type=resource_type,
+                                                 mode=mode,
                                                  decision=decision,
                                                  user=user,
                                                  remote_ip=remote_ip,

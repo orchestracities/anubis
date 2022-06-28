@@ -14,7 +14,8 @@ class AuditLog(Base):
             ondelete="CASCADE"))
     service = Column(String, index=True)
     resource = Column(String, index=True)
-    method = Column(String, index=True)
+    resource_type = Column(String, index=True)
+    mode = Column(String, index=True)
     decision = Column(String, index=True)
     # on resource creation, we should identify the owner
     user = Column(String, index=True, nullable=True)

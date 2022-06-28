@@ -9,7 +9,8 @@ def get_logs_by_service_path(
         service_path_id: str,
         user: str = None,
         resource: str = None,
-        method: str = None,
+        resource_type: str = None,
+        mode: str = None,
         decision: str = None,
         type: str = None,
         service: str = None,
@@ -24,9 +25,12 @@ def get_logs_by_service_path(
     if resource:
         db_logs = db_logs.filter(
             models.AuditLog.resource.contains(resource))
-    if method:
+    if resource_type:
         db_logs = db_logs.filter(
-            models.AuditLog.method.contains(method))
+            models.AuditLog.resource_type.contains(resource_type))
+    if mode:
+        db_logs = db_logs.filter(
+            models.AuditLog.mode.contains(mode))
     if user:
         db_logs = db_logs.filter(
             models.AuditLog.user.contains(user))
@@ -86,7 +90,8 @@ def update_audit_log(
                 "type": audit_log.type,
                 "service": audit_log.service,
                 "resource": audit_log.resource,
-                "method": audit_log.method,
+                "resource_type": audit_log.resource_type,
+                "mode": audit_log.mode,
                 "decision": audit_log.decision,
                 "user": audit_log.user,
                 "remote_ip": audit_log.remote_ip,

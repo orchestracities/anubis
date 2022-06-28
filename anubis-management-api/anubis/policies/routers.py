@@ -76,15 +76,132 @@ policies_not_json_responses = {
                     "type": "string"
                 },
                 "example": {
-                    """package enyoy.authz.4385a69f-6d3d-49ed-b342-848f30297a05
-                    'tenant = "EKZ"
-                    {...}
-                    resource_allowed {
-                        fiware_service = tenant
-                        is_token_valid
-                        glob.match("/v2/entities/", ["/"], path)
-                        contains_element(scope_method["acl:Read"], method)
-                        glob.match("/", ["/"], fiware_servicepath)
+                    """
+                    {
+                      "user_permissions": {
+                        "admin@mail.com": [
+                          {
+                            "id": "16c79213-5f9a-42c0-a37f-307c3c1614c3",
+                            "action": "acl:Control",
+                            "resource": "urn:ngsi-ld:AirQualityObserved:demo",
+                            "resource_type": "entity",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          }
+                        ]
+                      },
+                      "default_user_permissions": {},
+                      "group_permissions": {
+                        "User": [
+                          {
+                            "id": "1180e176-a39b-4dd0-b261-1c030123395d",
+                            "action": "acl:Read",
+                            "resource": "/v2/entities/some_entity",
+                            "resource_type": "entity",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          }
+                        ]
+                      },
+                      "default_group_permissions": {},
+                      "role_permissions": {
+                        "AuthenticatedAgent": [
+                          {
+                            "id": "eecd7954-03e9-4a58-9076-79c4c9fa26d5",
+                            "action": "acl:Write",
+                            "resource": "*",
+                            "resource_type": "entity",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "91934c76-5017-44c4-9cc8-8fac8ebffa59",
+                            "action": "acl:Control",
+                            "resource": "*",
+                            "resource_type": "entity",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "6d0d3663-125a-494e-9f18-aa0d2e8725a3",
+                            "action": "acl:Read",
+                            "resource": "*",
+                            "resource_type": "policy",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "cdd1530d-669d-41d2-b79e-62eb4f70428e",
+                            "action": "acl:Write",
+                            "resource": "*",
+                            "resource_type": "policy",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "0860514b-da0f-4e89-813b-4675aef1e2fe",
+                            "action": "acl:Read",
+                            "resource": "Tenant1",
+                            "resource_type": "tenant",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "15f707e6-efd5-481a-b624-ea90046876da",
+                            "action": "acl:Write",
+                            "resource": "Tenant1",
+                            "resource_type": "tenant",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "0641364c-9215-4f2e-aa0b-577d6bb9a4a3",
+                            "action": "acl:Read",
+                            "resource": "/",
+                            "resource_type": "service_path",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "685f98a3-71cb-4867-86e5-939bb838786b",
+                            "action": "acl:Write",
+                            "resource": "/",
+                            "resource_type": "service_path",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          }
+                        ]
+                      },
+                      "default_role_permissions": {
+                        "AuthenticatedAgent": [
+                          {
+                            "id": "f0c9d421-5da5-439b-85b9-84d6636af9d8",
+                            "action": "acl:Read",
+                            "resource": "default",
+                            "resource_type": "entity",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          }
+                        ],
+                        "Admin": [
+                          {
+                            "id": "5700d831-4f59-4f2c-9aab-01ab010193cd",
+                            "action": "acl:Control",
+                            "resource": "default",
+                            "resource_type": "policy",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          },
+                          {
+                            "id": "6caff4de-ce49-4cd3-a3d8-1a808bd4cbbd",
+                            "action": "acl:Control",
+                            "resource": "default",
+                            "resource_type": "entity",
+                            "service_path": "/",
+                            "tenant": "Tenant1"
+                          }
+                        ]
+                      }
                     }"""
                 }
             }
