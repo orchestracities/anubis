@@ -19,6 +19,7 @@ nav:
   - 'User & Programmers Manual':
       - 'Introduction': 'user/index.md'
       - 'Policies': 'user/policies.md'
+      - 'Audit': 'user/audit.md'
       - 'API Walkthrough': 'user/walkthrough.md'
   - 'Installation & Administration Manual':
       - 'Introduction': 'admin/index.md'
@@ -28,4 +29,3 @@ nav:
       - 'Default policies': 'admin/default-policies.md'
       - 'Turtle serialization': 'admin/Turtle-serialization.md'
       - 'Customize': 'admin/customize.md'
-      - 'Audit': 'admin/audit.md'
