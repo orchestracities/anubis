@@ -212,16 +212,16 @@ def create_audit_log(
                         detail="Service Path {} not found".format(service_path))
                 service_path_id = service_path_db[0].id
             audit_log = schemas.AuditLogCreate(id=opa_log.decision_id,
-                                                 type="access",
-                                                 service=service,
-                                                 resource=resource,
-                                                 resource_type=resource_type,
-                                                 mode=mode,
-                                                 decision=decision,
-                                                 user=user,
-                                                 remote_ip=remote_ip,
-                                                 timestamp=opa_log.timestamp
-                                                 )
+                                               type="access",
+                                               service=service,
+                                               resource=resource,
+                                               resource_type=resource_type,
+                                               mode=mode,
+                                               decision=decision,
+                                               user=user,
+                                               remote_ip=remote_ip,
+                                               timestamp=opa_log.timestamp
+                                               )
             operations.create_audit_log(db, audit_log, service_path_id)
         except IntegrityError:
             db.rollback()
