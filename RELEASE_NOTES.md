@@ -10,6 +10,8 @@
 
 ### Documentation
 
+- Document installation
+
 ### Continuous Integration
 
 ### Technical debt
