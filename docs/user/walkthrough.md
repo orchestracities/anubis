@@ -1,6 +1,4 @@
 <!-- markdownlint-disable -->
-<!-- markdownlint-disable -->
-<!-- markdownlint-disable -->
 # Anubis
 Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.
 
