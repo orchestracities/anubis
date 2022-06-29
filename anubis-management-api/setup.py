@@ -8,6 +8,7 @@ Modified by Madoshakalaka@Github (dependency links added)
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 from os import path
+from anubis.version import ANUBIS_VERSION
 
 long_description = """
 This package contains the Anubis Policy Management API. For more information,
@@ -19,7 +20,7 @@ visit the [Github Page](https://github.com/orchestracities/anubis).
 
 setup(
     name="anubis-policy-api",  # Required
-    version="0.3.0-dev",  # Required
+    version=ANUBIS_VERSION,  # Required
     description="The main module of anubis",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional
