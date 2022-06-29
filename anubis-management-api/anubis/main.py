@@ -1,8 +1,10 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Response
 from anubis.tenants import routers as t
 from anubis.tenants import models as t_models
 from anubis.policies import routers as p
 from anubis.policies import models as p_models
+from anubis.audit import routers as a
+from anubis.audit import models as a_models
 from anubis.version import ANUBIS_VERSION
 from fastapi.openapi.utils import get_openapi
 from anubis.database import engine
@@ -46,6 +48,7 @@ app.add_middleware(
 
 app.include_router(t.router)
 app.include_router(p.router)
+app.include_router(a.router)
 
 
 @app.get("/v1/", summary="Return Anubis API endpoints")
@@ -66,6 +69,7 @@ async def v1_version():
 def on_startup():
     t_models.init_db()
     p_models.init_db()
+    a_models.init_db()
 
 
 @app.get("/ping", summary="Simple healthcheck endpoint")

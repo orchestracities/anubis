@@ -724,7 +724,7 @@
                   "type": "string"
                 },
                 "example": [
-                  "package enyoy.authz.4385a69f-6d3d-49ed-b342-848f30297a05\n                    'tenant = \"EKZ\"\n                    {...}\n                    resource_allowed {\n                        fiware_service = tenant\n                        is_token_valid\n                        glob.match(\"/v2/entities/\", [\"/\"], path)\n                        contains_element(scope_method[\"acl:Read\"], method)\n                        glob.match(\"/\", [\"/\"], fiware_servicepath)\n                    }"
+                  "\n                    {\n                      \"user_permissions\": {\n                        \"admin@mail.com\": [\n                          {\n                            \"id\": \"16c79213-5f9a-42c0-a37f-307c3c1614c3\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"urn:ngsi-ld:AirQualityObserved:demo\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_user_permissions\": {},\n                      \"group_permissions\": {\n                        \"User\": [\n                          {\n                            \"id\": \"1180e176-a39b-4dd0-b261-1c030123395d\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/v2/entities/some_entity\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_group_permissions\": {},\n                      \"role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"eecd7954-03e9-4a58-9076-79c4c9fa26d5\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"91934c76-5017-44c4-9cc8-8fac8ebffa59\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6d0d3663-125a-494e-9f18-aa0d2e8725a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"cdd1530d-669d-41d2-b79e-62eb4f70428e\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0860514b-da0f-4e89-813b-4675aef1e2fe\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"15f707e6-efd5-481a-b624-ea90046876da\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0641364c-9215-4f2e-aa0b-577d6bb9a4a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"685f98a3-71cb-4867-86e5-939bb838786b\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"f0c9d421-5da5-439b-85b9-84d6636af9d8\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ],\n                        \"Admin\": [\n                          {\n                            \"id\": \"5700d831-4f59-4f2c-9aab-01ab010193cd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6caff4de-ce49-4cd3-a3d8-1a808bd4cbbd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      }\n                    }"
                 ]
               }
             }
@@ -889,7 +889,7 @@
                   "type": "string"
                 },
                 "example": [
-                  "package enyoy.authz.4385a69f-6d3d-49ed-b342-848f30297a05\n                    'tenant = \"EKZ\"\n                    {...}\n                    resource_allowed {\n                        fiware_service = tenant\n                        is_token_valid\n                        glob.match(\"/v2/entities/\", [\"/\"], path)\n                        contains_element(scope_method[\"acl:Read\"], method)\n                        glob.match(\"/\", [\"/\"], fiware_servicepath)\n                    }"
+                  "\n                    {\n                      \"user_permissions\": {\n                        \"admin@mail.com\": [\n                          {\n                            \"id\": \"16c79213-5f9a-42c0-a37f-307c3c1614c3\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"urn:ngsi-ld:AirQualityObserved:demo\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_user_permissions\": {},\n                      \"group_permissions\": {\n                        \"User\": [\n                          {\n                            \"id\": \"1180e176-a39b-4dd0-b261-1c030123395d\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/v2/entities/some_entity\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_group_permissions\": {},\n                      \"role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"eecd7954-03e9-4a58-9076-79c4c9fa26d5\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"91934c76-5017-44c4-9cc8-8fac8ebffa59\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6d0d3663-125a-494e-9f18-aa0d2e8725a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"cdd1530d-669d-41d2-b79e-62eb4f70428e\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0860514b-da0f-4e89-813b-4675aef1e2fe\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"15f707e6-efd5-481a-b624-ea90046876da\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0641364c-9215-4f2e-aa0b-577d6bb9a4a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"685f98a3-71cb-4867-86e5-939bb838786b\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"f0c9d421-5da5-439b-85b9-84d6636af9d8\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ],\n                        \"Admin\": [\n                          {\n                            \"id\": \"5700d831-4f59-4f2c-9aab-01ab010193cd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6caff4de-ce49-4cd3-a3d8-1a808bd4cbbd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      }\n                    }"
                 ]
               }
             }
@@ -1029,6 +1029,345 @@
         }
       }
     },
+    "/v1/audit/logs": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "List all Audit Logs",
+        "description": "TODO:\nLogs can be filtered by:\nIn case an JWT token is passed over ...",
+        "operationId": "read_audit_logs_v1_audit_logs_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            },
+            "name": "user",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource",
+              "type": "string"
+            },
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "type": "string"
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Decision",
+              "type": "string"
+            },
+            "name": "decision",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Type",
+              "type": "string"
+            },
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Service",
+              "type": "string"
+            },
+            "name": "service",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fromdate",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "fromDate",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Todate",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "toDate",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Authorization",
+              "type": "string"
+            },
+            "name": "authorization",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Audit Logs V1 Audit Logs Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditLog"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Create Audit Logs",
+        "operationId": "create_audit_log_v1_audit_logs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Opa Logs",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OpaDecisionLog"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/audit/logs/{audit_id}": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Get an Audit Log",
+        "operationId": "read_audit_log_v1_audit_logs__audit_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Audit Id",
+              "type": "string"
+            },
+            "name": "audit_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Authorization",
+              "type": "string"
+            },
+            "name": "authorization",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLog"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Delete an Audit Log for a given Tenant and Service Path",
+        "operationId": "delete_log_v1_audit_logs__audit_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Audit Id",
+              "type": "string"
+            },
+            "name": "audit_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/": {
       "get": {
         "summary": "Return Anubis API endpoints",
@@ -1098,6 +1437,57 @@
           }
         }
       },
+      "AuditLog": {
+        "title": "AuditLog",
+        "required": [
+          "id",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "service": {
+            "title": "Service",
+            "type": "string"
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string"
+          },
+          "resource_type": {
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "user": {
+            "title": "User",
+            "type": "string"
+          },
+          "remote_ip": {
+            "title": "Remote Ip",
+            "type": "string"
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "HTTPValidationError": {
         "title": "HTTPValidationError",
         "type": "object",
@@ -1126,6 +1516,45 @@
           "name": {
             "title": "Name",
             "type": "string"
+          }
+        }
+      },
+      "OpaDecisionLog": {
+        "title": "OpaDecisionLog",
+        "required": [
+          "decision_id",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "decision_id": {
+            "title": "Decision Id",
+            "type": "string"
+          },
+          "input": {
+            "title": "Input",
+            "type": "object"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "labels": {
+            "title": "Labels",
+            "type": "object"
+          },
+          "metrics": {
+            "title": "Metrics",
+            "type": "object"
+          },
+          "result": {
+            "title": "Result",
+            "type": "object"
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

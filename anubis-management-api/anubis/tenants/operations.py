@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-
+from fastapi import HTTPException
 from . import models, schemas
 from ..policies import schemas as policy_schemas
 from ..policies import operations as policy_operations
@@ -76,6 +76,19 @@ def get_tenant_service_paths(
     return db_service_paths.offset(skip).limit(limit).all()
 
 
+def get_db_service_path(db: Session, tenant: str, service_path: str):
+    if not tenant:
+        raise HTTPException(status_code=422, detail="Tenant cannot be None")
+    db_tenant = get_tenant_by_name(db, name=tenant)
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    db_service_path = get_tenant_service_path_by_path(
+        db, tenant_id=db_tenant.id, path=service_path)
+    if not db_service_path:
+        raise HTTPException(status_code=404, detail="Service Path not found")
+    return db_service_path
+
+
 def get_tenant_service_path_by_path(db: Session, tenant_id: str, path: str):
     if path.endswith('/#'):
         queryPath = path.replace('#', '%')
@@ -124,3 +137,7 @@ def create_tenant_service_path(
 def delete_service_path(db: Session, service_path: models.ServicePath):
     db.delete(service_path)
     db.commit()
+
+
+def compute_id(service_path: models.ServicePath):
+    return service_path.id

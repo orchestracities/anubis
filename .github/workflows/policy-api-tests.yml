@@ -53,10 +53,18 @@ jobs:
         working-directory: ./scripts
         run: |
           ./test_cors.sh
-      - name: Test demo
+      - name: Test context broker
         working-directory: ./scripts
         run: |
           ./test_context_broker.sh
+      - name: Test auth management api
+        working-directory: ./scripts
+        run: |
+          ./test_policy_api.sh
+      - name: Test audit api
+        working-directory: ./scripts
+        run: |
+          ./test_audit_logs.sh
       - name: Clean up
         working-directory: ./scripts
         run: |

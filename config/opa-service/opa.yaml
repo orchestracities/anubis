@@ -5,4 +5,12 @@ plugins:
     dry-run: false
     enable-reflection: true
 decision_logs:
-  console: true
+  service: acmecorp
+  resource: v1/audit/logs
+  reporting:
+    min_delay_seconds: 10
+    max_delay_seconds: 180
+services:
+  acmecorp:
+    url: http://policy-api:8000
+    response_header_timeout_seconds: 5

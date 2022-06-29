@@ -363,6 +363,104 @@ Delete a policy for a given Tenant and Service Path
 | 404 | Not found |
 | 422 | Validation Error |
 
+### /v1/audit/logs
+
+#### GET
+##### Summary:
+
+List all Audit Logs
+
+##### Description:
+
+TODO:
+Logs can be filtered by:
+In case an JWT token is passed over ...
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| user | query |  | No | string |
+| resource | query |  | No | string |
+| resource_type | query |  | No | string |
+| mode | query |  | No | string |
+| decision | query |  | No | string |
+| type | query |  | No | string |
+| service | query |  | No | string |
+| fromDate | query |  | No | dateTime |
+| toDate | query |  | No | dateTime |
+| skip | query |  | No | integer |
+| limit | query |  | No | integer |
+| authorization | header |  | No | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+#### POST
+##### Summary:
+
+Create Audit Logs
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+### /v1/audit/logs/{audit_id}
+
+#### GET
+##### Summary:
+
+Get an Audit Log
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| audit_id | path |  | Yes | string |
+| authorization | header |  | No | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+#### DELETE
+##### Summary:
+
+Delete an Audit Log for a given Tenant and Service Path
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| audit_id | path |  | Yes | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
 ### /v1/
 
 #### GET
@@ -412,6 +510,21 @@ Simple healthcheck endpoint
 | iri | string |  | Yes |
 | name | string |  | Yes |
 
+#### AuditLog
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | string |  | Yes |
+| type | string |  | No |
+| service | string |  | No |
+| resource | string |  | No |
+| resource_type | string |  | No |
+| mode | string |  | No |
+| decision | string |  | No |
+| user | string |  | No |
+| remote_ip | string |  | No |
+| timestamp | dateTime |  | Yes |
+
 #### HTTPValidationError
 
 | Name | Type | Description | Required |
@@ -424,6 +537,18 @@ Simple healthcheck endpoint
 | ---- | ---- | ----------- | -------- |
 | iri | string |  | Yes |
 | name | string |  | Yes |
+
+#### OpaDecisionLog
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| decision_id | string |  | Yes |
+| input | object |  | No |
+| path | string |  | No |
+| labels | object |  | No |
+| metrics | object |  | No |
+| result | object |  | No |
+| timestamp | dateTime |  | Yes |
 
 #### Policy
 
