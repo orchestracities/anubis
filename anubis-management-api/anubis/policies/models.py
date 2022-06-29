@@ -52,7 +52,7 @@ class Agent(Base):
     __tablename__ = "agents"
 
     iri = Column(String, primary_key=True, index=True)
-    type_id = Column(String, ForeignKey(AgentType.iri))
+    type_iri = Column(String, ForeignKey(AgentType.iri))
     type = relationship('AgentType')
 
 
@@ -76,11 +76,11 @@ def insert_initial_agent_type_values(target, connection, **kw):
     db.add(
         Agent(
             iri=default.AUTHENTICATED_AGENT_ID,
-            type=default.AGENT_CLASS_IRI))
+            type_iri=default.AGENT_CLASS_IRI))
     db.add(
         Agent(
             iri=default.UNAUTHENTICATED_AGENT_IRI,
-            type=default.AGENT_CLASS_IRI))
+            type_iri=default.AGENT_CLASS_IRI))
     db.commit()
     db.close()
 

@@ -292,14 +292,14 @@ def get_agents_by_type(
         agent_type_iri: str,
         skip: int = 0,
         limit: int = 100):
-    return db.query(models.Agent).filter(models.Agent.type ==
+    return db.query(models.Agent).filter(models.Agent.type_iri ==
                                          agent_type_iri).offset(skip).limit(limit).all()
 
 
 def create_agent(db: Session, agent_iri: str):
     # default agent are created on db instantiation
     agent_type = agent_iri[:agent_iri.index(":", 4)]
-    db_agent = models.Agent(iri=agent_iri, type=agent_type)
+    db_agent = models.Agent(iri=agent_iri, type_iri=agent_type)
     db.add(db_agent)
     db.commit()
     db.refresh(db_agent)
