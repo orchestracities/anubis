@@ -4,13 +4,14 @@ Anubis is available as a [docker container](https://hub.docker.com/r/orchestraci
 and as a python [package](https://pypi.org/project/anubis-policy-api/).
 
 Requirements to allow policy enforcement using Anubis (PAP) are:
+
 - [envoy proxy](https://www.envoyproxy.io/) acting as PEP
 - [opa with envoy plugin](https://www.openpolicyagent.org/docs/latest/envoy-introduction/)
   acting as PDP
 - optionally [PostgresSQL](https://postgresql.org) to store policies
 
 An example [docker compose](https://raw.githubusercontent.com/orchestracities/anubis/master/docker-compose.yaml)
-in Anubis code repository that deploy all the dependencies and demonstrate
+in Anubis code repository that deploy all the dependencies and demonstrates
 how to protect an [Orion Context Broker](https://fiware-orion.readthedocs.io/en/master/)
 instance.
 
