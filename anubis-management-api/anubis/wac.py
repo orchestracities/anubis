@@ -32,7 +32,6 @@ def parse_rdf_graph(data):
             policies[policy]["accessTo"] = "default"
         if pred == acl.accessToClass:
             policies[policy]["accessToClass"] = str(obj).split("/")[-1]
-    print(policies)
     return policies
 
 
@@ -41,7 +40,7 @@ def serialize(
         fiware_service: [str],
         fiware_servicepath: [str],
         policies: [Policy]):
-    with open(os.environ.get("DEFAULT_WAC_CONFIG_FILE", '../../config/opa-service/default_wac_config.yml'), 'r') as file:
+    with open(os.environ.get("DEFAULT_WAC_CONFIG_FILE", '../config/opa-service/default_wac_config.yml'), 'r') as file:
         default_wac = yaml.load(file, Loader=yaml.FullLoader)["wac"]
 
     g = Graph()
