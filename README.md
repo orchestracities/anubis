@@ -223,7 +223,7 @@ $ ./clean.sh
 In case you are using an ARM64 based architecture, before running the scripts,
 use the proper image (see comment in [docker-compose](docker-compose.yaml)).
 
-### Installation
+## Installation
 
 Anubis is available as a [docker container](https://hub.docker.com/r/orchestracities/anubis-management-api)
 and as a python [package](https://pypi.org/project/anubis-policy-api/).
