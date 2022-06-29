@@ -67,8 +67,8 @@ async def v1_version():
 
 @app.on_event("startup")
 def on_startup():
-    t_models.init_db()
     p_models.init_db()
+    t_models.init_db()
     a_models.init_db()
 
 

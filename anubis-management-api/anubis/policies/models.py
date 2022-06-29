@@ -52,8 +52,9 @@ class Agent(Base):
     __tablename__ = "agents"
 
     iri = Column(String, primary_key=True, index=True)
+    type = relationship(AgentType)
     type_iri = Column(String, ForeignKey(AgentType.iri))
-    type = relationship('AgentType')
+
 
 
 class Mode(Base):
@@ -73,6 +74,13 @@ def insert_initial_agent_type_values(target, connection, **kw):
     db.add(AgentType(name='agent', iri=default.AGENT_IRI))
     db.add(AgentType(name='group', iri=default.AGENT_GROUP_IRI))
     db.add(AgentType(name='class', iri=default.AGENT_CLASS_IRI))
+    db.commit()
+    db.close()
+
+
+@event.listens_for(Agent.__table__, 'after_create')
+def insert_initial_agent_values(target, connection, **kw):
+    db = SessionLocal()
     db.add(
         Agent(
             iri=default.AUTHENTICATED_AGENT_ID,
