@@ -1,4 +1,6 @@
 from sqlalchemy import Column, ForeignKey, String, DateTime
+from sqlalchemy.orm import relationship
+from ..tenants.models import ServicePath
 from ..database import Base, autocommit_engine
 
 
@@ -7,6 +9,7 @@ class AuditLog(Base):
 
     id = Column(String, primary_key=True, index=True)
     type = Column(String, index=True)
+    service_path = relationship(ServicePath)
     service_path_id = Column(
         String,
         ForeignKey(

@@ -33,6 +33,7 @@ class Policy(Base):
     access_to = Column(String, index=True)
     resource_type = Column(String, index=True)
     mode = relationship("Mode", secondary=policy_to_mode)
+    service_path = relationship(ServicePath)
     service_path_id = Column(
         String,
         ForeignKey(
@@ -40,22 +41,23 @@ class Policy(Base):
             ondelete="CASCADE"))
 
 
-class Agent(Base):
-    __tablename__ = "agents"
-
-    iri = Column(String, primary_key=True, index=True)
-    type = Column(String, index=True)
-
-
-class Mode(Base):
-    __tablename__ = "modes"
+class AgentType(Base):
+    __tablename__ = "agent_types"
 
     iri = Column(String, primary_key=True, index=True)
     name = Column(String, index=True, unique=True)
 
 
-class AgentType(Base):
-    __tablename__ = "agent_types"
+class Agent(Base):
+    __tablename__ = "agents"
+
+    iri = Column(String, primary_key=True, index=True)
+    type_id = Column(String, ForeignKey(AgentType.iri))
+    type = relationship('AgentType')
+
+
+class Mode(Base):
+    __tablename__ = "modes"
 
     iri = Column(String, primary_key=True, index=True)
     name = Column(String, index=True, unique=True)
