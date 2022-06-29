@@ -56,7 +56,6 @@ class Agent(Base):
     type_iri = Column(String, ForeignKey(AgentType.iri))
 
 
-
 class Mode(Base):
     __tablename__ = "modes"
 
