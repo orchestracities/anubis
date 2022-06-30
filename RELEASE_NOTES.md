@@ -13,6 +13,7 @@
 
 ### Documentation
 
+- Document installation
 - Document data model
 
 ### Continuous Integration

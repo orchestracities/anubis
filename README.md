@@ -223,6 +223,31 @@ $ ./clean.sh
 In case you are using an ARM64 based architecture, before running the scripts,
 use the proper image (see comment in [docker-compose](docker-compose.yaml)).
 
+## Installation
+
+Anubis is available as a [docker container](https://hub.docker.com/r/orchestracities/anubis-management-api)
+and as a python [package](https://pypi.org/project/anubis-policy-api/).
+
+Requirements to allow policy enforcement using Anubis (PAP) are:
+
+- [envoy proxy](https://www.envoyproxy.io/) acting as PEP
+- [opa with envoy plugin](https://www.openpolicyagent.org/docs/latest/envoy-introduction/)
+  acting as PDP
+- optionally [PostgresSQL](https://postgresql.org) to store policies
+
+An example [docker compose](docker-compose.yaml) is provided in this repository
+that deploy all the dependencies and demonstrates how to protect an
+[Orion Context Broker](https://fiware-orion.readthedocs.io/en/master/)
+instance.
+
+To install the python package:
+
+```bash
+$ pip install anubis-policy-api
+```
+
+This will allow you to reuse Anubis apis also for other projects.
+
 ### Configuration
 
 The following environment variables are used by the rego policy for
