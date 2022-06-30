@@ -78,7 +78,7 @@ state-of-the-art solutions and standards:
   for cloud native policy evaluation (not necessarily applied to access
   control).
 
-To an extent, Anubis can compare with [MyData](https://developer.mydata-control.de/)
+To an extent, Anubis' approach is comparable to [MyData](https://developer.mydata-control.de/)
 Framework by Fraunhofer IESE. The main differences are:
 
 - Anubis focuses on policy portability, and because of that, the starting point
