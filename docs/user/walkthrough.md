@@ -2,7 +2,7 @@
 # Anubis
 Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.
 
-## Version: 0.4.0
+## Version: 0.5.0-dev
 
 ### /v1/tenants/service_paths
 
