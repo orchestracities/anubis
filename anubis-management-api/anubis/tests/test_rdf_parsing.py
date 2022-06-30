@@ -10,8 +10,8 @@ client = TestClient(app)
 
 
 def test_rdf_parsing(test_db):
-    os.environ["DEFAULT_WAC_CONFIG_FILE"] = './tests/test_configs/test_wac_config.yml'
-    os.environ["DEFAULT_POLICIES_CONFIG_FILE"] = './tests/test_configs/test_policies.ttl'
+    os.environ["DEFAULT_WAC_CONFIG_FILE"] = './anubis/tests/test_configs/test_wac_config.yml'
+    os.environ["DEFAULT_POLICIES_CONFIG_FILE"] = './anubis/tests/test_configs/test_policies.ttl'
 
     response = client.post(
         "/v1/tenants/",

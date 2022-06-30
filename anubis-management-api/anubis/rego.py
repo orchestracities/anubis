@@ -41,21 +41,21 @@ def serialize(db: Session, policies: [Policy]):
                         category = "default_"
                     else:
                         category = ""
-                    if agent.type == "acl:agent":
+                    if agent.type_iri == "acl:agent":
                         if rego[category + "user_permissions"].get(entity):
                             rego[category + "user_permissions"][entity].append(
                                 policy_element)
                         else:
                             rego[category +
                                  "user_permissions"][entity] = [policy_element]
-                    elif agent.type == "acl:agentGroup":
+                    elif agent.type_iri == "acl:agentGroup":
                         if rego[category + "group_permissions"].get(entity):
                             rego[category +
                                  "group_permissions"][entity].append(policy_element)
                         else:
                             rego[category + "group_permissions"][entity] = [
                                 policy_element]
-                    elif agent.type == "acl:agentClass":
+                    elif agent.type_iri == "acl:agentClass":
                         if rego[category + "role_permissions"].get(entity):
                             rego[category + "role_permissions"][entity].append(
                                 policy_element)

@@ -120,6 +120,12 @@ $ uvicorn anubis.main:app --reload
 $ pytest -rP
 ```
 
+## Generate UML diagram for data models
+
+```bash
+$ python generate_uml.py
+```
+
 ## API documentation
 
 Once the API is running, you can check it at: `http://127.0.0.1:8000/docs`

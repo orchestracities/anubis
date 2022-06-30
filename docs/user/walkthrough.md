@@ -604,6 +604,6 @@ Simple healthcheck endpoint
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| loc | [ string ] |  | Yes |
+| loc | [  ] |  | Yes |
 | msg | string |  | Yes |
 | type | string |  | Yes |
