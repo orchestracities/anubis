@@ -18,12 +18,12 @@ nav:
   - 'Getting Started': 'quick_start_guide.md'
   - 'User & Programmers Manual':
       - 'Introduction': 'user/index.md'
+      - 'Usage Scenarios': 'user/scenario.md'
       - 'Policies': 'user/policies.md'
       - 'Audit': 'user/audit.md'
       - 'API Walkthrough': 'user/walkthrough.md'
   - 'Installation & Administration Manual':
       - 'Introduction': 'admin/index.md'
-      - 'Usage Scenarios': 'admin/scenario.md'
       - 'Installing Anubis': 'admin/install.md'
       - 'Data model': 'admin/datemodel.md'
       - 'Default policies': 'admin/default-policies.md'

@@ -61,6 +61,45 @@ based on their weights he allows the souls to ascend to a heavenly existence,
 or condemn them to be devoured by Ammit. Indeed, Anubis was a Policy Enforcement
 system for souls :)
 
+## State of the art and standards
+
+In the design and development of Anubis we tried to leverage different
+state-of-the-art solutions and standards:
+
+- [[W3C WAC](https://solid.github.io/web-access-control-spec/), one of the
+  reference vocabularies for expressing access control policies over web
+  resources.
+- [W3C ODRL](https://www.w3.org/TR/odrl-model/), a policy expression language
+  that allows representing statements about the usage of
+  content and services.
+- [OAUTH2](https://oauth.net/2/)) and [OIDC](https://openid.net/connect/)
+  the today reference protocols for authentication.
+- [OPA](https://www.openpolicyagent.org/) the state of the art solution
+  for cloud native policy evaluation (not necessarily applied to access
+  control).
+
+To an extent, Anubis' approach is comparable to [MyData](https://developer.mydata-control.de/)
+Framework by Fraunhofer IESE. The main differences are:
+
+- Anubis focuses on policy portability, and because of that, the starting point
+  to express policies are existing vocabularies targeting interoperability,
+  not a [new policy language](https://developer.mydata-control.de/language).
+- Anubis does not support data manipulation to reduce attributes or data
+  elements that should not be accessed (not yet at least).
+- Anubis is meant to work distributedly, while MyData takes more a centralised
+  approach.
+- Anubis tries to apply the principle that policies follows the data, while
+  interoperability of policies and their portability are out of the scope
+  of MyData.
+
+There are also quite some similarities with [FIWARE TRUE](https://fiware-true-connector.readthedocs.io/en/latest/index.html)
+by Engineering. Interestingly enough, TRUE uses ODRL for providing usage control
+on top of My Data Framework in the context of IDSA. This has quite a number
+of complex architectural and requirements implications, that we believe are
+not suitable in scenarios where the source of trust and control is the owner
+of the data, and not a central authority. Other differences resemble the ones
+analyzed for My Data.
+
 ## Architecture
 
 In our scenario, a client request for a resource to an API, and based on the
