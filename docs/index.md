@@ -80,6 +80,7 @@ state-of-the-art solutions and standards:
 
 To an extent, Anubis can compare with [MyData](https://developer.mydata-control.de/)
 Framework by Fraunhofer IESE. The main differences are:
+
 - Anubis focuses on policy portability, and because of that, the starting point
   to express policies are existing vocabularies targeting interoperability,
   not a [new policy language](https://developer.mydata-control.de/language).

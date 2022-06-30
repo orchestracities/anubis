@@ -6,7 +6,6 @@
 
 ### Bug fixes
 
-
 ### Documentation
 
 ### Continuous Integration
