@@ -26,3 +26,7 @@ Anubis is designed with the following scenarios in mind:
   format and access control policies, it is possible to avoid that.
   Suppose that Data 1 is stored in API A and in API B, Anubis allow you
   to define a single set of policies to access Data 1 across both APIs.
+
+Ultimately the support for these three scenarios enables user-centric control
+of security and privacy data policies on existing APIs thus enabling
+user-centric data sovereignty across different APIs, platforms and providers.
