@@ -5,10 +5,15 @@
 ### New features
 
 - Implement access logs via OPA decision log collection (#17)
+- Update dependencies
 
 ### Bug fixes
 
+- Fix models using correctly relationships
+
 ### Documentation
+
+- Document data model
 
 ### Continuous Integration
 

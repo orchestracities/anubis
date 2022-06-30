@@ -33,6 +33,7 @@ class Policy(Base):
     access_to = Column(String, index=True)
     resource_type = Column(String, index=True)
     mode = relationship("Mode", secondary=policy_to_mode)
+    service_path = relationship(ServicePath)
     service_path_id = Column(
         String,
         ForeignKey(
@@ -40,22 +41,23 @@ class Policy(Base):
             ondelete="CASCADE"))
 
 
-class Agent(Base):
-    __tablename__ = "agents"
-
-    iri = Column(String, primary_key=True, index=True)
-    type = Column(String, index=True)
-
-
-class Mode(Base):
-    __tablename__ = "modes"
+class AgentType(Base):
+    __tablename__ = "agent_types"
 
     iri = Column(String, primary_key=True, index=True)
     name = Column(String, index=True, unique=True)
 
 
-class AgentType(Base):
-    __tablename__ = "agent_types"
+class Agent(Base):
+    __tablename__ = "agents"
+
+    iri = Column(String, primary_key=True, index=True)
+    type = relationship(AgentType)
+    type_iri = Column(String, ForeignKey(AgentType.iri))
+
+
+class Mode(Base):
+    __tablename__ = "modes"
 
     iri = Column(String, primary_key=True, index=True)
     name = Column(String, index=True, unique=True)
@@ -71,14 +73,21 @@ def insert_initial_agent_type_values(target, connection, **kw):
     db.add(AgentType(name='agent', iri=default.AGENT_IRI))
     db.add(AgentType(name='group', iri=default.AGENT_GROUP_IRI))
     db.add(AgentType(name='class', iri=default.AGENT_CLASS_IRI))
+    db.commit()
+    db.close()
+
+
+@event.listens_for(Agent.__table__, 'after_create')
+def insert_initial_agent_values(target, connection, **kw):
+    db = SessionLocal()
     db.add(
         Agent(
             iri=default.AUTHENTICATED_AGENT_ID,
-            type=default.AGENT_CLASS_IRI))
+            type_iri=default.AGENT_CLASS_IRI))
     db.add(
         Agent(
             iri=default.UNAUTHENTICATED_AGENT_IRI,
-            type=default.AGENT_CLASS_IRI))
+            type_iri=default.AGENT_CLASS_IRI))
     db.commit()
     db.close()
 
