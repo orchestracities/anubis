@@ -6,9 +6,11 @@
 
 ### Bug fixes
 
-- Change the keycloack config file to manage the token refresh
+- Change the keycloak config file to manage the token refresh
 
 ### Documentation
+
+- Improve architecture documentation
 
 ### Continuous Integration
 

@@ -109,21 +109,20 @@ a client request for a resource to an API, and based on the
 defined policies, the client is able or not to access the resource.
 The figure below shows the current architecture.
 
-```ascii
-                            ┌──────────────┐        ┌──────────────┐
-                            │   Policy     │   3    │    Policy    │
-                            │   Decision   ├───────►│Administration│
-                            │   Point      │        │    Point     │
-                            └──────────────┘        └──────────────┘
-                                   ▲
-                                 2 │
-                                   │
-    ┌──────────────┐        ┌──────┴──────┐        ┌───────────────┐
-    │              │   1    │   Policy    │   4    │   Protected   │
-    │    Client    ├───────►│ Enforcement ├───────►│               │
-    │              │        │    Point    │        │      API      │
-    └──────────────┘        └─────────────┘        └───────────────┘
-```
+        :::ascii
+                                ┌──────────────┐        ┌──────────────┐
+                                │   Policy     │   3    │    Policy    │
+                                │   Decision   ├───────►│Administration│
+                                │   Point      │        │    Point     │
+                                └──────────────┘        └──────────────┘
+                                       ▲
+                                     2 │
+                                       │
+        ┌──────────────┐        ┌──────┴──────┐        ┌───────────────┐
+        │              │   1    │   Policy    │   4    │   Protected   │
+        │    Client    ├───────►│ Enforcement ├───────►│               │
+        │              │        │    Point    │        │      API      │
+        └──────────────┘        └─────────────┘        └───────────────┘
 
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
     implemented using an Envoy's proxy
