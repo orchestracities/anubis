@@ -109,20 +109,20 @@ a client request for a resource to an API, and based on the
 defined policies, the client is able or not to access the resource.
 The figure below shows the current architecture.
 
-        :::ascii
-                                ┌──────────────┐        ┌──────────────┐
-                                │   Policy     │   3    │    Policy    │
-                                │   Decision   ├───────►│Administration│
-                                │   Point      │        │    Point     │
-                                └──────────────┘        └──────────────┘
-                                       ▲
-                                     2 │
-                                       │
-        ┌──────────────┐        ┌──────┴──────┐        ┌───────────────┐
-        │              │   1    │   Policy    │   4    │   Protected   │
-        │    Client    ├───────►│ Enforcement ├───────►│               │
-        │              │        │    Point    │        │      API      │
-        └──────────────┘        └─────────────┘        └───────────────┘
+    :::ascii
+                            ┌──────────────┐        ┌──────────────┐
+                            │   Policy     │   3    │    Policy    │
+                            │   Decision   ├───────►│Administration│
+                            │   Point      │        │    Point     │
+                            └──────────────┘        └──────────────┘
+                                   ▲
+                                 2 │
+                                   │
+    ┌──────────────┐        ┌──────┴──────┐        ┌───────────────┐
+    │              │   1    │   Policy    │   4    │   Protected   │
+    │    Client    ├───────►│ Enforcement ├───────►│               │
+    │              │        │    Point    │        │      API      │
+    └──────────────┘        └─────────────┘        └───────────────┘
 
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
     implemented using an Envoy's proxy
@@ -158,13 +158,13 @@ the specific format of an API.
 For example, we may have a policy that states
 *anyone authenticated can read urn:mycool:resource*:
 
-        :::text
-        @prefix acl: <http://www.w3.org/ns/auth/acl#> .
-        example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
-            acl:accessTo urn:mycool:resource ;
-            acl:accessToClass urn:mycool ;
-            acl:agentClass acl:AuthenticatedAgent ;
-            acl:mode acl:Read .
+    :::text
+    @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+    example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
+        acl:accessTo urn:mycool:resource ;
+        acl:accessToClass urn:mycool ;
+        acl:agentClass acl:AuthenticatedAgent ;
+        acl:mode acl:Read .
 
 Rego's rules translate this policy to a `GET` request that contains
 a valid `JWT token` the api endpoint: `http://myapi/resources/urn:mycool:resource`
@@ -184,20 +184,20 @@ with a smaller footprint), when this is not required.
 
 The distribution middleware is called Policy Distribution Point.
 
-        :::ascii
-        ┌──────────────┐        ┌──────────────┐
-        │   Policy     │        │    Policy    │
-        │ Distribution │◄──────►│Administration│
-        │   Point 1    │        │    Point 1   │
-        └──────────────┘        └──────────────┘
-               ▲
-             2 │
-               ▼
-        ┌──────────────┐        ┌──────────────┐
-        │   Policy     │        │    Policy    │
-        │ Distribution │◄──────►│Administration│
-        │   Point 2    │        │    Point 2   │
-        └──────────────┘        └──────────────┘
+    :::ascii
+    ┌──────────────┐        ┌──────────────┐
+    │   Policy     │        │    Policy    │
+    │ Distribution │◄──────►│Administration│
+    │   Point 1    │        │    Point 1   │
+    └──────────────┘        └──────────────┘
+           ▲
+         2 │
+           ▼
+    ┌──────────────┐        ┌──────────────┐
+    │   Policy     │        │    Policy    │
+    │ Distribution │◄──────►│Administration│
+    │   Point 2    │        │    Point 2   │
+    └──────────────┘        └──────────────┘
 
 The policy distribution works based on discovery and publish subscribe
 mechanisms. Key interactions are described below:
