@@ -150,7 +150,7 @@ combining the data stored in the Policy Management API, and a set of API
 specific rule defined in [Rego](https://www.openpolicyagent.org/docs/latest/policy-language/)
 (OPA's native query language).
 
-The role of Rego's rules is to apply policies that are API independent - 
+The role of Rego's rules is to apply policies that are API independent -
 policies identify their objects using [Uniform Resource Name](https://en.wikipedia.org/wiki/Uniform_Resource_Name)
 to define a unique identifier for data (as envisioned by NGSI-LD) - to
 the specific format of an API.
@@ -167,7 +167,7 @@ For example, we may have a policy that states
             acl:mode acl:Read .
 
 Rego's rules translate this policy to a `GET` request that contains
-a valid `JWT token` the api endpoint: http://myapi/resources/urn:mycool:resource
+a valid `JWT token` the api endpoint: `http://myapi/resources/urn:mycool:resource`
 
 A different Rego rule can be defined to work on another API using
 a different authentication mechanism.
@@ -177,6 +177,7 @@ a different authentication mechanism.
 The policy distribution architecture relies on [libp2p](https://libp2p.io/)
 middleware to distribute policies across differed Policies Administration
 Points. The architecture decouples the PAP from the distribution middleware to:
+
 - Allow different PAP to share the same distribution node.
 - Allow deployment without the distribution functionalities (and hence
 with a smaller footprint), when this is not required.
@@ -216,7 +217,7 @@ mechanisms. Key interactions are described below:
             p2p1->>p2p1: create policy message published on the topic
             p2p1->>p2p2: notify nodes registered to the topic
             p2p2->>pap2: register policy
-    
+
     In this interaction, when a new policy is created in the PAP 1,
     the notification is sent to the Policy Distribution Point 1,
     a topic (if not existing) is created for the resource to which
@@ -229,23 +230,23 @@ mechanisms. Key interactions are described below:
     PAPs.
 
 1. Create a new resource in a PEP:
-    ```mermaid
-    sequenceDiagram
-        participant pap1
-        participant p2p1
-        participant p2p2
-        participant pap2
-        pap1->>p2p1: create resource
-        p2p1->>p2p1: (if topic does not exist) create it
-        p2p1->>p2p1: (if topic does not exist) register as content provider for the topic
-        p2p1->>p2p1: (if topic does not exist) register to the topic
-        p2p1->>p2p1: (if topic exist) search content provider
-        p2p1->>p2p2: (if topic exist) retrieve policies
-        p2p2->>anubis2: (if topic exist) retrieve policies
-        anubis2->>p2p2: (if topic exist) return policies
-        p2p2->>p2p1: (if topic exist) return policies
-        p2p1->>pap1: (if topic exist) register policies
-    ```
+
+        :::mermaid
+        sequenceDiagram
+            participant pap1
+            participant p2p1
+            participant p2p2
+            participant pap2
+            pap1->>p2p1: create resource
+            p2p1->>p2p1: (if topic does not exist) create it
+            p2p1->>p2p1: (if topic does not exist) register as content provider for the topic
+            p2p1->>p2p1: (if topic does not exist) register to the topic
+            p2p1->>p2p1: (if topic exist) search content provider
+            p2p1->>p2p2: (if topic exist) retrieve policies
+            p2p2->>anubis2: (if topic exist) retrieve policies
+            anubis2->>p2p2: (if topic exist) return policies
+            p2p2->>p2p1: (if topic exist) return policies
+            p2p1->>pap1: (if topic exist) register policies
 
     In this interaction, when a new resource is created in the PAP 1,
     the notification is sent to the Policy Distribution Point 1.
@@ -265,7 +266,7 @@ mechanisms. Key interactions are described below:
       - the Policy Distribution Point 1 stores policies in PAP 1.
 
 N.B.: Generic policies (i.e. that apply to any resource of a given type) are
-distributed only if nodes belong to the same domain. 
+distributed only if nodes belong to the same domain.
 
 ## Manuals
 
