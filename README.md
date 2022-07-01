@@ -76,49 +76,41 @@ system for souls :)
 
 ## Architecture
 
-In our scenario, a client request for a resource to an API, and based on the
+### Policy Enforcement
+
+In term of policy enforcement, Anubis adopts a standard architecture:
+a client request for a resource to an API, and based on the
 defined policies, the client is able or not to access the resource.
 The figure below shows the current architecture.
 
 ```ascii
-                           ┌─────────────┐
-                           │     API     │
-                           │  Specific   │
-                           │    Rules    │
-                           └─────────────┘
-                                  ▲
-                                2 │
-                                  │
-    ┌─────────────┐        ┌──────┴──────┐        ┌─────────────┐
-    │             │   1    │   Policy    │   4    │             │
-    │    Client   ├───────►│ Enforcement ├───────►│     API     │
-    │             │        │    Point    │        │             │
-    └─────────────┘        └──────┬──────┘        └─────────────┘
-                                  │
-                                3 │
-                                  ▼
-                           ┌─────────────┐
-                           │    Policy   │
-                           │  Management │
-                           │     API     │
-                           └─────────────┘
-
+                            ┌──────────────┐        ┌──────────────┐
+                            │   Policy     │   3    │    Policy    │
+                            │   Decision   ├───────►│Administration│
+                            │   Point      │        │    Point     │
+                            └──────────────┘        └──────────────┘
+                                   ▲
+                                 2 │
+                                   │
+    ┌──────────────┐        ┌──────┴──────┐        ┌───────────────┐
+    │              │   1    │   Policy    │   4    │   Protected   │
+    │    Client    ├───────►│ Enforcement ├───────►│               │
+    │              │        │    Point    │        │      API      │
+    └──────────────┘        └─────────────┘        └───────────────┘
 ```
 
-(The schema is editable at [asciiflow](https://asciiflow.com/#/share/eJyrVspLzE1VssorzcnRUcpJrEwtUrJSqo5RqohRsrI0N9aJUaoEsozMLYCsktSKEiAnRkkBO3g0ZQ%2FxKCYmD7cxYNoxwBPGJ6Q4uCA1OTMtM5koxQpBpTmpxcSYTA3fwEybtomwGmLMAashyW1keYjcUEDSCtMPJA0RzID8nMzkSgRfAY2J6ksQxzknMzWvBJ9bpu0CKXXNS8svSk7NBSkmoBQEUJMXdncjMQPyM8GOIM7dgzR2cCYrJNdTQc002mcrLImJqiUKCp9avlGqVaoFAKtNRnk%3D))
-
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
-    implemented using a authz envoy
-[authz filter](https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/ext_authz).
+    implemented using an Envoy's proxy
+    [authz filter](https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/ext_authz).
 1. The PEP pass over the request to the PDP (Policy Decision Point), provided by
     OPA which evaluates a set of rules that apply the abstract policies to the
-    specific API to be protected
-1. In combination with the policies stored in the Policy Management API,
-    that acts as PAP (Policy Administration Point);
+    specific API to be protected;
+1. In combination with the policies stored in the PAP (Policy Administration
+    Point), provided by the Policy Management API;
 1. If the evaluation of the policies returns `allowed`, then the request is
-    forwarded to the API.
+    forwarded to the Protected API.
 
-## Policy management
+## Policy Management
 
 Anubis currently supports only Role Based Access Control policies. Policies
 are stored in the [policy management api](anubis-management-api), that supports
@@ -131,7 +123,7 @@ specifically for the [NGSIv2 Context Broker](https://fiware-orion.readthedocs.io
 Anubis management, and JWT-based authentication. You can see Orion rules in this
 [rego file](config/opa-service/rego/context_broker_policy.rego).
 
-### Policy format
+## Policies
 
 The formal policy specification is defined by the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
 as en extension to [Web Access control](https://solid.github.io/web-access-control-spec/).
