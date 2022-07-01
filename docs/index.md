@@ -109,7 +109,7 @@ a client request for a resource to an API, and based on the
 defined policies, the client is able or not to access the resource.
 The figure below shows the current architecture.
 
-    :::ascii
+```ascii
                             ┌──────────────┐        ┌──────────────┐
                             │   Policy     │   3    │    Policy    │
                             │   Decision   ├───────►│Administration│
@@ -123,6 +123,7 @@ The figure below shows the current architecture.
     │    Client    ├───────►│ Enforcement ├───────►│               │
     │              │        │    Point    │        │      API      │
     └──────────────┘        └─────────────┘        └───────────────┘
+```
 
 1. A client requests for a resource via the Policy Enforcement Point (PEP) -
     implemented using an Envoy's proxy
@@ -158,13 +159,14 @@ the specific format of an API.
 For example, we may have a policy that states
 *anyone authenticated can read urn:mycool:resource*:
 
-    :::text
+```text
     @prefix acl: <http://www.w3.org/ns/auth/acl#> .
     example:a0be6113-2339-40d7-9e85-56f93372f279 a acl:Authorization ;
         acl:accessTo urn:mycool:resource ;
         acl:accessToClass urn:mycool ;
         acl:agentClass acl:AuthenticatedAgent ;
         acl:mode acl:Read .
+```
 
 Rego's rules translate this policy to a `GET` request that contains
 a valid `JWT token` the api endpoint: `http://myapi/resources/urn:mycool:resource`
@@ -184,7 +186,7 @@ with a smaller footprint), when this is not required.
 
 The distribution middleware is called Policy Distribution Point.
 
-    :::ascii
+```ascii
     ┌──────────────┐        ┌──────────────┐
     │   Policy     │        │    Policy    │
     │ Distribution │◄──────►│Administration│
@@ -198,25 +200,14 @@ The distribution middleware is called Policy Distribution Point.
     │ Distribution │◄──────►│Administration│
     │   Point 2    │        │    Point 2   │
     └──────────────┘        └──────────────┘
+```
 
 The policy distribution works based on discovery and publish subscribe
 mechanisms. Key interactions are described below:
 
 1. Create a policy for an existing resource:
 
-        :::mermaid
-        sequenceDiagram
-            participant pap1
-            participant p2p1
-            participant p2p2
-            participant pap2
-            pap1->>p2p1: create policy
-            p2p1->>p2p1: (if topic does not exist) create topic
-            p2p1->>p2p1: (if topic does not exist) register as content provider for the topic
-            p2p1->>p2p1: (if not registered to the topic) register to the topic
-            p2p1->>p2p1: create policy message published on the topic
-            p2p1->>p2p2: notify nodes registered to the topic
-            p2p2->>pap2: register policy
+    ![Create a policy for an existing resource](createpolicy.png)
 
     In this interaction, when a new policy is created in the PAP 1,
     the notification is sent to the Policy Distribution Point 1,
@@ -231,39 +222,27 @@ mechanisms. Key interactions are described below:
 
 1. Create a new resource in a PEP:
 
-        :::mermaid
-        sequenceDiagram
-            participant pap1
-            participant p2p1
-            participant p2p2
-            participant pap2
-            pap1->>p2p1: create resource
-            p2p1->>p2p1: (if topic does not exist) create it
-            p2p1->>p2p1: (if topic does not exist) register as content provider for the topic
-            p2p1->>p2p1: (if topic does not exist) register to the topic
-            p2p1->>p2p1: (if topic exist) search content provider
-            p2p1->>p2p2: (if topic exist) retrieve policies
-            p2p2->>anubis2: (if topic exist) retrieve policies
-            anubis2->>p2p2: (if topic exist) return policies
-            p2p2->>p2p1: (if topic exist) return policies
-            p2p1->>pap1: (if topic exist) register policies
+    ![Create a new resource](createresource.png)
 
     In this interaction, when a new resource is created in the PAP 1,
     the notification is sent to the Policy Distribution Point 1.
     In case the topic for the resource is not existing in the distribution network:
-      - the Policy Distribution Point 1 creates a topic for the resource,
-      - the Policy Distribution Point 1 registers as a content provider for the
+
+      1. the Policy Distribution Point 1 creates a topic for the resource,
+      1. the Policy Distribution Point 1 registers as a content provider for the
         resource.
-      - the Policy Distribution Point 1 registers to the topic.
-    In case the topic for the resource already exist in the distribution
-    network:
-      - the Policy Distribution Point 1 search content providers for the topic
-      - the Policy Distribution Point 1 ask fro policies for the topic from
+      1. the Policy Distribution Point 1 registers to the topic.
+    
+  In case the topic for the resource already exist in the distribution
+  network:
+
+      1. the Policy Distribution Point 1 search content providers for the topic
+      1. the Policy Distribution Point 1 ask fro policies for the topic from
         other Policy Distribution Points
-      - the Policy Distribution Point 2 retrieves the policies from PAP 2
-      - the Policy Distribution Point 2 forward policies to the Policy
+      1. the Policy Distribution Point 2 retrieves the policies from PAP 2
+      1. the Policy Distribution Point 2 forward policies to the Policy
         Distribution Point 1
-      - the Policy Distribution Point 1 stores policies in PAP 1.
+      1. the Policy Distribution Point 1 stores policies in PAP 1.
 
 N.B.: Generic policies (i.e. that apply to any resource of a given type) are
 distributed only if nodes belong to the same domain.
