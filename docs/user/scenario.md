@@ -2,7 +2,7 @@
 
 Anubis is designed with the following scenarios in mind:
 
-1. 1. Simplify portability of data access control policies across different
+1. Simplify portability of data access control policies across different
   platforms by keeping data and policy together, thus supporting data sharing
   and increasing data sovereignty.
   Suppose User A stores Data 1 in your Platform X, and then User A

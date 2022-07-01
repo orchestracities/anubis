@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant pap1
+    participant p2p1
+    participant p2p2
+    participant pap2
+    pap1->>p2p1: create policy
+    p2p1->>p2p1: (if topic does not exist) create topic
+    p2p1->>p2p1: (if topic does not exist) register as content provider for the topic
+    p2p1->>p2p1: (if not registered to the topic) register to the topic
+    p2p1->>p2p1: create policy message published on the topic
+    p2p1->>p2p2: notify nodes registered to the topic
+    p2p2->>pap2: register policy

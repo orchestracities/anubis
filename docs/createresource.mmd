@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant pap1
+    participant p2p1
+    participant p2p2
+    participant pap2
+    pap1->>p2p1: create resource
+    p2p1->>p2p1: (if topic does not exist) create it
+    p2p1->>p2p1: (if topic does not exist) register as content provider for the topic
+    p2p1->>p2p1: (if topic does not exist) register to the topic
+    p2p1->>p2p1: (if topic exist) search content provider
+    p2p1->>p2p2: (if topic exist) retrieve policies
+    p2p2->>anubis2: (if topic exist) retrieve policies
+    anubis2->>p2p2: (if topic exist) return policies
+    p2p2->>p2p1: (if topic exist) return policies
+    p2p1->>pap1: (if topic exist) register policies
