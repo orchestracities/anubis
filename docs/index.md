@@ -208,7 +208,7 @@ distributed only if nodes belong to the same domain.
 The policy distribution works based on discovery and publish subscribe
 mechanisms. Key interactions are described in the following sections.
 
-#### Create a policy for an existing resource:
+#### Create a policy for an existing resource
 
 ![Create a policy for an existing resource](createpolicy.png)
 
@@ -228,7 +228,7 @@ Point 1 register itself to the topic.
 1. Consequently, notified Policy Distribution Points update related
 PAPs.
 
-#### Create a new resource in a PEP:
+#### Create a new resource in a PEP
 
 ![Create a new resource](createresource.png)
 
