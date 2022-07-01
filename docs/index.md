@@ -213,6 +213,7 @@ mechanisms. Key interactions are described in the following sections.
 ![Create a policy for an existing resource](createpolicy.png)
 
 In this interaction, when a new policy is created in the PAP 1:
+
 1. The notification is sent to the Policy Distribution Point 1.
 1. If a topic for the resource does not exist:
     1. The Policy Distribution Point 1
