@@ -202,50 +202,52 @@ The distribution middleware is called Policy Distribution Point.
     └──────────────┘        └──────────────┘
 ```
 
-The policy distribution works based on discovery and publish subscribe
-mechanisms. Key interactions are described below:
-
-1. Create a policy for an existing resource:
-
-    ![Create a policy for an existing resource](createpolicy.png)
-
-    In this interaction, when a new policy is created in the PAP 1,
-    the notification is sent to the Policy Distribution Point 1,
-    a topic (if not existing) is created for the resource to which
-    the policy is related, and the Policy Distribution Point 1
-    registers a content provider for the given resource.
-    At this point, the Policy Distribution Point 1 register itself
-    to the topic (newly created or already existing), and notify the new policy
-    to other Policy Distribution Points registered to the topic.
-    Consequently, notified Policy Distribution Points will update related
-    PAPs.
-
-1. Create a new resource in a PEP:
-
-    ![Create a new resource](createresource.png)
-
-    In this interaction, when a new resource is created in the PAP 1,
-    the notification is sent to the Policy Distribution Point 1.
-    In case the topic for the resource is not existing in the distribution network:
-
-      1. the Policy Distribution Point 1 creates a topic for the resource,
-      1. the Policy Distribution Point 1 registers as a content provider for the
-        resource.
-      1. the Policy Distribution Point 1 registers to the topic.
-    
-  In case the topic for the resource already exist in the distribution
-  network:
-
-      1. the Policy Distribution Point 1 search content providers for the topic
-      1. the Policy Distribution Point 1 ask fro policies for the topic from
-        other Policy Distribution Points
-      1. the Policy Distribution Point 2 retrieves the policies from PAP 2
-      1. the Policy Distribution Point 2 forward policies to the Policy
-        Distribution Point 1
-      1. the Policy Distribution Point 1 stores policies in PAP 1.
-
 N.B.: Generic policies (i.e. that apply to any resource of a given type) are
 distributed only if nodes belong to the same domain.
+
+The policy distribution works based on discovery and publish subscribe
+mechanisms. Key interactions are described in the following sections.
+
+#### Create a policy for an existing resource:
+
+![Create a policy for an existing resource](createpolicy.png)
+
+In this interaction, when a new policy is created in the PAP 1:
+1. The notification is sent to the Policy Distribution Point 1.
+1. If a topic for the resource does not exist:
+    1. The Policy Distribution Point 1
+        creates a topic for the resource to which
+        the policy is related
+    1. The Policy Distribution Point 1 registers a content provider
+       for the given resource.
+1. At this point, (if not yet registered to the topic), the Policy Distribution
+Point 1 register itself to the topic.
+1. The Policy Distribution 1 create a message on the topic.
+1. Other Policy Distribution Points registered to the topic are notified.
+1. Consequently, notified Policy Distribution Points update related
+PAPs.
+
+#### Create a new resource in a PEP:
+
+![Create a new resource](createresource.png)
+
+In this interaction, when a new resource is created in the PAP 1:
+
+1. The notification is sent to the Policy Distribution Point 1.
+1. In case the topic for the resource is not existing in the distribution network:
+    1. the Policy Distribution Point 1 creates a topic for the resource,
+    1. The Policy Distribution Point 1 registers as a content provider for the
+      resource.
+    1. The Policy Distribution Point 1 registers to the topic.
+1. In case the topic for the resource already exist in the distribution
+network:
+    1. The Policy Distribution Point 1 search content providers for the topic
+    1. The Policy Distribution Point 1 ask for policies for the topic from
+      other Policy Distribution Points
+    1. The Policy Distribution Point 2 retrieves the policies from PAP 2
+    1. The Policy Distribution Point 2 forward policies to the Policy
+      Distribution Point 1
+    1. The Policy Distribution Point 1 stores policies in PAP 1.
 
 ## Manuals
 
