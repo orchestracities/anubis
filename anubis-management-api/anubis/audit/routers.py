@@ -147,7 +147,8 @@ def create_audit_log(
         try:
             remote_ip = None
             if opa_log.input['attributes']['source']['address']['socketAddress']['address']:
-                remote_ip = anonymize_ip(opa_log.input['attributes']['source']['address']['socketAddress']['address'])
+                remote_ip = anonymize_ip(
+                    opa_log.input['attributes']['source']['address']['socketAddress']['address'])
             decision = None
             if opa_log.result['allowed']:
                 decision = opa_log.result['allowed']
