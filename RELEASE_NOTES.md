@@ -11,6 +11,7 @@
 ### Documentation
 
 - Improve architecture documentation
+- End to end demo including UI
 
 ### Continuous Integration
 

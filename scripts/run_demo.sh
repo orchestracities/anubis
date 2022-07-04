@@ -47,6 +47,8 @@ if [ $wait -gt 60 ]; then
   exit -1
 fi
 
+docker run --env MONGO_DB="mongodb://mongo:27017/graphql" --network=opa-authz_envoymesh orchestracities/configuration-api node main/mongo/populateDB.js
+
 echo "Setting up tenant Tenant1..."
 curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
@@ -172,3 +174,15 @@ curl -s -i -X 'POST' \
 }'
 
 echo "Demo deployed!"
+
+echo "Your browser will open at: http://localhost:3000"
+echo "User: admin / Password: admin"
+if [ "$(uname)" == "Darwin" ]; then
+    open http://localhost:3000
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    xdg-open http://localhost:3000
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+    start http://localhost:3000
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+    start http://localhost:3000
+fi
