@@ -4,6 +4,8 @@
 
 ### New features
 
+- Anonymize IP and email in logs
+
 ### Bug fixes
 
 - Change the keycloak config file to manage the token refresh
