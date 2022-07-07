@@ -174,16 +174,18 @@ curl -s -i -X 'POST' \
 "agent": ["acl:AuthenticatedAgent"]
 }'
 
-echo "Demo deployed!"
-
-echo "Your browser will open at: http://localhost:3000"
-echo "User: admin / Password: admin"
-if [ "$(uname)" == "Darwin" ]; then
-    open http://localhost:3000
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    xdg-open http://localhost:3000
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
-    start http://localhost:3000
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
-    start http://localhost:3000
+if [[ $1 == "silent" ]]; then
+  echo "Demo deployed!"
+else
+  echo "Your browser will open at: http://localhost:3000"
+  echo "User: admin / Password: admin"
+  if [ "$(uname)" == "Darwin" ]; then
+      open http://localhost:3000
+  elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+      xdg-open http://localhost:3000
+  elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+      start http://localhost:3000
+  elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+      start http://localhost:3000
+  fi
 fi

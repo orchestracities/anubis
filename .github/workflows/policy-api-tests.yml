@@ -48,7 +48,7 @@ jobs:
       - name: Setup demo
         working-directory: ./scripts
         run: |
-          ./run_demo.sh
+          ./run_demo.sh silent
       - name: Test CORS
         working-directory: ./scripts
         run: |
