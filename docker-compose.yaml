@@ -119,7 +119,7 @@ services:
   management-ui:
     image: orchestracities/management-ui
     ports:
-      - "3000:3000"
+      - "3000:80"
     networks:
       - envoymesh
 
