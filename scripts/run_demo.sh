@@ -47,7 +47,7 @@ if [ $wait -gt 60 ]; then
   exit -1
 fi
 
-docker run --env MONGO_DB="mongodb://mongo:27017/graphql" --network=opa-authz_envoymesh orchestracities/configuration-api node main/mongo/populateDB.js
+docker run --env MONGO_DB="mongodb://mongo:27017/graphql" --network=anubis_envoymesh orchestracities/configuration-api node main/mongo/populateDB.js
 
 echo "Setting up tenant Tenant1..."
 curl -s -i -X 'POST' \
