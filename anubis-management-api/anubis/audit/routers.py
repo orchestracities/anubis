@@ -10,6 +10,8 @@ from ..dependencies import get_db
 from sqlalchemy.orm import Session
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError, PendingRollbackError
+from anonymizeip import anonymize_ip
+import re
 import json
 
 
@@ -145,7 +147,8 @@ def create_audit_log(
         try:
             remote_ip = None
             if opa_log.input['attributes']['source']['address']['socketAddress']['address']:
-                remote_ip = opa_log.input['attributes']['source']['address']['socketAddress']['address']
+                remote_ip = anonymize_ip(
+                    opa_log.input['attributes']['source']['address']['socketAddress']['address'])
             decision = None
             if opa_log.result['allowed']:
                 decision = opa_log.result['allowed']
@@ -185,7 +188,7 @@ def create_audit_log(
                 authorization = opa_log.input['attributes']['request']['http']['headers']['authorization']
                 token = parse_auth_token(authorization)
                 if token:
-                    user = token['email']
+                    user = re.sub(r'[^@.]', 'x', token['email'])
             tenant_id = None
             tenant = None
             if opa_log.input['attributes']['request']['http']['headers']['fiware-service']:

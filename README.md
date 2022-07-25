@@ -310,6 +310,13 @@ For additional planned features you can
 check the pending [issues](https://github.com/orchestracities/anubis/issues)
 and their mapping to [milestones](https://github.com/orchestracities/anubis/milestones).
 
+## Related repositories
+
+- [Anubis Vocabulary](https://github.com/orchestracities/anubis-vocabulary)
+    hosting custom extensions to [W3C WAC](https://solid.github.io/web-access-control-spec/).
+- [Anubis Management UI](https://github.com/orchestracities/auth-management-ui)
+    hosting a UI to manage policies.
+
 ## Credits
 
 - [JSON.lua package](config/opa-service/lua/JSON.lua) by Jeffrey Friedl

@@ -18,6 +18,7 @@ uvicorn = "~=0.18.1"
 pyyaml = "~=6.0"
 pg8000 = "~=1.29.1"
 pyjwt = "~=2.4.0"
+anonymizeip = "~=1.0.0"
 
 [dev-packages]
 pytest = "~=6.2.5"
