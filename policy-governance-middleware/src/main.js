@@ -12,6 +12,9 @@ import delay from 'delay'
 import { Bootstrap } from '@libp2p/bootstrap'
 import * as json from 'multiformats/codecs/json'
 import { sha256 } from 'multiformats/hashes/sha2'
+import { FloodSub } from '@libp2p/floodsub'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 
 const server_port = process.env.SERVER_PORT || 8099
 const other_node = process.env.OTHER_NODE || '/ip4/127.0.0.1/tcp/0'
@@ -34,23 +37,49 @@ const node = await createLibp2p({
   dht: new KadDHT(),
   peerDiscovery: [
     new Bootstrap({
-      list: bootstrapMultiaddrs
+      list: bootstrapMultiaddrs,
+      interval: 2000
     })
   ],
   connectionManager: {
     autoDial: true
-  }
+  },
+  //pubsub: new FloodSub({emitSelf: true})
+  pubsub: new FloodSub()
 })
 
-app.get('/policy/:id', async(req, res) => {
-  const bytes = json.encode({ policy_id: req.params.id })
+app.post('/resource', async(req, res) => {
+  if (!Object.keys(req.body).length) {
+   return res.status(400).json({
+     message: "Request body cannot be empty",
+   })
+  }
+  var { resource } = req.body
+  if (!resource) {
+   res.status(400).json({
+     message: "Ensure you sent a resource field",
+   })
+  }
+  const bytes = json.encode({ resource: resource })
+  const hash = await sha256.digest(bytes)
+  const cid = CID.create(1, json.code, hash)
+  await node.contentRouting.provide(cid)
+  console.log(`Provided ${resource}`)
+  await node.pubsub.subscribe(resource)
+  console.log(`Subscribed to ${resource}`)
+  // TODO: Find other providers, get policies
+  res.end("Posted resource " + resource)
+})
+
+app.get('/resource/:id', async(req, res) => {
+  const bytes = json.encode({ resource: req.params.id })
   const hash = await sha256.digest(bytes)
   const cid = CID.create(1, json.code, hash)
 
   try {
     const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
-    console.log('Found provider:', providers[0].id.toString())
-    res.end(providers[0].id.toString())
+    console.log('Found providers:', providers)
+    res.end("Found providers: " + providers)
   }
   catch(err) {
     console.log("No providers found")
@@ -58,46 +87,39 @@ app.get('/policy/:id', async(req, res) => {
   }
 })
 
-app.post('/policy', async(req, res) => {
+app.post('/resource/:id/policy', async(req, res) => {
   if (!Object.keys(req.body).length) {
    return res.status(400).json({
      message: "Request body cannot be empty",
    })
   }
-  var { policy_id } = req.body
-  if (!policy_id) {
+  var { policy } = req.body
+  if (!policy) {
    res.status(400).json({
-     message: "Ensure you sent a policy_id field",
+     message: "Ensure you sent a policy field",
    })
   }
-  const bytes = json.encode({ policy_id: policy_id })
-  const hash = await sha256.digest(bytes)
-  const cid = CID.create(1, json.code, hash)
-  await node.contentRouting.provide(cid)
-  res.end("Done")
+  await node.pubsub.subscribe(req.params.id)
+  await node.pubsub.publish(req.params.id, uint8ArrayFromString(policy)).catch(err => {
+    console.error(err)
+    res.end(`Error: ${err}`)
+  })
+  res.end("Policy message sent: " + policy)
 })
 
-async function providePolicies() {
-  // TODO: Get policies from Anubis
-  var policies = [{
-      "policy_id": "foo"
-    },
-    {
-      "policy_id": "bar"
-    }
-  ]
-  for (const policy of policies) {
-    const bytes = json.encode(policy)
-    const hash = sha256.digest(bytes)
+async function processTopicMessage(evt) {
+  console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic}`)
+  try {
+    const bytes = json.encode({ resource: evt.detail.topic })
+    const hash = await sha256.digest(bytes)
     const cid = CID.create(1, json.code, hash)
-
-    try {
-      const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
-    }
-    catch(err) {
-      node.contentRouting.provide(cid)
-    }
+    const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
+    console.log('Found providers:', providers)
   }
+  catch(err) {
+    console.log("No providers found")
+  }
+  // TODO: Get resource policies from content providers
 }
 
 var server = app.listen(server_port, async() => {
@@ -112,16 +134,20 @@ var server = app.listen(server_port, async() => {
     console.log('Connection established to:', connection.remotePeer.toString())
   })
 
-  node.addEventListener('peer:discovery', (evt) => {
+  node.addEventListener('peer:discovery', async(evt) => {
     const peer = evt.detail
     if (node.peerId.toString() == peer.id.toString()) {
       return
     }
-    console.log('Discovered:', peer.id.toString())
-    node.peerStore.addressBook.set(peer.id, peer.multiaddrs)
-    //node.dial(peer.id)
-    providePolicies()
+    var peerId = node.peerStore.addressBook.get(peer.id)
+    if (!peerId) {
+      console.log('Discovered:', peer.id.toString())
+      node.peerStore.addressBook.set(peer.id, peer.multiaddrs)
+      node.dial(peer.id)
+    }
   })
+
+  await node.pubsub.addEventListener("message", (evt) => processTopicMessage(evt))
 
   await delay(1000)
 
