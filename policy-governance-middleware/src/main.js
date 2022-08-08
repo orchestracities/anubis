@@ -15,18 +15,18 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import { FloodSub } from '@libp2p/floodsub'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
+import { MulticastDNS } from '@libp2p/mdns'
+import axios from 'axios'
 
+// Configuration for the port used by this node
 const server_port = process.env.SERVER_PORT || 8099
-const other_node = process.env.OTHER_NODE || '/ip4/127.0.0.1/tcp/0'
 
+// Setting up Node app
 var app = express()
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
 
-const bootstrapMultiaddrs = [
-  other_node
-]
-
+// Setting up the Libp2p node
 const node = await createLibp2p({
   addresses: {
     listen: ['/ip4/127.0.0.1/tcp/0']
@@ -36,92 +36,135 @@ const node = await createLibp2p({
   connectionEncryption: [new Noise()],
   dht: new KadDHT(),
   peerDiscovery: [
-    new Bootstrap({
-      list: bootstrapMultiaddrs,
-      interval: 2000
+    new MulticastDNS({
+      interval: 20e3
     })
   ],
   connectionManager: {
     autoDial: true
   },
-  //pubsub: new FloodSub({emitSelf: true})
   pubsub: new FloodSub()
 })
 
-app.post('/resource', async(req, res) => {
+// Endpoint when a new policy is created
+app.post('/resource/policy/new', async(req, res) => {
   if (!Object.keys(req.body).length) {
    return res.status(400).json({
      message: "Request body cannot be empty",
    })
   }
-  var { resource } = req.body
+  var { resource, policy } = req.body
   if (!resource) {
    res.status(400).json({
      message: "Ensure you sent a resource field",
    })
   }
-  const bytes = json.encode({ resource: resource })
-  const hash = await sha256.digest(bytes)
-  const cid = CID.create(1, json.code, hash)
-  await node.contentRouting.provide(cid)
-  console.log(`Provided ${resource}`)
-  await node.pubsub.subscribe(resource)
-  console.log(`Subscribed to ${resource}`)
-  // TODO: Find other providers, get policies
-  res.end("Posted resource " + resource)
-})
-
-app.get('/resource/:id', async(req, res) => {
-  const bytes = json.encode({ resource: req.params.id })
-  const hash = await sha256.digest(bytes)
-  const cid = CID.create(1, json.code, hash)
-
-  try {
-    const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
-    console.log('Found providers:', providers)
-    res.end("Found providers: " + providers)
-  }
-  catch(err) {
-    console.log("No providers found")
-    res.end("No providers found")
-  }
-})
-
-app.post('/resource/:id/policy', async(req, res) => {
-  if (!Object.keys(req.body).length) {
-   return res.status(400).json({
-     message: "Request body cannot be empty",
-   })
-  }
-  var { policy } = req.body
   if (!policy) {
    res.status(400).json({
      message: "Ensure you sent a policy field",
    })
   }
-  await node.pubsub.subscribe(req.params.id)
-  await node.pubsub.publish(req.params.id, uint8ArrayFromString(policy)).catch(err => {
+
+  const bytes = json.encode({ resource: resource })
+  const hash = await sha256.digest(bytes)
+  const cid = CID.create(1, json.code, hash)
+  try {
+    await node.contentRouting.provide(cid)
+  }
+  catch(err) {
+    console.log(`No other peers to provide ${resource} to`)
+  }
+  console.log(`Provided policy for resource ${resource}`)
+  try {
+    console.log(`Syncing with other providers for ${resource}...`)
+    const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
+    for (const provider of providers) {
+      console.log(provider.multiaddrs[0].nodeAddress())
+      await axios({
+        method: 'get',
+        url: `http://${provider.multiaddrs[0].nodeAddress().address}:8085/v1/policies?resource=${resource}`,
+        headers: {
+          'fiware-Service': 'Tenant1',
+          'fiware-Servicepath': '/'
+        }
+      })
+      .then(function (response) {
+        console.log(response.data)
+        for (const policy_entry of response.data) {
+          axios({
+            method: 'post',
+            url: `http://${provider.multiaddrs[0].nodeAddress().address}:8085/v1/policies?resource=${resource}`,
+            headers: {
+              'fiware-Service': 'Tenant1',
+              'fiware-Servicepath': '/'
+            },
+            data: policy_entry
+          })
+          .then(function (r) {
+            console.log(r.data)
+          })
+          .catch(function (err) {
+            console.log(err.response.data);
+          })
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+    }
+  }
+  catch(err) {
+    console.log(`No other providers for ${resource}`)
+  }
+
+  // TODO: Check if already subscribed
+  await node.pubsub.subscribe(resource)
+  console.log(`Subscribed to ${resource}`)
+  await node.pubsub.publish(resource, uint8ArrayFromString(policy)).catch(err => {
     console.error(err)
     res.end(`Error: ${err}`)
   })
   res.end("Policy message sent: " + policy)
 })
 
+// Function to process a message arriving on a topic (resource)
 async function processTopicMessage(evt) {
-  console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic}`)
-  try {
-    const bytes = json.encode({ resource: evt.detail.topic })
-    const hash = await sha256.digest(bytes)
-    const cid = CID.create(1, json.code, hash)
-    const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
-    console.log('Found providers:', providers)
-  }
-  catch(err) {
-    console.log("No providers found")
-  }
-  // TODO: Get resource policies from content providers
+  const sender = await node.peerStore.addressBook.get(evt.detail.from)
+  console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic} from ${sender[0].multiaddr.nodeAddress().address}`)
+  await axios({
+    method: 'get',
+    url: `http://${sender[0].multiaddr.nodeAddress().address}:8085/v1/policies?resource=${evt.detail.topic}`,
+    headers: {
+      'fiware-Service': 'Tenant1',
+      'fiware-Servicepath': '/'
+    }
+  })
+  .then(function (response) {
+    console.log(response.data)
+    for (const policy_entry of response.data) {
+      axios({
+        method: 'post',
+        url: `http://${sender[0].multiaddr.nodeAddress().address}:8085/v1/policies?resource=${evt.detail.topic}`,
+        headers: {
+          'fiware-Service': 'Tenant1',
+          'fiware-Servicepath': '/'
+        },
+        data: policy_entry
+      })
+      .then(function (r) {
+        console.log(r.data)
+      })
+      .catch(function (err) {
+        console.log(err.response.data);
+      })
+    }
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
 }
 
+// Starting server
 var server = app.listen(server_port, async() => {
 
   await node.start()
