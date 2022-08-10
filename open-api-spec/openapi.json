@@ -1707,12 +1707,16 @@
       "Policy": {
         "title": "Policy",
         "required": [
+          "id",
           "access_to",
-          "resource_type",
-          "id"
+          "resource_type"
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
           "access_to": {
             "title": "Access To",
             "type": "string"
@@ -1736,10 +1740,6 @@
               "type": "string"
             },
             "default": []
-          },
-          "id": {
-            "title": "Id",
-            "type": "string"
           }
         }
       },
@@ -1751,6 +1751,10 @@
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
           "access_to": {
             "title": "Access To",
             "type": "string"
