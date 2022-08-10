@@ -649,16 +649,17 @@ Simple healthcheck endpoint
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
+| id | string |  | Yes |
 | access_to | string |  | Yes |
 | resource_type | string |  | Yes |
 | mode | [ string ] |  | No |
 | agent | [ string ] |  | No |
-| id | string |  | Yes |
 
 #### PolicyCreate
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
+| id | string |  | No |
 | access_to | string |  | Yes |
 | resource_type | string |  | Yes |
 | mode | [ string ] |  | No |
