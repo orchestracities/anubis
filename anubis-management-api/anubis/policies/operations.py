@@ -226,8 +226,7 @@ def create_policy(
         service_path_id: str,
         policy: schemas.PolicyCreate):
     db_policy = models.Policy(
-        id=str(
-            uuid.uuid4()),
+        id=policy.id,
         access_to=policy.access_to,
         resource_type=policy.resource_type,
         service_path_id=service_path_id)

@@ -4,6 +4,7 @@ from pydantic import BaseModel, ValidationError, validator
 from rfc3987 import parse
 import re
 import anubis.default as default
+import uuid
 
 
 class ModeBase(BaseModel):
@@ -23,11 +24,18 @@ class Mode(ModeBase):
 
 
 class PolicyBase(BaseModel):
+    id: Optional[str] = None
     access_to: str
     resource_type: str
     mode: List[str] = []
     agent: List[str] = []
     # agent iri (unless pre-defined) are agent_type_iri:id
+
+    @validator('id')
+    def valid_id(cls, id):
+        if not id:
+            return str(uuid.uuid4())
+        return id
 
     @validator('agent')
     def valid_agent(cls, agent, values):
