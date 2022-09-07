@@ -10,3 +10,4 @@ anubis-management-api/.idea/*
 *.json
 *.bin
 policy-governance-middleware/node_modules/
+policy-governance-middleware/data.json
