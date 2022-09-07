@@ -1,0 +1,158 @@
+version: "3.7"
+services:
+
+  front-envoy:
+    image: envoyproxy/envoy:v1.18-latest
+    volumes:
+      - ./config/envoy/v3.yaml:/etc/envoy/envoy.yaml
+      - ./config/opa-service/lua:/etc/envoy/lua
+    networks:
+      - envoymesh
+    ports:
+      - "8000:8000"
+      - "8090:8090"
+
+  policy-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: orchestracities/anubis-management-api:test
+    networks:
+      - envoymesh
+    environment:
+      - CORS_ALLOWED_ORIGINS=http://localhost
+      - CORS_ALLOWED_METHODS=*
+      - CORS_ALLOWED_HEADERS=*
+      - DEFAULT_POLICIES_CONFIG_FILE=/home/apiuser/config/opa-service/default_policies.ttl
+      - DEFAULT_WAC_CONFIG_FILE=/home/apiuser/config/opa-service/default_wac_config.yml
+      - DB_TYPE=postgres
+      - DB_HOST=postgresserver
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - DB_NAME=anubis
+    ports:
+      - "8085:8000"
+    volumes:
+      - ./config/opa-service/default_policies.ttl:/home/apiuser/config/opa-service/default_policies.ttl
+      - ./config/opa-service/default_wac_config.yml:/home/apiuser/config/opa-service/default_wac_config.yml
+    depends_on:
+      - postgresserver
+
+  middleware1:
+    build:
+      context: ./policy-governance-middleware
+      dockerfile: Dockerfile
+    image: orchestracities/middleware:test
+    networks:
+      - envoymesh
+    environment:
+      - SERVER_PORT=8098
+      - ANUBIS_API_URI=policy-api:8000
+      - LISTEN_ADDRESS="/ip4/127.0.0.1/tcp/63936"
+      - PEERID_STRING="bafzbeia7rezbp2hac3fv66ndq3v3f2dvxregrvaz2nfw5aejesokvmlwq4"
+    ports:
+      - "8098:8098"
+    depends_on:
+      - policy-api
+
+  middleware2:
+    build:
+      context: ./policy-governance-middleware
+      dockerfile: Dockerfile
+    image: orchestracities/middleware:test
+    networks:
+      - envoymesh
+    environment:
+      - SERVER_PORT=8098
+      - ANUBIS_API_URI=policy-api:8000
+      - LISTEN_ADDRESS="/ip4/127.0.0.1/tcp/0"
+      - PEERID_STRING="12D3KooWNJV9S1HUhP4BtEMW7bMCbgmqppLLNbNnUK3U1gVmVfwh"
+      - NODE_BOOTSTRAPERS="['/dnsaddr/middleware1/tcp/63936/p2p/QmQTkgfevVJnS6nsNynxxTpNzMGmWmSDyMHWVhP4vZjRWe']"
+    ports:
+      - "8098:8098"
+    depends_on:
+      - policy-api
+
+  ext_authz-opa-service:
+    image: openpolicyagent/opa:0.38.1-envoy-3
+    environment:
+      - AUTH_API_URI=http://policy-api:8000/v1/policies/
+      - VALID_ISSUERS=http://keycloak:8080/auth/realms/master
+      - VALID_AUDIENCE=client1
+    ports:
+      - "9191:9191"
+      - "8282:8282"
+      - "8181:8181"
+    volumes:
+      - ./config/opa-service/rego:/etc/rego
+      - ./config/opa-service/opa.yaml:/opa.yaml
+    command:
+      - run
+      - --log-level=debug
+      - --server
+      - --config-file=/opa.yaml
+      - --diagnostic-addr=0.0.0.0:8282
+      - --set=plugins.envoy_ext_authz_grpc.addr=:9002
+      - /etc/rego/common.rego
+      - /etc/rego/context_broker_policy.rego
+      - /etc/rego/anubis_management_api_policy.rego
+      - /etc/rego/audit.rego
+    networks:
+      - envoymesh
+
+  mongo:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+    networks:
+      - envoymesh
+
+  postgresserver:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=anubis
+    networks:
+      - envoymesh
+
+  keycloak:
+    image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
+    # if your platform is linux/arm64 use the following image
+    #image: koolwithk/keycloak-arm:16.0.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/oc-custom.jar:/opt/jboss/keycloak/standalone/deployments/oc-custom.jar
+      - ./keycloak/realm-export.json:/opt/jboss/realm-export.json
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+      - JAVA_TOOL_OPTIONS=-Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/jboss/realm-export.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+    networks:
+      - envoymesh
+
+  upstream-service:
+    image: fiware/orion:${ORION_VERSION:-3.3.1}
+    ports:
+      - "1026:1026"
+    command: -logLevel DEBUG -noCache -dbhost mongo
+    depends_on:
+      - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:1026/version"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+    networks:
+      - envoymesh
+
+volumes:
+  mongodata:
+
+networks:
+  envoymesh: {}
