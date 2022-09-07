@@ -17,26 +17,46 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { MulticastDNS } from '@libp2p/mdns'
 import axios from 'axios'
+import { peerIdFromString } from '@libp2p/peer-id'
+import fs from 'fs'
 
 // Configuration for the port used by this node
 const server_port = process.env.SERVER_PORT || 8099
-const anubis_api_uri = "127.0.0.1:8085"
+const anubis_api_uri = process.env.ANUBIS_API_URI || "127.0.0.1:8085"
+const listen_address = process.env.LISTEN_ADDRESS || '/ip4/127.0.0.1/tcp/0'
+const peerIdString = process.env.PEERID_STRING || 'bafzbeia7rezbp2hac3fv66ndq3v3f2dvxregrvaz2nfw5aejesokvmlwq4'
+
+if(process.env.NODE_BOOTSTRAPERS) {
+  var bootstrapers = JSON.parse(process.env.NODE_BOOTSTRAPERS)
+}
+else {
+  var bootstrapers = ['/ip4/127.0.0.1/tcp/0']
+}
 
 // Setting up Node app
 var app = express()
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
 
+const peerId = await peerIdFromString(peerIdString)
+
+var providedResources = []
+
 // Setting up the Libp2p node
 const node = await createLibp2p({
+  // peerId: peerId,
   addresses: {
-    listen: ['/ip4/127.0.0.1/tcp/0']
+    listen: [listen_address]
   },
   transports: [new TCP(), new WebSockets()],
   streamMuxers: [new Mplex()],
   connectionEncryption: [new Noise()],
   dht: new KadDHT(),
   peerDiscovery: [
+    new Bootstrap({
+      interval: 60e3,
+      list: bootstrapers
+    }),
     new MulticastDNS({
       interval: 20e3
     })
@@ -85,6 +105,7 @@ app.post('/resource/policy/new', async(req, res) => {
   }
   catch(err) {
     await node.contentRouting.provide(cid)
+    providedResources.push(resource)
     console.log(`Provided policy for resource ${resource}`)
     console.log(`Syncing with other providers for ${resource}...`)
     const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
@@ -179,7 +200,7 @@ app.post('/resource/policy/update', async(req, res) => {
     console.log(`Subscribed to ${resource}`)
   }
   var message = {
-    "action": "post",
+    "action": "put",
     "policy_id": policy,
     "service": service,
     "servicepath": servicepath,
@@ -228,7 +249,7 @@ app.post('/resource/policy/delete', async(req, res) => {
     console.log(`Subscribed to ${resource}`)
   }
   var message = {
-    "action": "post",
+    "action": "delete",
     "policy_id": policy,
     "service": service,
     "servicepath": servicepath,
@@ -314,10 +335,41 @@ async function processTopicMessage(evt) {
   })
 }
 
+// Saving config to file
+async function saveConfiguration() {
+  var persistentDataFileStream = fs.createWriteStream('data.json')
+  const topics = await node.pubsub.getTopics()
+  let data2 = JSON.stringify({"topics": topics, "resources": providedResources})
+  persistentDataFileStream.write(data2)
+  persistentDataFileStream.close()
+}
+
 // Starting server
 var server = app.listen(server_port, async() => {
 
   await node.start()
+
+  let rawdata = fs.readFileSync('data.json')
+  let data = JSON.parse(rawdata)
+
+  for(const resource of data.resources) {
+    providedResources.push(resource)
+    const bytes = json.encode({ resource: resource })
+    const hash = await sha256.digest(bytes)
+    const cid = CID.create(1, json.code, hash)
+    try {
+      await node.contentRouting.provide(cid)
+    }
+    catch(err) {
+      console.log(`Failed to initially provide ${resource}`)
+    }
+  }
+
+  for(const topic of data.topics) {
+    node.pubsub.subscribe(topic)
+  }
+
+  await saveConfiguration()
 
   console.log("Node started with:")
   node.getMultiaddrs().forEach((ma) => console.log(`${ma.toString()}`))
