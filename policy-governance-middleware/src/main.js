@@ -17,14 +17,14 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { MulticastDNS } from '@libp2p/mdns'
 import axios from 'axios'
-import { peerIdFromString } from '@libp2p/peer-id'
 import fs from 'fs'
+import { Multiaddr } from "@multiformats/multiaddr";
+import dns from "dns/promises";
 
 // Configuration for the port used by this node
 const server_port = process.env.SERVER_PORT || 8099
 const anubis_api_uri = process.env.ANUBIS_API_URI || "127.0.0.1:8085"
-const listen_address = process.env.LISTEN_ADDRESS || '/ip4/127.0.0.1/tcp/0'
-const peerIdString = process.env.PEERID_STRING || 'bafzbeia7rezbp2hac3fv66ndq3v3f2dvxregrvaz2nfw5aejesokvmlwq4'
+const listen_address = process.env.LISTEN_ADDRESS || '/dnsaddr/localhost/tcp/49662'
 
 if(process.env.NODE_BOOTSTRAPERS) {
   var bootstrapers = JSON.parse(process.env.NODE_BOOTSTRAPERS)
@@ -33,20 +33,36 @@ else {
   var bootstrapers = ['/ip4/127.0.0.1/tcp/0']
 }
 
+const mas = bootstrapers.map(str => new Multiaddr(str))
+
+const rmas = await Promise.all(mas.map(async ma => {
+  const options = ma.toOptions()
+  if(options.host == 'localhost') {
+    return ma
+  }
+	const lookup = await dns.lookup(options.host)
+	return new Multiaddr(ma.toString().replace(options.host, lookup.address).replace("dnsaddr", "ip4"))
+}))
+
+var ma = new Multiaddr(listen_address)
+var options = ma.toOptions()
+if(options.host != 'localhost') {
+  const lookup = await dns.lookup(options.host)
+  console.log(lookup)
+  ma = new Multiaddr(ma.toString().replace(options.host, lookup.address).replace("dnsaddr", "ip4"))
+}
+
 // Setting up Node app
 var app = express()
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
 
-const peerId = await peerIdFromString(peerIdString)
-
 var providedResources = []
 
 // Setting up the Libp2p node
 const node = await createLibp2p({
-  // peerId: peerId,
   addresses: {
-    listen: [listen_address]
+    listen: [ma]
   },
   transports: [new TCP(), new WebSockets()],
   streamMuxers: [new Mplex()],
@@ -55,7 +71,7 @@ const node = await createLibp2p({
   peerDiscovery: [
     new Bootstrap({
       interval: 60e3,
-      list: bootstrapers
+      list: rmas
     }),
     new MulticastDNS({
       interval: 20e3
@@ -64,7 +80,16 @@ const node = await createLibp2p({
   connectionManager: {
     autoDial: true
   },
-  pubsub: new FloodSub()
+  pubsub: new FloodSub(),
+  relay: {
+    enabled: true,
+    hop: {
+      enabled: true
+    },
+    advertise: {
+      enabled: true,
+    }
+  }
 })
 
 // Endpoint when a new policy is created

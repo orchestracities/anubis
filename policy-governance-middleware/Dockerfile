@@ -6,7 +6,7 @@ COPY . .
 
 RUN npm install
 
-ENV SERVER_PORT="8099"
-ENV ANUBIS_API_URI="127.0.0.1:8085"
+EXPOSE 49662
+EXPOSE 8099
 
 CMD [ "node", "src/main.js" ]
