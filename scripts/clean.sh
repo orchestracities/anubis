@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-docker-compose down -v
+docker-compose down -v --remove-orphans
 docker-compose rm -fv
 docker image rm orchestracities/anubis-management-api:test
 docker image rm orchestracities/configuration-api:latest
