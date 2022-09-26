@@ -76,7 +76,7 @@ services:
       - ANUBIS_API_URI=policy-api1:8000
       - LISTEN_ADDRESS=/dnsaddr/middleware1/tcp/49662
     ports:
-      - "8098:8099"
+      - "8098:8098"
       - "49662:49662"
     depends_on:
       - policy-api1
@@ -89,12 +89,12 @@ services:
     networks:
       - envoymesh
     environment:
-      - SERVER_PORT=8099
+      - SERVER_PORT=8098
       - ANUBIS_API_URI=policy-api2:8000
       - LISTEN_ADDRESS=/dnsaddr/middleware2/tcp/49662
       - NODE_BOOTSTRAPERS=["/dnsaddr/middleware1/tcp/49662"]
     ports:
-      - "8099:8099"
+      - "8099:8098"
       - "49663:49662"
     depends_on:
       - policy-api2
@@ -221,4 +221,3 @@ volumes:
 
 networks:
   envoymesh:
-    driver: bridge

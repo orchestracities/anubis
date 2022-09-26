@@ -33,23 +33,11 @@ else {
   var bootstrapers = ['/ip4/127.0.0.1/tcp/0']
 }
 
-const mas = bootstrapers.map(str => new Multiaddr(str))
-
-const rmas = await Promise.all(mas.map(async ma => {
-  const options = ma.toOptions()
-  if(options.host == 'localhost') {
-    return ma
-  }
-	const lookup = await dns.lookup(options.host)
-	return new Multiaddr(ma.toString().replace(options.host, lookup.address).replace("dnsaddr", "ip4"))
-}))
-
-var ma = new Multiaddr(listen_address)
-var options = ma.toOptions()
+var listen_ma = new Multiaddr(listen_address)
+var options = listen_ma.toOptions()
 if(options.host != 'localhost') {
   const lookup = await dns.lookup(options.host)
-  console.log(lookup)
-  ma = new Multiaddr(ma.toString().replace(options.host, lookup.address).replace("dnsaddr", "ip4"))
+  listen_ma = new Multiaddr(listen_ma.toString().replace(options.host, lookup.address).replace("dnsaddr", "ip4"))
 }
 
 // Setting up Node app
@@ -57,22 +45,19 @@ var app = express()
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
 
+// Keeping track of resources being provided
 var providedResources = []
 
 // Setting up the Libp2p node
 const node = await createLibp2p({
   addresses: {
-    listen: [ma]
+    listen: [listen_ma]
   },
   transports: [new TCP(), new WebSockets()],
   streamMuxers: [new Mplex()],
   connectionEncryption: [new Noise()],
   dht: new KadDHT(),
   peerDiscovery: [
-    new Bootstrap({
-      interval: 60e3,
-      list: rmas
-    }),
     new MulticastDNS({
       interval: 20e3
     })
@@ -90,6 +75,150 @@ const node = await createLibp2p({
       enabled: true,
     }
   }
+})
+
+// Endpoint to retrieve node metadata
+app.get('/metadata', async(req, res) => {
+  res.json({"policy_api_uri": anubis_api_uri})
+})
+
+// Endpoint for providing a resource
+app.post('/resource/provide', async(req, res) => {
+  if (!Object.keys(req.body).length) {
+   return res.status(400).json({
+     message: "Request body cannot be empty",
+   })
+  }
+  var { resource, policy, service, servicepath } = req.body
+  if (!resource) {
+   res.status(400).json({
+     message: "Ensure you sent a resource field",
+   })
+  }
+  if (!service) {
+   res.status(400).json({
+     message: "Ensure you sent a service field",
+   })
+  }
+  if (!servicepath) {
+   res.status(400).json({
+     message: "Ensure you sent a servicepath field",
+   })
+  }
+
+  const bytes = json.encode({ resource: resource })
+  const hash = await sha256.digest(bytes)
+  const cid = CID.create(1, json.code, hash)
+  await node.contentRouting.provide(cid)
+  providedResources.push(resource)
+
+  console.log(`Provided policy for resource ${resource}`)
+  res.end(`Provided policy for resource ${resource}`)
+})
+
+// Endpoint for subscribing to a resource topic
+app.post('/resource/subscribe', async(req, res) => {
+  if (!Object.keys(req.body).length) {
+   return res.status(400).json({
+     message: "Request body cannot be empty",
+   })
+  }
+  var { resource, policy, service, servicepath } = req.body
+  if (!resource) {
+   res.status(400).json({
+     message: "Ensure you sent a resource field",
+   })
+  }
+  if (!service) {
+   res.status(400).json({
+     message: "Ensure you sent a service field",
+   })
+  }
+  if (!servicepath) {
+   res.status(400).json({
+     message: "Ensure you sent a servicepath field",
+   })
+  }
+
+  const topics = await node.pubsub.getTopics()
+  if (!topics.includes(resource)) {
+    await node.pubsub.subscribe(resource)
+    console.log(`Subscribed to ${resource}`)
+  }
+
+  const bytes = json.encode({ resource: resource })
+  const hash = await sha256.digest(bytes)
+  const cid = CID.create(1, json.code, hash)
+
+  var providers = []
+  try {
+    providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
+  }
+  catch(error) {
+    res.end(`Subscribed to ${resource}, no other providers found`)
+  }
+  console.log(`Syncing with other providers for ${resource}...`)
+  for (const provider of providers) {
+    var providerPolicyApi = null
+    await axios({
+      method: 'get',
+      url: `http://${provider.multiaddrs[0].nodeAddress().address}:8098/metadata`
+    })
+    .then(async function (response) {
+      providerPolicyApi = response.data["policy_api_uri"]
+    })
+    .catch(function (error) {
+      console.log(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
+      res.end(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
+    })
+    await axios({
+      method: 'post',
+      url: `http://${anubis_api_uri}/v1/tenants/`,
+      data: {"name": service}
+    })
+    .then(async function (response) {
+      console.log(`Created Tenant ${service}`)
+    })
+    .catch(function (error) {
+      console.log(`No new Tenant created`)
+    })
+    await axios({
+      method: 'get',
+      url: `http://${providerPolicyApi}/v1/policies`,
+      headers: {
+        'fiware-Service': service,
+        'fiware-Servicepath': servicepath
+      },
+      params: {
+        'resource': resource
+      }
+    })
+    .then(async function (response) {
+      for (const policy_entry of response.data) {
+        // TODO: Concurrency
+        await axios({
+          method: 'post',
+          url: `http://${anubis_api_uri}/v1/policies`,
+          headers: {
+            'fiware-Service': service,
+            'fiware-Servicepath': servicepath
+          },
+          data: policy_entry
+        })
+        .then(function (r) {
+          console.log(r.data)
+        })
+        .catch(function (err) {
+          console.log(err.response.data)
+        })
+      }
+    })
+    .catch(function (error) {
+      console.log(error.response.data)
+    })
+  }
+
+  res.end(`Subscribed to ${resource}`)
 })
 
 // Endpoint when a new policy is created
@@ -121,60 +250,6 @@ app.post('/resource/policy/new', async(req, res) => {
    })
   }
 
-  const bytes = json.encode({ resource: resource })
-  const hash = await sha256.digest(bytes)
-  const cid = CID.create(1, json.code, hash)
-  var providers = []
-  try {
-    providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
-  }
-  catch(err) {
-    await node.contentRouting.provide(cid)
-    providedResources.push(resource)
-    console.log(`Provided policy for resource ${resource}`)
-    console.log(`Syncing with other providers for ${resource}...`)
-    const providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
-    for (const provider of providers) {
-      console.log(provider.multiaddrs[0].nodeAddress())
-      await axios({
-        method: 'get',
-        url: `http://${provider.multiaddrs[0].nodeAddress().address}:8085/v1/policies?resource=${resource}`,
-        headers: {
-          'fiware-Service': service,
-          'fiware-Servicepath': servicepath
-        }
-      })
-      .then(async function (response) {
-        console.log(response.data)
-        for (const policy_entry of response.data) {
-          await axios({
-            method: 'post',
-            url: `http://${anubis_api_uri}/v1/policies`,
-            headers: {
-              'fiware-Service': service,
-              'fiware-Servicepath': servicepath
-            },
-            data: policy_entry
-          })
-          .then(function (r) {
-            console.log(r.data)
-          })
-          .catch(function (err) {
-            console.log(err.response.data);
-          })
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-    }
-  }
-
-  const topics = await node.pubsub.getTopics()
-  if (!topics.includes(resource)) {
-    await node.pubsub.subscribe(resource)
-    console.log(`Subscribed to ${resource}`)
-  }
   var message = {
     "action": "post",
     "policy_id": policy,
@@ -186,6 +261,7 @@ app.post('/resource/policy/new', async(req, res) => {
     console.error(err)
     res.end(`Error: ${err}`)
   })
+
   res.end("Policy message sent: " + message)
   console.log("Policy message sent: " + message)
 })
@@ -219,11 +295,6 @@ app.post('/resource/policy/update', async(req, res) => {
    })
   }
 
-  const topics = await node.pubsub.getTopics()
-  if (!topics.includes(resource)) {
-    await node.pubsub.subscribe(resource)
-    console.log(`Subscribed to ${resource}`)
-  }
   var message = {
     "action": "put",
     "policy_id": policy,
@@ -235,6 +306,7 @@ app.post('/resource/policy/update', async(req, res) => {
     console.error(err)
     res.end(`Error: ${err}`)
   })
+
   res.end("Policy message sent: " + message)
   console.log("Policy message sent: " + message)
 })
@@ -268,11 +340,6 @@ app.post('/resource/policy/delete', async(req, res) => {
    })
   }
 
-  const topics = await node.pubsub.getTopics()
-  if (!topics.includes(resource)) {
-    await node.pubsub.subscribe(resource)
-    console.log(`Subscribed to ${resource}`)
-  }
   var message = {
     "action": "delete",
     "policy_id": policy,
@@ -284,6 +351,7 @@ app.post('/resource/policy/delete', async(req, res) => {
     console.error(err)
     res.end(`Error: ${err}`)
   })
+
   res.end("Policy message sent: " + message)
   console.log("Policy message sent: " + message)
 })
@@ -293,18 +361,58 @@ async function processTopicMessage(evt) {
   const sender = await node.peerStore.addressBook.get(evt.detail.from)
   const message = JSON.parse(uint8ArrayToString(evt.detail.data))
   console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic} from ${sender[0].multiaddr.nodeAddress().address}`)
+  var providerPolicyApi = null
   await axios({
     method: 'get',
-    url: `http://${sender[0].multiaddr.nodeAddress().address}:8085/v1/policies/${message.policy_id}`,
+    url: `http://${sender[0].multiaddr.nodeAddress().address}:8098/metadata`
+  })
+  .then(async function (response) {
+    providerPolicyApi = response.data["policy_api_uri"]
+  })
+  .catch(function (error) {
+    console.log(error)
+  })
+  if(message.action == "delete") {
+    await axios({
+      method: 'delete',
+      url: `http://${anubis_api_uri}/v1/policies/${message.policy_id}`,
+      headers: {
+        'fiware-Service': message.service,
+        'fiware-Servicepath': message.servicepath
+      },
+      data: response.data
+    })
+    .then(function (r) {
+      console.log(r)
+    })
+    .catch(function (err) {
+      console.log(err)
+    })
+    return
+  }
+  await axios({
+    method: 'get',
+    url: `http://${providerPolicyApi}/v1/policies/${message.policy_id}`,
     headers: {
       'fiware-Service': message.service,
       'fiware-Servicepath': message.servicepath
     }
   })
-  .then(function (response) {
+  .then(async function (response) {
     console.log(response.data)
     if(message.action == "post") {
-      axios({
+      await axios({
+        method: 'post',
+        url: `http://${anubis_api_uri}/v1/tenants/`,
+        data: {"name": message.service}
+      })
+      .then(async function (response) {
+        console.log(`Created Tenant ${resource}`)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+      await axios({
         method: 'post',
         url: `http://${anubis_api_uri}/v1/policies`,
         headers: {
@@ -321,25 +429,8 @@ async function processTopicMessage(evt) {
       })
     }
     else if(message.action == "put") {
-      axios({
+      await axios({
         method: 'put',
-        url: `http://${anubis_api_uri}/v1/policies/${message.policy_id}`,
-        headers: {
-          'fiware-Service': message.service,
-          'fiware-Servicepath': message.servicepath
-        },
-        data: response.data
-      })
-      .then(function (r) {
-        console.log(r)
-      })
-      .catch(function (err) {
-        console.log(err)
-      })
-    }
-    if(message.action == "delete") {
-      axios({
-        method: 'delete',
         url: `http://${anubis_api_uri}/v1/policies/${message.policy_id}`,
         headers: {
           'fiware-Service': message.service,
