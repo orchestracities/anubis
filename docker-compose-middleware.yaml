@@ -75,6 +75,7 @@ services:
       - SERVER_PORT=8098
       - ANUBIS_API_URI=policy-api1:8000
       - LISTEN_ADDRESS=/dnsaddr/middleware1/tcp/49662
+      - IS_PRIVATE_ORG=false
     ports:
       - "8098:8098"
       - "49662:49662"
@@ -92,7 +93,7 @@ services:
       - SERVER_PORT=8098
       - ANUBIS_API_URI=policy-api2:8000
       - LISTEN_ADDRESS=/dnsaddr/middleware2/tcp/49662
-      - NODE_BOOTSTRAPERS=["/dnsaddr/middleware1/tcp/49662"]
+      - IS_PRIVATE_ORG=false
     ports:
       - "8099:8098"
       - "49663:49662"
