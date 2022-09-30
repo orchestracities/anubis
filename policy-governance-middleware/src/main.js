@@ -25,13 +25,7 @@ import dns from "dns/promises";
 const server_port = process.env.SERVER_PORT || 8099
 const anubis_api_uri = process.env.ANUBIS_API_URI || "127.0.0.1:8085"
 const listen_address = process.env.LISTEN_ADDRESS || '/dnsaddr/localhost/tcp/49662'
-
-if(process.env.NODE_BOOTSTRAPERS) {
-  var bootstrapers = JSON.parse(process.env.NODE_BOOTSTRAPERS)
-}
-else {
-  var bootstrapers = ['/ip4/127.0.0.1/tcp/0']
-}
+const is_private_org = process.env.IS_PRIVATE_ORG || "true"
 
 var listen_ma = new Multiaddr(listen_address)
 var options = listen_ma.toOptions()
@@ -93,16 +87,6 @@ app.post('/resource/provide', async(req, res) => {
   if (!resource) {
    res.status(400).json({
      message: "Ensure you sent a resource field",
-   })
-  }
-  if (!service) {
-   res.status(400).json({
-     message: "Ensure you sent a service field",
-   })
-  }
-  if (!servicepath) {
-   res.status(400).json({
-     message: "Ensure you sent a servicepath field",
    })
   }
 
@@ -196,6 +180,13 @@ app.post('/resource/subscribe', async(req, res) => {
     .then(async function (response) {
       for (const policy_entry of response.data) {
         // TODO: Concurrency
+        if(is_private_org != "true") {
+          var filtered_agents = policy_entry.agent.filter(a => !a.includes("acl:agent:"))
+          console.log(filtered_agents)
+          if(filtered_agents.length > 0) {
+            continue
+          }
+        }
         await axios({
           method: 'post',
           url: `http://${anubis_api_uri}/v1/policies`,
