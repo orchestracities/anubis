@@ -76,6 +76,65 @@ app.get('/metadata', async(req, res) => {
   res.json({"policy_api_uri": anubis_api_uri})
 })
 
+// Endpoint for providing a resource from the mobile app
+app.post('/resource/mobile/send', async(req, res) => {
+  if (!Object.keys(req.body).length) {
+   return res.status(400).json({
+     message: "Request body cannot be empty",
+   })
+  }
+  var { policies, service, servicepath } = req.body
+  if (!policies) {
+   res.status(400).json({
+     message: "Ensure you sent a policies field",
+   })
+  }
+  if (!service) {
+   res.status(400).json({
+     message: "Ensure you sent a service field",
+   })
+  }
+  if (!servicepath) {
+   res.status(400).json({
+     message: "Ensure you sent a servicepath field",
+   })
+  }
+  for(const entry of policies) {
+    const usrMail = entry.usrMail
+    for(const resource of entry.usrData) {
+      const resId = resource.id
+      for(const policy of resource.children) {
+        var modes = []
+        for(const m of policy.mode.split(",")) {
+          modes.push(m)
+        }
+        modes = modes.filter(e => e != '')
+        var new_policy = {
+            "id": policy.id,
+            "access_to": resId,
+            "resource_type": "mobile",
+            "mode": modes,
+            "agent": [
+                policy.actorType
+            ]
+        }
+        var message = {
+          "action": "send_mobile",
+          "policy": new_policy,
+          "service": service,
+          "servicepath": servicepath,
+        }
+        message = JSON.stringify(message)
+        await node.pubsub.publish(resId, uint8ArrayFromString(message)).catch(err => {
+          console.error(err)
+          res.end(`Error: ${err}`)
+        })
+      }
+    }
+  }
+  res.json({})
+})
+
 // Endpoint for providing a resource
 app.post('/resource/provide', async(req, res) => {
   if (!Object.keys(req.body).length) {
@@ -140,6 +199,7 @@ app.post('/resource/subscribe', async(req, res) => {
   }
   catch(error) {
     res.end(`Subscribed to ${resource}, no other providers found`)
+    return
   }
   console.log(`Syncing with other providers for ${resource}...`)
   for (const provider of providers) {
@@ -208,7 +268,6 @@ app.post('/resource/subscribe', async(req, res) => {
       console.log(error.response.data)
     })
   }
-
   res.end(`Subscribed to ${resource}`)
 })
 
@@ -351,7 +410,36 @@ app.post('/resource/policy/delete', async(req, res) => {
 async function processTopicMessage(evt) {
   const sender = await node.peerStore.addressBook.get(evt.detail.from)
   const message = JSON.parse(uint8ArrayToString(evt.detail.data))
-  console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic} from ${sender[0].multiaddr.nodeAddress().address}`)
+  console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic}`)
+  if(message.action == "send_mobile") {
+    await axios({
+      method: 'post',
+      url: `http://${anubis_api_uri}/v1/tenants/`,
+      data: {"name": message.service}
+    })
+    .then(async function (response) {
+      console.log(`Created Tenant ${message.service}`)
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+    await axios({
+      method: 'post',
+      url: `http://${anubis_api_uri}/v1/policies`,
+      headers: {
+        'fiware-Service': message.service,
+        'fiware-Servicepath': message.servicepath
+      },
+      data: message.policy
+    })
+    .then(function (r) {
+      console.log(r)
+    })
+    .catch(function (err) {
+      console.log(err.response.data)
+    })
+    return
+  }
   var providerPolicyApi = null
   await axios({
     method: 'get',
