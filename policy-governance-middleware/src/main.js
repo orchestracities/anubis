@@ -23,13 +23,17 @@ import dns from "dns/promises";
 
 // Configuration for the port used by this node
 const server_port = process.env.SERVER_PORT || 8099
+// Uri of the Anubis API connected to this middleware
 const anubis_api_uri = process.env.ANUBIS_API_URI || "127.0.0.1:8085"
+// The multiaddress format address this middleware listens on
 const listen_address = process.env.LISTEN_ADDRESS || '/dnsaddr/localhost/tcp/49662'
+// Is this a private organisation? (Private org won't share policies that aren't of a specific user only)
 const is_private_org = process.env.IS_PRIVATE_ORG || "true"
 
+// Convert DNS address to IP address (solves Docker issues)
 var listen_ma = new Multiaddr(listen_address)
 var options = listen_ma.toOptions()
-if(options.host != 'localhost') {
+if(listen_address.includes("dnsaddr") && options.host != 'localhost') {
   const lookup = await dns.lookup(options.host)
   listen_ma = new Multiaddr(listen_ma.toString().replace(options.host, lookup.address).replace("dnsaddr", "ip4"))
 }
@@ -74,6 +78,100 @@ const node = await createLibp2p({
 // Endpoint to retrieve node metadata
 app.get('/metadata', async(req, res) => {
   res.json({"policy_api_uri": anubis_api_uri})
+})
+
+// Endpoint for receiving resources from the mobile app
+app.post('/resource/mobile/retrieve', async(req, res) => {
+  if (!Object.keys(req.body).length) {
+   return res.status(400).json({
+     message: "Request body cannot be empty",
+   })
+  }
+  var { resource, service, servicepath } = req.body
+  if (!resource) {
+   res.status(400).json({
+     message: "Ensure you sent a resource field",
+   })
+  }
+  if (!service) {
+   res.status(400).json({
+     message: "Ensure you sent a service field",
+   })
+  }
+  if (!servicepath) {
+   res.status(400).json({
+     message: "Ensure you sent a servicepath field",
+   })
+  }
+
+  // TODO: Email of the user
+  var responseData = [
+      {
+          "usrMail": "test@gmail.com",
+          "usrData": [
+              {
+                  "id": resource,
+                  "description": "test",
+                  "children": []
+              }
+          ]
+      }
+  ]
+
+  const bytes = json.encode({ resource: resource })
+  const hash = await sha256.digest(bytes)
+  const cid = CID.create(1, json.code, hash)
+
+  var providers = []
+  try {
+    providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
+  }
+  catch(error) {
+    res.end(`No providers for ${resource}`)
+    return
+  }
+  for (const provider of providers) {
+    var providerPolicyApi = null
+    await axios({
+      method: 'get',
+      url: `http://${provider.multiaddrs[0].nodeAddress().address}:8098/metadata`
+    })
+    .then(async function (response) {
+      providerPolicyApi = response.data["policy_api_uri"]
+    })
+    .catch(function (error) {
+      console.log(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
+    })
+    if(!providerPolicyApi) {
+      continue
+    }
+    await axios({
+      method: 'get',
+      url: `http://${providerPolicyApi}/v1/policies`,
+      headers: {
+        'fiware-Service': service,
+        'fiware-Servicepath': servicepath
+      },
+      params: {
+        'resource': resource
+      }
+    })
+    .then(async function (response) {
+      for (const policy_entry of response.data) {
+        if(is_private_org != "true") {
+          var filtered_agents = policy_entry.agent.filter(a => !a.includes("acl:agent:"))
+          if(filtered_agents.length > 0) {
+            continue
+          }
+        }
+        responseData[0].usrData[0].children.push({"id": policy_entry["id"], "actorType": policy_entry["agent"], "mode": policy_entry["mode"]})
+      }
+    })
+    .catch(function (error) {
+      console.log(error.response.data)
+    })
+  }
+  res.json({responseData})
 })
 
 // Endpoint for providing a resource from the mobile app
@@ -213,8 +311,10 @@ app.post('/resource/subscribe', async(req, res) => {
     })
     .catch(function (error) {
       console.log(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
-      res.end(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
     })
+    if(!providerPolicyApi) {
+      continue
+    }
     await axios({
       method: 'post',
       url: `http://${anubis_api_uri}/v1/tenants/`,
@@ -242,7 +342,6 @@ app.post('/resource/subscribe', async(req, res) => {
         // TODO: Concurrency
         if(is_private_org != "true") {
           var filtered_agents = policy_entry.agent.filter(a => !a.includes("acl:agent:"))
-          console.log(filtered_agents)
           if(filtered_agents.length > 0) {
             continue
           }
@@ -478,7 +577,6 @@ async function processTopicMessage(evt) {
     }
   })
   .then(async function (response) {
-    console.log(response.data)
     if(message.action == "post") {
       await axios({
         method: 'post',
