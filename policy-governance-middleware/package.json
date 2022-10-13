@@ -29,6 +29,7 @@
     "libp2p": "0.37.3-05e8e7e",
     "libp2p-gossipsub": "^0.13.0",
     "peer-id": "^0.16.0",
-    "uint8arrays": "^3.0.0"
+    "uint8arrays": "^3.0.0",
+    "pm2": "^5.2.0"
   }
 }
