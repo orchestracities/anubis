@@ -27,7 +27,10 @@ def get_tenants(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Tenant).offset(skip).limit(limit).all()
 
 
-def create_tenant(db: Session, tenant: schemas.TenantCreate, tenant_id: str = None ):
+def create_tenant(
+        db: Session,
+        tenant: schemas.TenantCreate,
+        tenant_id: str = None):
     if not tenant_id:
         tenant_id = str(uuid.uuid4())
     new_tenant = models.Tenant(id=tenant_id, name=tenant.name)
