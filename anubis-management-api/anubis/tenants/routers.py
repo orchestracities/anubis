@@ -50,22 +50,27 @@ def create_tenant(
             status_code=400,
             detail="Tenant already registered")
 
-    keycloak_enabled = os.environ.get('KEYCLOACK_ENABLED', 'False').lower() in ('true', '1', 't')
+    keycloak_enabled = os.environ.get(
+        'KEYCLOACK_ENABLED', 'False').lower() in (
+        'true', '1', 't')
     id = None
     if keycloak_enabled and token:
-        auth = "bearer "+token 
-        headers = {"Content-Type":"application/json", "Authorization": auth }
+        auth = "bearer " + token
+        headers = {"Content-Type": "application/json", "Authorization": auth}
         payload = {
-              "name": tenant.name,
-              "attributes": {
-                  "tenant": [
-                      "true"
-                  ]
-              }
+            "name": tenant.name,
+            "attributes": {
+                "tenant": [
+                    "true"
+                ]
+            }
         }
-        api_url = os.environ.get('KEYCLOACK_ADMIN_ENDPOINT', 'http://localhost:8080/admin/realms/default') + "/groups"
+        api_url = os.environ.get(
+            'KEYCLOACK_ADMIN_ENDPOINT',
+            'http://localhost:8080/admin/realms/default') + "/groups"
         try:
-            response = requests.post(api_url, data=json.dumps(payload), headers=headers)
+            response = requests.post(
+                api_url, data=json.dumps(payload), headers=headers)
             if response.status_code != 201:
                 raise HTTPException(
                     status_code=response.status_code,
@@ -78,8 +83,8 @@ def create_tenant(
         except Exception as e:
             logging.debug(e)
             raise HTTPException(
-                    status_code=400,
-                    detail="Tenant creation failed with Keycloak")
+                status_code=400,
+                detail="Tenant creation failed with Keycloak")
     if keycloak_enabled and not token:
         raise HTTPException(
             status_code=401,
