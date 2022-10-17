@@ -172,9 +172,8 @@ user_permitted(request) {
 # Group permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
+	token.payload.tenants[request.tenant]
+  entry := data.group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -184,9 +183,8 @@ user_permitted(request) {
 # Default Group permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.default_group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
+	token.payload.tenants[request.tenant]
+  entry := data.default_group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -196,9 +194,8 @@ user_permitted(request) {
 # Role permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
+  token.payload.tenants[request.tenant]
+  entry := data.role_permissions[token.payload.tenants[request.tenant].roles[_]][_]
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -208,9 +205,8 @@ user_permitted(request) {
 # Default Role permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.default_role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
+  token.payload.tenants[request.tenant]
+  entry := data.default_role_permissions[token.payload.tenants[tenant_i].roles[_]][_]
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
   entry.tenant == request.tenant

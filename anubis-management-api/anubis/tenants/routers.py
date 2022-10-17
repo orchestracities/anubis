@@ -53,7 +53,7 @@ def create_tenant(
     keycloak_enabled = os.environ.get('KEYCLOACK_ENABLED', 'False').lower() in ('true', '1', 't')
     id = None
     if keycloak_enabled and token:
-        auth = "bearer "+token 
+        auth = "bearer "+token
         headers = {"Content-Type":"application/json", "Authorization": auth }
         payload = {
               "name": tenant.name,
