@@ -8,9 +8,10 @@ if [ $status -eq 7 ]; then
     exit 1
 fi
 
-echo "Downloading Keycloak scripts..."
+echo "Downloading Keycloak scripts and realm..."
 cd ../keycloak
-wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.4/oc-custom.jar -O oc-custom.jar
+wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.5/oc-custom.jar -O oc-custom.jar
+wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/realm-export.json -O realm-export.json
 cd ..
 
 echo "Deploying services via Docker Compose..."
@@ -50,10 +51,20 @@ fi
 docker run --env MONGO_DB="mongodb://mongo:27017/graphql" --name=populateDB --network=anubis_envoymesh orchestracities/configuration-api node main/mongo/populateDB.js
 docker rm -f populateDB
 
+
+echo "Obtaining token from Keycloak..."
+
+export token=`curl -s -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: policy-api:8000" 'http://localhost:8080/realms/default/protocol/openid-connect/token' | \
+jq -j '.access_token'`
+
+export token="${token%\"}"
+export token="${token#\"}"
+
 echo "Setting up tenant Tenant1..."
 curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
   -H 'accept: */*' \
+  -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \
   -d '{
   "name": "Tenant1"
@@ -63,6 +74,7 @@ echo "Setting up tenant Tenant2..."
 curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
   -H 'accept: */*' \
+  -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \
   -d '{
   "name": "Tenant2"
@@ -73,6 +85,7 @@ echo "Setting up policy that allows creating entities under tenant Tenant1 and p
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -86,6 +99,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -99,6 +113,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -112,6 +127,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -125,6 +141,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -138,6 +155,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -151,6 +169,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -164,6 +183,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \

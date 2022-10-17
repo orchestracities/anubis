@@ -2,7 +2,7 @@
 
 echo "Obtaining token from Keycloak..."
 
-export token=`curl -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/auth/realms/default/protocol/openid-connect/token' | \
+export token=`curl -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/realms/default/protocol/openid-connect/token' | \
 jq '.access_token'`
 
 export token="${token%\"}"
