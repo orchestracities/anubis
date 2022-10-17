@@ -158,7 +158,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
       }
     },
     "/v1/tenants/{tenant_id}": {
@@ -662,15 +667,6 @@
           {
             "required": false,
             "schema": {
-              "title": "Authorization",
-              "type": "string"
-            },
-            "name": "authorization",
-            "in": "header"
-          },
-          {
-            "required": false,
-            "schema": {
               "title": "Fiware-Service",
               "type": "string"
             },
@@ -742,7 +738,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -1754,6 +1755,12 @@
             "type": "string"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "OptionalHTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   },

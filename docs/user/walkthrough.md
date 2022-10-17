@@ -61,6 +61,12 @@ Create a new Tenant
 | 404 | Not found |
 | 422 | Validation Error |
 
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
+
 ### /v1/tenants/{tenant_id}
 
 #### GET
@@ -262,7 +268,6 @@ such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
 | agent_type | query |  | No | string |
 | skip | query |  | No | integer |
 | limit | query |  | No | integer |
-| authorization | header |  | No | string |
 | fiware-service | header |  | No | string |
 | fiware-servicepath | header |  | No | string |
 | accept | header |  | No | string |
@@ -274,6 +279,12 @@ such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
 | 200 | Success |
 | 404 | Not found |
 | 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
 
 #### POST
 ##### Summary:
