@@ -1,10 +1,16 @@
 from typing import List, Optional
-from fastapi import Depends, APIRouter, HTTPException, status, Response
+from fastapi import Depends, APIRouter, HTTPException, status, Response, Header
 from . import operations, models, schemas
 from ..dependencies import get_db
 from sqlalchemy.orm import Session
+import os
+import requests
+import json
+from ..utils import OptionalHTTPBearer
+import logging
 
 
+auth_scheme = OptionalHTTPBearer()
 router = APIRouter(prefix="/v1/tenants",
                    tags=["services"],
                    responses={404: {"description": "Not found"}},)
@@ -36,13 +42,50 @@ async def read_tenants(skip: int = 0, limit: int = 100, db: Session = Depends(ge
 def create_tenant(
         response: Response,
         tenant: schemas.TenantCreate,
+        token: str = Depends(auth_scheme),
         db: Session = Depends(get_db)):
     db_tenant = operations.get_tenant_by_name(db, name=tenant.name)
     if db_tenant:
         raise HTTPException(
             status_code=400,
             detail="Tenant already registered")
-    tenant_id = operations.create_tenant(db=db, tenant=tenant).id
+
+    keycloak_enabled = os.environ.get('KEYCLOACK_ENABLED', 'False').lower() in ('true', '1', 't')
+    id = None
+    if keycloak_enabled and token:
+        auth = "bearer "+token 
+        headers = {"Content-Type":"application/json", "Authorization": auth }
+        payload = {
+              "name": tenant.name,
+              "attributes": {
+                  "tenant": [
+                      "true"
+                  ]
+              }
+        }
+        api_url = os.environ.get('KEYCLOACK_ADMIN_ENDPOINT', 'http://localhost:8080/admin/realms/default') + "/groups"
+        try:
+            response = requests.post(api_url, data=json.dumps(payload), headers=headers)
+            if response.status_code != 201:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail=response.text)
+            response.headers['location']
+        except HTTPException as e:
+            raise HTTPException(
+                status_code=e.status_code,
+                detail=e.detail)
+        except Exception as e:
+            logging.debug(e)
+            raise HTTPException(
+                    status_code=400,
+                    detail="Tenant creation failed with Keycloak")
+    if keycloak_enabled and not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Token is missing: cannot authenticate with Keycloak")
+
+    tenant_id = operations.create_tenant(db=db, tenant=tenant, tenant_id=id).id
     response.headers["Tenant-ID"] = tenant_id
     response.status_code = status.HTTP_201_CREATED
     return response

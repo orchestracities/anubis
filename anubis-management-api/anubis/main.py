@@ -8,6 +8,7 @@ from anubis.audit import models as a_models
 from anubis.version import ANUBIS_VERSION
 from fastapi.openapi.utils import get_openapi
 from anubis.database import engine
+import uvicorn
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -92,3 +93,6 @@ def custom_openapi():
 
 
 app.openapi = custom_openapi
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8050)
