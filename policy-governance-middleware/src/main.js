@@ -240,7 +240,7 @@ app.post('/resource/provide', async(req, res) => {
      message: "Request body cannot be empty",
    })
   }
-  var { resource, policy, service, servicepath } = req.body
+  var { resource } = req.body
   if (!resource) {
    res.status(400).json({
      message: "Ensure you sent a resource field",
