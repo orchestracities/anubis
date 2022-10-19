@@ -15,6 +15,7 @@ from ..utils import parse_auth_token, extract_auth_token, OptionalHTTPBearer
 
 auth_scheme = OptionalHTTPBearer()
 
+
 class GzipRequest(Request):
     async def body(self) -> bytes:
         if not hasattr(self, "_body"):
@@ -187,7 +188,8 @@ def create_audit_log(
             user = None
             if opa_log.input['attributes']['request']['http']['headers']['authorization']:
                 authorization = opa_log.input['attributes']['request']['http']['headers']['authorization']
-                opa_log_token = parse_auth_token(extract_auth_token(authorization))
+                opa_log_token = parse_auth_token(
+                    extract_auth_token(authorization))
                 if opa_log_token:
                     user = re.sub(r'[^@.]', 'x', opa_log_token['email'])
             tenant = None
