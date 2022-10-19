@@ -45,7 +45,7 @@ services:
     environment:
       - AUTH_API_URI=http://policy-api:8000/v1/policies/
       - VALID_ISSUERS=http://keycloak:8080/realms/default
-      - VALID_AUDIENCE=ngsi
+      - VALID_AUDIENCE=ngsi;configuration
     ports:
       - "9191:9191"
       - "8282:8282"
@@ -97,7 +97,7 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_FEATURES=scripts 
+      - KC_FEATURES=scripts
     command: start-dev --import-realm
     networks:
       - envoymesh
