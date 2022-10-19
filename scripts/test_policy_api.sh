@@ -2,8 +2,8 @@
 
 echo "Obtaining token from Keycloak..."
 
-export token=`curl -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/realms/default/protocol/openid-connect/token' | \
-jq '.access_token'`
+export token=`curl -s -d "client_id=ngsi&client_secret=wWUO65Xa1zyBlTdaYaJ8TCqyBvYa3oi0&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/realms/default/protocol/openid-connect/token' | \
+jq -j '.access_token'`
 
 export token="${token%\"}"
 export token="${token#\"}"
