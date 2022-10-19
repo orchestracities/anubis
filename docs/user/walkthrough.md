@@ -439,6 +439,12 @@ Create Audit Logs
 
 Get an Audit Log
 
+##### Description:
+
+TODO:
+Logs can be filtered by:
+In case an JWT token is passed over ...
+
 ##### Parameters
 
 | Name | Located in | Description | Required | Schema |

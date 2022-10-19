@@ -1243,6 +1243,7 @@
           "audit"
         ],
         "summary": "Get an Audit Log",
+        "description": "TODO:\nLogs can be filtered by:\nIn case an JWT token is passed over ...",
         "operationId": "read_audit_log_v1_audit_logs__audit_id__get",
         "parameters": [
           {
