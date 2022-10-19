@@ -10,4 +10,4 @@ RUN npm install pm2@5.2.0 -g
 EXPOSE 49662
 EXPOSE 8099
 
-CMD [ "pm2", "start", "src/main.js", "--no-daemon" ]
+CMD [ "node", "src/main.js" ]
