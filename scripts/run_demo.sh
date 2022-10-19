@@ -9,7 +9,7 @@ if [ $status -eq 7 ]; then
 fi
 
 echo "Downloading Keycloak scripts and realm..."
-mkdir keycloak
+mkdir ../keycloak
 cd ../keycloak
 wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.5/oc-custom.jar -O oc-custom.jar
 wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/realm-export.json -O realm-export.json
