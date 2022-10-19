@@ -642,27 +642,32 @@ var server = app.listen(server_port, async() => {
 
   await node.start()
 
-  let rawdata = fs.readFileSync('data.json')
-  let data = JSON.parse(rawdata)
+  try {
+    let rawdata = fs.readFileSync('data.json')
+    let data = JSON.parse(rawdata)
 
-  for(const resource of data.resources) {
-    providedResources.push(resource)
-    const bytes = json.encode({ resource: resource })
-    const hash = await sha256.digest(bytes)
-    const cid = CID.create(1, json.code, hash)
-    try {
-      await node.contentRouting.provide(cid)
+    for(const resource of data.resources) {
+      providedResources.push(resource)
+      const bytes = json.encode({ resource: resource })
+      const hash = await sha256.digest(bytes)
+      const cid = CID.create(1, json.code, hash)
+      try {
+        await node.contentRouting.provide(cid)
+      }
+      catch(err) {
+        console.log(`Failed to initially provide ${resource}`)
+      }
     }
-    catch(err) {
-      console.log(`Failed to initially provide ${resource}`)
+
+    for(const topic of data.topics) {
+      node.pubsub.subscribe(topic)
     }
-  }
 
-  for(const topic of data.topics) {
-    node.pubsub.subscribe(topic)
+    await saveConfiguration()
   }
-
-  await saveConfiguration()
+  catch(err) {
+    console.log("Couldn't read any initial config")
+  }
 
   console.log("Node started with:")
   node.getMultiaddrs().forEach((ma) => console.log(`${ma.toString()}`))
