@@ -55,7 +55,7 @@ docker rm -f populateDB
 
 echo "Obtaining token from Keycloak..."
 
-export json=$(curl -s -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: policy-api:8000" 'http://localhost:8080/realms/default/protocol/openid-connect/token')
+export json=$(curl -s -d "client_id=configuration&grant_type=password&username=admin@mail.com&password=admin" -X POST --header "Host: policy-api:8000" 'http://localhost:8080/realms/default/protocol/openid-connect/token')
 export token=$( jq -r ".access_token" <<<"$json" )
 
 echo "\ndecoded token:\n"

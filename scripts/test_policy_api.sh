@@ -2,11 +2,12 @@
 
 echo "Obtaining token from Keycloak..."
 
-export token=`curl -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/realms/default/protocol/openid-connect/token' | \
-jq '.access_token'`
+export json=$(curl -d "client_id=configuration&grant_type=password&username=admin@mail.com&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/realms/default/protocol/openid-connect/token')
+export token=$( jq -r ".access_token" <<<"$json" )
 
-export token="${token%\"}"
-export token="${token#\"}"
+echo "\ndecoded token:\n"
+
+jq -R 'split(".") | .[1] | @base64d | fromjson' <<< $( jq -r ".access_token" <<<"$json" )
 
 echo "Can I read all policies?"
 echo "==============================================================="

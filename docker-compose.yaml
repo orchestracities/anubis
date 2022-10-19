@@ -6,6 +6,8 @@ services:
     volumes:
       - ./config/envoy/v3.yaml:/etc/envoy/envoy.yaml
       - ./config/opa-service/lua:/etc/envoy/lua
+    environment:
+      - loglevel=debug
     networks:
       - envoymesh
     ports:
