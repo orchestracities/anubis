@@ -20,6 +20,7 @@ import axios from 'axios'
 import fs from 'fs'
 import { Multiaddr } from "@multiformats/multiaddr";
 import dns from "dns/promises";
+import cors from 'cors';
 
 // Configuration for the port used by this node
 const server_port = process.env.SERVER_PORT || 8099
@@ -40,6 +41,7 @@ if(listen_address.includes("dnsaddr") && options.host != 'localhost') {
 
 // Setting up Node app
 var app = express()
+app.use(cors())
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
 
