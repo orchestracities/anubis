@@ -402,7 +402,6 @@ In case an JWT token is passed over ...
 | toDate | query |  | No | dateTime |
 | skip | query |  | No | integer |
 | limit | query |  | No | integer |
-| authorization | header |  | No | string |
 | fiware-service | header |  | No | string |
 | fiware-servicepath | header |  | No | string |
 
@@ -413,6 +412,12 @@ In case an JWT token is passed over ...
 | 200 | Successful Response |
 | 404 | Not found |
 | 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
 
 #### POST
 ##### Summary:
@@ -439,7 +444,6 @@ Get an Audit Log
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | audit_id | path |  | Yes | string |
-| authorization | header |  | No | string |
 | fiware-service | header |  | No | string |
 | fiware-servicepath | header |  | No | string |
 
@@ -450,6 +454,12 @@ Get an Audit Log
 | 200 | Successful Response |
 | 404 | Not found |
 | 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
 
 #### DELETE
 ##### Summary:

@@ -1145,15 +1145,6 @@
           {
             "required": false,
             "schema": {
-              "title": "Authorization",
-              "type": "string"
-            },
-            "name": "authorization",
-            "in": "header"
-          },
-          {
-            "required": false,
-            "schema": {
               "title": "Fiware-Service",
               "type": "string"
             },
@@ -1199,7 +1190,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -1261,15 +1257,6 @@
           {
             "required": false,
             "schema": {
-              "title": "Authorization",
-              "type": "string"
-            },
-            "name": "authorization",
-            "in": "header"
-          },
-          {
-            "required": false,
-            "schema": {
               "title": "Fiware-Service",
               "type": "string"
             },
@@ -1311,7 +1298,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
       },
       "delete": {
         "tags": [
