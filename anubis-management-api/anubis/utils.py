@@ -13,6 +13,14 @@ def parse_auth_token(token: str):
     return None
 
 
+def extract_auth_token(auth_string: str):
+    token = auth_string.split(" ")
+    if token[0] == "Bearer":
+        token = token[1]
+        return token
+    return None
+
+
 class OptionalHTTPBearer(HTTPBearer):
     async def __call__(self, request: Request) -> Optional[str]:
         from fastapi import status
