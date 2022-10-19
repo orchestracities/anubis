@@ -9,6 +9,7 @@ if [ $status -eq 7 ]; then
 fi
 
 echo "Downloading Keycloak scripts and realm..."
+mkdir keycloak
 cd ../keycloak
 wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.5/oc-custom.jar -O oc-custom.jar
 wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/realm-export.json -O realm-export.json
@@ -54,11 +55,12 @@ docker rm -f populateDB
 
 echo "Obtaining token from Keycloak..."
 
-export token=`curl -s -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: policy-api:8000" 'http://localhost:8080/realms/default/protocol/openid-connect/token' | \
-jq -j '.access_token'`
+export json=$(curl -s -d "client_id=configuration&grant_type=password&username=admin&password=admin" -X POST --header "Host: policy-api:8000" 'http://localhost:8080/realms/default/protocol/openid-connect/token')
+export token=$( jq -r ".access_token" <<<"$json" )
 
-export token="${token%\"}"
-export token="${token#\"}"
+echo "\ndecoded token:\n"
+
+jq -R 'split(".") | .[1] | @base64d | fromjson' <<< $( jq -r ".access_token" <<<"$json" )
 
 echo "Setting up tenant Tenant1..."
 curl -s -i -X 'POST' \
