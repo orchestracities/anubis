@@ -9,6 +9,7 @@ import os
 acl = Namespace("http://www.w3.org/ns/auth/acl#")
 oc_acl = Namespace("http://voc.orchestracities.io/oc-acl#")
 
+
 def parse_rdf_graph(data):
     g = Graph()
     g.parse(data=data)
