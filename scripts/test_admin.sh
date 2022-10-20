@@ -12,11 +12,15 @@ export json=$( curl -sS --location --request POST 'http://localhost:8080/realms/
 
 export token=$( jq -r ".access_token" <<<"$json" )
 
-echo "\ndecoded token:\n"
+echo ""
+echo "decoded token:"
+echo ""
 
 jq -R 'split(".") | .[1] | @base64d | fromjson' <<< $( jq -r ".access_token" <<<"$json" )
 
-echo "\nkeycloak response:\n"
+echo ""
+echo "keycloak response:"
+echo ""
 
 curl 'http://localhost:8080/admin/realms/default/groups?briefRepresentation=false' \
   -H 'Accept: application/json, text/plain, */*' \

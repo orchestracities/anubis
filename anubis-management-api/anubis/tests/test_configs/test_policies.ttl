@@ -27,6 +27,6 @@ tenant:policy4 a acl:Authorization ;
 
 tenant:policy5 a acl:Authorization ;
     acl:agentClass <acl:agent:Gina@mail.com> ;
-    acl:accessTo </v2/entities/test> ;
+    acl:accessTo <test> ;
     acl:accessToClass <entity> ;
     acl:mode <acl:Read> .

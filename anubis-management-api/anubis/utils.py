@@ -8,7 +8,12 @@ import jwt
 def parse_auth_token(token: str):
     if token:
         token = jwt.decode(token, options={"verify_signature": False})
-        user_info = {"email": token["email"], "tenants": token["tenants"]}
+        user_info = {
+            "email": token["email"],
+            "tenants": token["tenants"],
+            "sub": token["sub"],
+            "is_super_admin": token["is_super_admin"]
+        }
         return user_info
     return None
 

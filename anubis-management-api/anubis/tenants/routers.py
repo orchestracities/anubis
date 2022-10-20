@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 import os
 import requests
 import json
-from ..utils import OptionalHTTPBearer
+from ..utils import OptionalHTTPBearer, parse_auth_token
 import logging
 
 
@@ -53,10 +53,18 @@ def create_tenant(
     keycloak_enabled = os.environ.get(
         'KEYCLOACK_ENABLED', 'False').lower() in (
         'true', '1', 't')
-    id = None
+    tenant_admin_role_id = os.environ.get(
+        'TENANT_ADMIN_ROLE_ID', '9dc79aa8-d42f-4720-8de0-fe79a00a46b7')
+    db_tenant_id = None
     if keycloak_enabled and token:
         auth = "bearer " + token
         headers = {"Content-Type": "application/json", "Authorization": auth}
+        api_url = os.environ.get(
+            'KEYCLOACK_ADMIN_ENDPOINT',
+            'http://localhost:8080/admin/realms/default')
+        # get user from token
+        user_info = parse_auth_token(token)
+        user_id = user_info['sub']
         payload = {
             "name": tenant.name,
             "attributes": {
@@ -65,17 +73,57 @@ def create_tenant(
                 ]
             }
         }
-        api_url = os.environ.get(
-            'KEYCLOACK_ADMIN_ENDPOINT',
-            'http://localhost:8080/admin/realms/default') + "/groups"
+
         try:
-            response = requests.post(
-                api_url, data=json.dumps(payload), headers=headers)
-            if response.status_code != 201:
+            # create tenant
+            res = requests.post(
+                api_url + "/groups", data=json.dumps(payload), headers=headers)
+            if res.status_code != 201:
                 raise HTTPException(
-                    status_code=response.status_code,
-                    detail=response.text)
-            response.headers['location']
+                    status_code=res.status_code,
+                    detail=res.text)
+            db_tenant_id = res.headers['location'][res.headers['location'].rindex("/")+1:]
+            # add user to group
+            # PUT / {realm} / users / {id} / groups / {groupId}
+            res = requests.put(
+                api_url + "/users/" + user_id + "/groups/" + db_tenant_id, headers=headers)
+            if res.status_code != 204:
+                raise HTTPException(
+                    status_code=res.status_code,
+                    detail=res.text)
+            # create admin subgroup add user and set tenant-admin role
+            if tenant_admin_role_id:
+                # POST /{realm}/groups/{id}/children
+                payload = {
+                    "name": "Admin"
+                }
+                res = requests.post(
+                    api_url + "/groups/" + db_tenant_id + "/children", data=json.dumps(payload), headers=headers)
+                if res.status_code != 201:
+                    raise HTTPException(
+                        status_code=res.status_code,
+                        detail=res.text)
+                admin_group_id = res.headers['location'][res.headers['location'].rindex("/") + 1:]
+                # PUT / {realm} / users / {id} / groups / {groupId}
+                res = requests.put(
+                    api_url + "/users/" + user_id + "/groups/" + admin_group_id, headers=headers)
+                if res.status_code != 204:
+                    raise HTTPException(
+                        status_code=response.status_code,
+                        detail=res.text)
+                # POST / {realm} / groups / {groupId} / role-mappings / realm
+                payload = [{
+                    "name": "tenant-admin",
+                    "id": tenant_admin_role_id
+                }]
+                res = requests.post(
+                    api_url + "/groups/" + admin_group_id + "/role-mappings/realm", data=json.dumps(payload), headers=headers)
+                if res.status_code != 204:
+                    raise HTTPException(
+                        status_code=response.status_code,
+                        detail=res.text)
+            else:
+                logging.warning("TENANT_ADMIN_ROLE_ID not defined")
         except HTTPException as e:
             raise HTTPException(
                 status_code=e.status_code,
@@ -90,7 +138,7 @@ def create_tenant(
             status_code=401,
             detail="Token is missing: cannot authenticate with Keycloak")
 
-    tenant_id = operations.create_tenant(db=db, tenant=tenant, tenant_id=id).id
+    tenant_id = operations.create_tenant(db=db, tenant=tenant, tenant_id=db_tenant_id).id
     response.headers["Tenant-ID"] = tenant_id
     response.status_code = status.HTTP_201_CREATED
     return response

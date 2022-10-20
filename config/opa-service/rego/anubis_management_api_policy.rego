@@ -141,19 +141,19 @@ header_link = link {
   current_path[2] == "policies"
   current_path[3]
   not current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"policy"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"policy"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "policies"
   current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "policies"
   not current_path[3]
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
 }
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any tenant or all
@@ -190,19 +190,19 @@ header_link = link {
   current_path[3]
   not current_path[3] == ""
   not current_path[4]
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"tenant"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"tenant"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "tenants"
   current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","tenant"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","tenant"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "tenants"
   not current_path[3]
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","tenant"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","tenant"])
 }
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any tenant or all
@@ -250,7 +250,7 @@ header_link = link {
   not current_path[5] == ""
   current_service_path_array := array.concat([""],array.slice(current_path, 5, count(current_path)))
   current_service_path := concat("/",current_service_path_array)
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_service_path,"service_path"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_service_path,"service_path"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
@@ -259,7 +259,7 @@ header_link = link {
   not current_path[3] == ""
   current_path[4] == "service_paths"
   not current_path[5]
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","service_path"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","service_path"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
@@ -268,5 +268,5 @@ header_link = link {
   not current_path[3] == ""
   current_path[4] == "service_paths"
   current_path[5] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","service_path"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","service_path"])
 }

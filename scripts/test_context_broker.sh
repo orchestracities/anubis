@@ -2,10 +2,12 @@
 
 echo "Obtaining token from Keycloak..."
 
-export json=$(curl -s -d "client_id=ngsi&client_secret=wWUO65Xa1zyBlTdaYaJ8TCqyBvYa3oi0&grant_type=password&username=admin@mail.com&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/realms/default/protocol/openid-connect/token')
+export json=$(curl -s -d "client_id=ngsi&client_secret=changeme&grant_type=password&username=admin@mail.com&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/realms/default/protocol/openid-connect/token')
 export token=$( jq -r ".access_token" <<<"$json" )
 
-echo "\ndecoded token:\n"
+echo ""
+echo "decoded token:"
+echo ""
 
 jq -R 'split(".") | .[1] | @base64d | fromjson' <<< $( jq -r ".access_token" <<<"$json" )
 

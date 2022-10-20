@@ -10,7 +10,7 @@ policy_data = {
          {
             "id":"b1b8ade1-03d8-49b1-b3ca-c5428e1a5812",
             "action":"acl:Read",
-            "resource":"/v2/entities/some_entity",
+            "resource":"some_entity",
             "resource_type":"entity",
             "service_path":"/",
             "tenant":"Tenant1"

@@ -39,19 +39,19 @@ header_link = link {
   current_path[2] == "entities"
   current_path[3]
   not current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"entity"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"entity"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "entities"
   current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "entities"
   not current_path[3]
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity"])
 }
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any entity types or all
@@ -87,19 +87,19 @@ header_link = link {
   current_path[2] == "types"
   current_path[3]
   not current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"entity_type"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"entity_type"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "types"
   current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity_type"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity_type"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "types"
   not current_path[3]
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity_type"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","entity_type"])
 }
 
 # Checks if the policy has the wildcard asterisks, thus matching paths to any subscription or all
@@ -135,17 +135,17 @@ header_link = link {
   current_path[2] == "subscriptions"
   current_path[3]
   not current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"subscription"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"subscription"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "subscriptions"
   current_path[3] == ""
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","subscription"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","subscription"])
 }
 header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "subscriptions"
   not current_path[3]
-  link := sprintf("<%s?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","subscription"])
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","subscription"])
 }
