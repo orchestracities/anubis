@@ -9,25 +9,26 @@ See this [example](https://github.com/orchestracities/anubis/blob/master/config/
 
 ```ttl
 @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix oc-acl: <http://voc.orchestracities.io/oc-acl#> .
 @prefix tenant: <https://tenant.url/> .
 
 tenant:policy1 a acl:Authorization ;
-    acl:agentClass <acl:agentClass:Admin> ;
+    acl:agentClass acl:agentClass:Admin ;
     acl:default </> ;
     acl:accessToClass <entity> ;
-    acl:mode <acl:Control> .
+    acl:mode acl:Control .
 
 tenant:policy2 a acl:Authorization ;
-    acl:agentClass <acl:AuthenticatedAgent> ;
+    acl:agentClass acl:AuthenticatedAgent ;
     acl:default </> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Read> .
+    acl:accessToClass oc-acl:entity> ;
+    acl:mode acl:Read .
 
 tenant:policy3 a acl:Authorization ;
-    acl:agentClass <acl:agentClass:Admin> ;
+    acl:agentClass acl:agentClass:Admin ;
     acl:default </> ;
-    acl:accessToClass <policy> ;
-    acl:mode <acl:Control> .
+    acl:accessToClass oc-acl:policy ;
+    acl:mode acl:Control .
 ```
 
 `acl:default </>` indicates that the policies is valid for all resources
