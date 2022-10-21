@@ -1,32 +1,34 @@
 @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix oc-acl: <http://voc.orchestracities.io/oc-acl#> .
 @prefix tenant: <https://tenant.url/> .
+@prefix entity: <https://tenant1.orion.url/v2/entities/> .
 
 tenant:policy1 a acl:Authorization ;
     acl:agentClass <acl:agent:Pippo@mail.com> ;
     acl:default </> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Control> .
+    acl:accessToClass oc-acl:entity ;
+    acl:mode acl:Control .
 
 tenant:policy2 a acl:Authorization ;
-    acl:agentClass <acl:agentGroup:People> ;
+    acl:agentClass acl:agentGroup:People ;
     acl:default </> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Read> .
+    acl:accessToClass oc-acl:entity ;
+    acl:mode acl:Read .
 
 tenant:policy3 a acl:Authorization ;
-    acl:agentClass <acl:agentClass:Member> ;
+    acl:agentClass acl:agentClass:Member ;
     acl:default </> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Write> .
+    acl:accessToClass oc-acl:entity ;
+    acl:mode acl:Write .
 
 tenant:policy4 a acl:Authorization ;
-    acl:agentClass <acl:AuthenticatedAgent> ;
+    acl:agentClass acl:AuthenticatedAgent ;
     acl:default </> ;
-    acl:accessToClass <subscription> ;
-    acl:mode <acl:Read> .
+    acl:accessToClass oc-acl:subscription ;
+    acl:mode acl:Read .
 
 tenant:policy5 a acl:Authorization ;
     acl:agentClass <acl:agent:Gina@mail.com> ;
-    acl:accessTo <test> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Read> .
+    acl:accessTo entity:test ;
+    acl:accessToClass oc-acl:entity ;
+    acl:mode acl:Read .

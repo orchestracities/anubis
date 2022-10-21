@@ -99,5 +99,6 @@ def insert_initial_mode_values(target, connection, **kw):
     db.add(Mode(iri=default.WRITE_MODE_IRI, name='write'))
     db.add(Mode(iri=default.CONTROL_MODE_IRI, name='control'))
     db.add(Mode(iri=default.APPEND_MODE_IRI, name='append'))
+    db.add(Mode(iri=default.DELETE_MODE_IRI, name='delete'))
     db.commit()
     db.close()

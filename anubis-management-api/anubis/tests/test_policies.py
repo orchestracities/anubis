@@ -108,7 +108,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     assert response.status_code == 200
     body = response.json()
-    assert len(body) == 8
+    assert len(body) == 10
 
     response = client.get(
         "/v1/policies/",
@@ -125,7 +125,7 @@ def test_policies(test_db):
             "fiware-service": "test"})
     assert response.status_code == 200
     body = response.json()
-    assert len(body) == 9
+    assert len(body) == 11
 
     response = client.get(
         "/v1/policies/?agent_type=acl:agent",
@@ -143,7 +143,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert len(body) == 2
 
     response = client.get(
         "/v1/policies/?resource_type=entity",
@@ -152,7 +152,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 7
+    assert len(body) == 9
 
     response = client.get(
         "/v1/policies/?resource_type=entity&agent_type=acl:agent",
@@ -170,7 +170,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert len(body) == 2
 
     response = client.get(
         "/v1/policies/?resource_type=entity&agent_type=acl:agent&resource=resource",
