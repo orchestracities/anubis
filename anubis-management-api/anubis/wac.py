@@ -31,17 +31,19 @@ def parse_rdf_graph(data):
         if pred == acl.default:
             policies[policy]["accessTo"] = "default"
         if pred == acl.accessToClass:
-            policies[policy]["accessToClass"] = str(nm.normalizeUri(obj)).split(":")[-1]
+            policies[policy]["accessToClass"] = str(
+                nm.normalizeUri(obj)).split(":")[-1]
     return policies
 
 
 def redux(uri: str):
     if "http://www.w3.org/ns/auth/acl#" in uri:
-        return "acl:" + uri[len("http://www.w3.org/ns/auth/acl#")+1:-1]
+        return "acl:" + uri[len("http://www.w3.org/ns/auth/acl#") + 1:-1]
     if "http://voc.orchestracities.io/oc-acl#" in uri:
-        return "oc-acl:" + uri[len("http://voc.orchestracities.io/oc-acl#")+1:-1]
+        return "oc-acl:" + \
+            uri[len("http://voc.orchestracities.io/oc-acl#") + 1:-1]
     if "http://xmlns.com/foaf/0.1/" in uri:
-        return "foaf:" + uri[len("http://xmlns.com/foaf/0.1/")+1:-1]
+        return "foaf:" + uri[len("http://xmlns.com/foaf/0.1/") + 1:-1]
     if "<" in uri[0] and ">" in uri[-1]:
         return uri[1:-1]
     return uri
