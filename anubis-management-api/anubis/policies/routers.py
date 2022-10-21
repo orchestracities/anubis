@@ -239,7 +239,8 @@ def my_policies(
       - Resource
       - Resource Type
     In case an JWT token is passed over, user id, roles and groups are used to
-    filter policies that are only valid for him. Unless the user is super admin or tenant admin.
+    filter policies that are only valid for him.
+    # TODO if no token, we should return policies for foaf:Agent!
     To return policies from a service path tree, you can used the wildchar "#".
     For example, using `/Path1/#` you will obtain policies for all subpaths,
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
