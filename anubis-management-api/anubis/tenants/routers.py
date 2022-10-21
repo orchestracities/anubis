@@ -82,11 +82,17 @@ def create_tenant(
                 raise HTTPException(
                     status_code=res.status_code,
                     detail=res.text)
-            db_tenant_id = res.headers['location'][res.headers['location'].rindex("/")+1:]
+            db_tenant_id = res.headers['location'][res.headers['location'].rindex(
+                "/") + 1:]
             # add user to group
             # PUT / {realm} / users / {id} / groups / {groupId}
             res = requests.put(
-                api_url + "/users/" + user_id + "/groups/" + db_tenant_id, headers=headers)
+                api_url +
+                "/users/" +
+                user_id +
+                "/groups/" +
+                db_tenant_id,
+                headers=headers)
             if res.status_code != 204:
                 raise HTTPException(
                     status_code=res.status_code,
@@ -98,15 +104,26 @@ def create_tenant(
                     "name": "Admin"
                 }
                 res = requests.post(
-                    api_url + "/groups/" + db_tenant_id + "/children", data=json.dumps(payload), headers=headers)
+                    api_url +
+                    "/groups/" +
+                    db_tenant_id +
+                    "/children",
+                    data=json.dumps(payload),
+                    headers=headers)
                 if res.status_code != 201:
                     raise HTTPException(
                         status_code=res.status_code,
                         detail=res.text)
-                admin_group_id = res.headers['location'][res.headers['location'].rindex("/") + 1:]
+                admin_group_id = res.headers['location'][res.headers['location'].rindex(
+                    "/") + 1:]
                 # PUT / {realm} / users / {id} / groups / {groupId}
                 res = requests.put(
-                    api_url + "/users/" + user_id + "/groups/" + admin_group_id, headers=headers)
+                    api_url +
+                    "/users/" +
+                    user_id +
+                    "/groups/" +
+                    admin_group_id,
+                    headers=headers)
                 if res.status_code != 204:
                     raise HTTPException(
                         status_code=response.status_code,
@@ -117,7 +134,12 @@ def create_tenant(
                     "id": tenant_admin_role_id
                 }]
                 res = requests.post(
-                    api_url + "/groups/" + admin_group_id + "/role-mappings/realm", data=json.dumps(payload), headers=headers)
+                    api_url +
+                    "/groups/" +
+                    admin_group_id +
+                    "/role-mappings/realm",
+                    data=json.dumps(payload),
+                    headers=headers)
                 if res.status_code != 204:
                     raise HTTPException(
                         status_code=response.status_code,
@@ -138,7 +160,8 @@ def create_tenant(
             status_code=401,
             detail="Token is missing: cannot authenticate with Keycloak")
 
-    tenant_id = operations.create_tenant(db=db, tenant=tenant, tenant_id=db_tenant_id).id
+    tenant_id = operations.create_tenant(
+        db=db, tenant=tenant, tenant_id=db_tenant_id).id
     response.headers["Tenant-ID"] = tenant_id
     response.status_code = status.HTTP_201_CREATED
     return response
