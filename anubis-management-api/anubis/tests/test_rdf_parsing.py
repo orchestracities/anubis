@@ -48,7 +48,7 @@ def test_rdf_parsing(test_db):
 
     response = response.json()
     for p in response:
-        if p["access_to"] == "/v2/entities/test":
+        if p["access_to"] == "test":
             policy_id = p["id"]
 
     response = client.get(

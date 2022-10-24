@@ -23,7 +23,9 @@ def get_policies_by_service_path(
         resource_type: str = None,
         skip: int = 0,
         limit: int = 100,
-        user_info: dict = None):
+        user_info: dict = None,
+        owner: str = None):
+    # TODO: filter policy that owner (email based) controls
     if mode is not None and agent is not None:
         db_policies = db.query(
             models.Policy).join(
@@ -185,17 +187,19 @@ def get_policies(db: Session, skip: int = 0, limit: int = 100):
 def filter_policies_by_user_profile(db_policies, tenant, user_info):
     user = default.AGENT_IRI + ":" + user_info["email"]
 
-    groups = list(filter(lambda t: t["name"] == tenant, user_info["tenants"]))
-    groups = list(map(lambda t: t["groups"], groups))
-    groups = list(reduce(lambda a, b: a + b, groups))
+    groups = user_info["tenants"].get(tenant)
+    if groups:
+        groups = list(groups["groups"])
+    else:
+        groups = []
     groups = list(
-        map(lambda t: default.AGENT_GROUP_IRI + ":" + t["name"], groups))
+        map(lambda t: default.AGENT_GROUP_IRI + ":" + t, groups))
 
-    roles = list(filter(lambda t: t["name"] == tenant, user_info["tenants"]))
-    roles = list(map(lambda t: t["groups"], roles))
-    roles = list(reduce(lambda a, b: a + b, roles))
-    roles = list(map(lambda t: t["clientRoles"], roles))
-    roles = list(reduce(lambda a, b: a + b, roles))
+    roles = user_info["tenants"].get(tenant)
+    if roles:
+        roles = list(roles["roles"])
+    else:
+        roles = []
     roles = list(map(lambda t: default.AGENT_CLASS_IRI + ":" + t, roles))
     roles.append("acl:AuthenticatedAgent")
 

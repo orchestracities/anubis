@@ -35,7 +35,10 @@ This will allow you to reuse Anubis apis also for other projects.
 | `CORS_ALLOWED_HEADERS`         | A `;` separated list of the allowed CORS headers (e.g. `content-type;some-other-header`).|
 | `DEFAULT_POLICIES_CONFIG_FILE` | Specifies the path of the configuration file of the default policies to create upon tenant creation.|
 | `DEFAULT_WAC_CONFIG_FILE`      | Specifies the path of the configuration file of the wac serialization.|
-| `DB_TYPE`                | The database type to be used by the API. Valid options for now are `postgres` and `sqlite`.|
+| `KEYCLOACK_ENABLED`            | Enable creation of tenant also in Keycloak.|
+| `TENANT_ADMIN_ROLE_ID`         | Specifies the path of the configuration file of the wac serialization.|
+| `KEYCLOACK_ADMIN_ENDPOINT`     | The endpoint of the admin api of Keycloak.|
+| `DB_TYPE`                      | The database type to be used by the API. Valid options for now are `postgres` and `sqlite`.|
 | `DB_HOST`                      | The host for the database.|
 | `DB_USER`                      | The user for the database.|
 | `DB_PASSWORD`                  | The password of the database user.|

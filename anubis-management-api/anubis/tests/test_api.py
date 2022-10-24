@@ -13,7 +13,7 @@ def test_root(test_db):
     body = response.json()
     assert body["tenants_url"] == "/v1/tenants"
     assert body["policies_url"] == "/v1/policies"
-    assert body["resources_url"] == "/v1/resources"
+    assert body["audit_url"] == "/v1/audit"
 
 
 def test_version(test_db):

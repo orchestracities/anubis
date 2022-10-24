@@ -5,10 +5,17 @@
 ### New features
 
 - Anonymize IP and email in logs
+- Create Tenant in Keycloak on Tenant creation on the API
+- Create group Admin as Tenant subgroup on Tenant creation
+- Add role tenant-admin to Admin subgroup on Tenant creation
+- Add user creating tenant to Admin subgroup
+- Add /me endpoint under /policy to retrieve policies that applies to a user
 
 ### Bug fixes
 
 - Change the keycloak config file to manage the token refresh
+- Missing database entry for oc-acl:Delete
+- Correct parsing / serialisation of policies (still something to be checked)
 
 ### Documentation
 
@@ -109,7 +116,7 @@
 - automatic creation of policies for entities, assigned to the user who
   successfully created the entity
 - adding the graphql config inside the realm export
-- change the url for the client1 in order to communicate with the frontend
+- change the url for the ngsi in order to communicate with the frontend
 
 ### Bug fixes
 

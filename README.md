@@ -262,6 +262,10 @@ For the policy API, the following env variables are also available:
   file of the default policies to create upon tenant creation.
 - `DEFAULT_WAC_CONFIG_FILE`: Specifies the path of the configuration file of
   the wac serialization.
+- `KEYCLOACK_ENABLED`: Enable creation of tenant also in Keycloak.
+- `TENANT_ADMIN_ROLE_ID`: Role id for tenant admins (you need to retrieve it
+  from a running keycloak using a different template).
+- `KEYCLOACK_ADMIN_ENDPOINT`: The endpoint of the admin api of Keycloak.
 - `DB_TYPE`: The database type to be used by the API. Valid options for
   now are `postgres` and `sqlite`.
 

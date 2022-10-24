@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from . import models, schemas
@@ -25,8 +27,13 @@ def get_tenants(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Tenant).offset(skip).limit(limit).all()
 
 
-def create_tenant(db: Session, tenant: schemas.TenantCreate):
-    new_tenant = models.Tenant(id=str(uuid.uuid4()), name=tenant.name)
+def create_tenant(
+        db: Session,
+        tenant: schemas.TenantCreate,
+        tenant_id: str = None):
+    if not tenant_id:
+        tenant_id = str(uuid.uuid4())
+    new_tenant = models.Tenant(id=tenant_id, name=tenant.name)
     db.add(new_tenant)
     # there is always a `/` path
     service_path = schemas.ServicePathCreate(path='/')
@@ -40,16 +47,19 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.commit()
     db.refresh(new_tenant)
     # creating default policy
-    with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../config/opa-service/default_policies.ttl'), 'r') as file:
-        policies = parse_rdf_graph(file.read())
-        for p in policies:
-            policy = policy_schemas.PolicyCreate(
-                access_to=policies[p]["accessTo"],
-                resource_type=policies[p]["accessToClass"],
-                mode=[policies[p]["mode"]],
-                agent=[policies[p]["agentClass"]])
-            policy_operations.create_policy(
-                db=db, service_path_id=default_service_path.id, policy=policy)
+    try:
+        with open(os.environ.get("DEFAULT_POLICIES_CONFIG_FILE", '../config/opa-service/default_policies.ttl'), 'r') as file:
+            policies = parse_rdf_graph(file.read())
+            for p in policies:
+                policy = policy_schemas.PolicyCreate(
+                    access_to=policies[p]["accessTo"],
+                    resource_type=policies[p]["accessToClass"],
+                    mode=[policies[p]["mode"]],
+                    agent=[policies[p]["agentClass"]])
+                policy_operations.create_policy(
+                    db=db, service_path_id=default_service_path.id, policy=policy)
+    except Exception as e:
+        logging.error(e)
     return new_tenant
 
 

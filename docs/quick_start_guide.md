@@ -217,7 +217,7 @@ Verify that all services are up and running:
 1. Obtain a valid `access_token` from keycloak
 
         :::bash
-        $ export token=`curl -s -d "client_id=client1&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/auth/realms/master/protocol/openid-connect/token' | \
+        $ export token=`curl -s -d "client_id=ngsi&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/auth/realms/default/protocol/openid-connect/token' | \
         jq -j '.access_token'`
 
 1. Use the token to create an entity

@@ -5,3 +5,6 @@ anubis-management-api/build/*
 anubis-management-api/dist/*
 anubis-management-api/.idea/*
 .python-version
+*.pyc
+.idea/*
+*.json

@@ -29,7 +29,7 @@ valid_iss = split(opa.runtime()["env"]["VALID_ISSUERS"], ";")
 api_uri = opa.runtime()["env"]["AUTH_API_URI"]
 
 # Audience
-aud = opa.runtime()["env"]["VALID_AUDIENCE"]
+aud = split(opa.runtime()["env"]["VALID_AUDIENCE"], ";")
 
 # Token issuer
 issuer = token.payload.iss
@@ -104,8 +104,14 @@ is_token_valid {
   token.payload.exp >= now
   jwks = json.marshal(jwks_request(jwks_endpoint).body.keys[_])
   io.jwt.verify_rs256(bearer_token, jwks)
-	token.payload.azp = aud
+	some i, a in aud
+	valid_audience(a)
 	issuer = valid_iss[_]
+}
+
+# Test for valid audiences in token
+valid_audience(aud_entry) {
+	token.payload.azp = aud_entry
 }
 
 # Token valid when testing (default is false)
@@ -172,9 +178,8 @@ user_permitted(request) {
 # Group permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
+	token.payload.tenants[request.tenant]
+  entry := data.group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -184,9 +189,8 @@ user_permitted(request) {
 # Default Group permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.default_group_permissions[token.payload.tenants[tenant_i].groups[_].name][_]
+	token.payload.tenants[request.tenant]
+  entry := data.default_group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -196,9 +200,8 @@ user_permitted(request) {
 # Role permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
+  token.payload.tenants[request.tenant]
+  entry := data.role_permissions[token.payload.tenants[request.tenant].roles[_]][_]
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -208,9 +211,8 @@ user_permitted(request) {
 # Default Role permissions
 user_permitted(request) {
   is_token_valid
-  some tenant_i
-  token.payload.tenants[tenant_i].name == request.tenant
-  entry := data.default_role_permissions[token.payload.tenants[tenant_i].groups[_].clientRoles[_]][_]
+  token.payload.tenants[request.tenant]
+  entry := data.default_role_permissions[token.payload.tenants[tenant_i].roles[_]][_]
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
   entry.tenant == request.tenant

@@ -4,7 +4,6 @@ from fastapi import Depends, Body, Request, APIRouter, HTTPException, status, Re
 from fastapi.routing import APIRoute
 from . import operations, models, schemas
 from ..tenants import operations as so
-from ..utils import parse_auth_token
 import anubis.default as default
 from ..dependencies import get_db
 from sqlalchemy.orm import Session
@@ -12,7 +11,9 @@ from datetime import datetime
 from sqlalchemy.exc import IntegrityError, PendingRollbackError
 from anonymizeip import anonymize_ip
 import re
-import json
+from ..utils import parse_auth_token, extract_auth_token, OptionalHTTPBearer
+
+auth_scheme = OptionalHTTPBearer()
 
 
 class GzipRequest(Request):
@@ -49,8 +50,7 @@ router = APIRouter(
             response_model=List[schemas.AuditLog],
             summary="List all Audit Logs")
 def read_audit_logs(
-        authorization: Optional[str] = Header(
-            None),
+        token: str = Depends(auth_scheme),
         fiware_service: Optional[str] = Header(
             None),
         fiware_servicepath: Optional[str] = Header(
@@ -72,9 +72,7 @@ def read_audit_logs(
     Logs can be filtered by:
     In case an JWT token is passed over ...
     """
-    user_info = None
-    if authorization:
-        user_info = parse_auth_token(authorization)
+    user_info = parse_auth_token(token)
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_service_path_id = list(map(so.compute_id, db_service_path))
@@ -100,13 +98,17 @@ def read_audit_logs(
             response_model=schemas.AuditLog,
             summary="Get an Audit Log")
 def read_audit_log(audit_id: str,
-                   authorization: Optional[str] = Header(
-                       None),
+                   token: str = Depends(auth_scheme),
                    fiware_service: Optional[str] = Header(
                        None),
                    fiware_servicepath: Optional[str] = Header(
                        '/#'),
                    db: Session = Depends(get_db)):
+    """
+    TODO:
+    Logs can be filtered by:
+    In case an JWT token is passed over ...
+    """
     db_tenant = so.get_tenant_by_name(db, name=fiware_service)
     if not db_tenant:
         raise HTTPException(
@@ -186,10 +188,10 @@ def create_audit_log(
             user = None
             if opa_log.input['attributes']['request']['http']['headers']['authorization']:
                 authorization = opa_log.input['attributes']['request']['http']['headers']['authorization']
-                token = parse_auth_token(authorization)
-                if token:
-                    user = re.sub(r'[^@.]', 'x', token['email'])
-            tenant_id = None
+                opa_log_token = parse_auth_token(
+                    extract_auth_token(authorization))
+                if opa_log_token:
+                    user = re.sub(r'[^@.]', 'x', opa_log_token['email'])
             tenant = None
             if opa_log.input['attributes']['request']['http']['headers']['fiware-service']:
                 tenant = opa_log.input['attributes']['request']['http']['headers']['fiware-service']
@@ -200,7 +202,6 @@ def create_audit_log(
                         detail="Tenant " +
                         tenant +
                         " not found")
-                tenant_id = tenant_db.id
             if not tenant:
                 raise HTTPException(
                     status_code=422, detail="Tenant cannot be none")
@@ -236,7 +237,10 @@ def create_audit_log(
                 'errorMessage': e.detail}
             errors.append(error)
         except Exception as e:
-            print(e)
+            error = {
+                'id': opa_log.decision_id,
+                'errorType': type(e).__name__}
+            errors.append(error)
     if errors and len(errors) > 0:
         raise HTTPException(status_code=200, detail=errors)
     else:

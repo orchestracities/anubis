@@ -6,10 +6,11 @@ from sqlalchemy.orm import Session
 from ..tenants import operations as so
 from ..wac import serialize as w_serialize
 from ..rego import serialize as r_serialize
-from ..utils import parse_auth_token
+from ..utils import parse_auth_token, OptionalHTTPBearer
 import anubis.default as default
 
 
+auth_scheme = OptionalHTTPBearer()
 router = APIRouter(prefix="/v1/policies",
                    tags=["policies"],
                    responses={404: {"description": "Not found"}},)
@@ -210,13 +211,12 @@ policies_not_json_responses = {
 }
 
 
-@router.get("/",
+@router.get("/me",
             response_model=List[schemas.Policy],
             responses=policies_not_json_responses,
-            summary="List policies for a given Tenant and Service Path")
-def read_policies(
-        authorization: Optional[str] = Header(
-            None),
+            summary="List policies for a given Tenant and Service Path that apply to me")
+def my_policies(
+        token: str = Depends(auth_scheme),
         fiware_service: Optional[str] = Header(
             None),
         fiware_servicepath: Optional[str] = Header(
@@ -240,13 +240,17 @@ def read_policies(
       - Resource Type
     In case an JWT token is passed over, user id, roles and groups are used to
     filter policies that are only valid for him.
+    # TODO if no token, we should return policies for foaf:Agent!
     To return policies from a service path tree, you can used the wildchar "#".
     For example, using `/Path1/#` you will obtain policies for all subpaths,
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
     """
-    user_info = None
-    if authorization:
-        user_info = parse_auth_token(authorization)
+    user_info = parse_auth_token(token)
+    if not user_info:
+        raise HTTPException(
+            status_code=403,
+            detail='missing access token, cannot identify user'
+        )
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,
@@ -290,18 +294,102 @@ def read_policies(
         return policies
 
 
+@router.get("/",
+            response_model=List[schemas.Policy],
+            responses=policies_not_json_responses,
+            summary="List policies for a given Tenant and Service Path")
+def read_policies(
+        token: str = Depends(auth_scheme),
+        fiware_service: Optional[str] = Header(
+            None),
+        fiware_servicepath: Optional[str] = Header(
+            '/#'),
+        mode: Optional[str] = None,
+        agent: Optional[str] = None,
+        accept: Optional[str] = Header(
+            'application/json'),
+        resource: Optional[str] = None,
+        resource_type: Optional[str] = None,
+        agent_type: Optional[str] = None,
+        skip: int = 0,
+        limit: int = 100,
+        db: Session = Depends(get_db)):
+    """
+    Policies can be filtered by:
+      - Access Mode
+      - Agent
+      - Agent Type
+      - Resource
+      - Resource Type
+    In case an JWT token is passed over, user id, roles and groups are used to
+    filter policies that are only valid for him. Unless the user is super admin or tenant admin.
+    To return policies from a service path tree, you can used the wildchar "#".
+    For example, using `/Path1/#` you will obtain policies for all subpaths,
+    such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
+    """
+    user_info = parse_auth_token(token)
+    owner = None
+    if user_info and user_info['is_super_admin']:
+        owner = None
+    elif user_info and user_info['tenants'] and fiware_service in user_info['tenants'] and "roles" in user_info['tenants'][fiware_service] and "tenant-admin" in user_info['tenants'][fiware_service]["roles"]:
+        owner = None
+    elif user_info and user_info['email']:
+        owner = user_info['email']
+    # we don't filter policies in case super admin or tenant admin
+    # TODO CHANGE LOGIC IT SHOULD LIST POLICIES I CONTROL
+    if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
+        raise HTTPException(
+            status_code=422,
+            detail='agent_type {} is not a valid agent type. Valid types are {} or {}'.format(
+                agent_type,
+                default.DEFAULT_AGENTS,
+                default.DEFAULT_AGENT_TYPES))
+    db_service_path = so.get_db_service_path(
+        db, fiware_service, fiware_servicepath)
+    db_service_path_id = list(map(so.compute_id, db_service_path))
+    db_policies = operations.get_policies_by_service_path(
+        db,
+        tenant=fiware_service,
+        service_path_id=db_service_path_id,
+        mode=mode,
+        agent=agent,
+        agent_type=agent_type,
+        resource=resource,
+        resource_type=resource_type,
+        skip=skip,
+        limit=limit,
+        owner=owner)
+    if accept == 'text/turtle':
+        return Response(
+            content=w_serialize(
+                db,
+                fiware_service,
+                fiware_servicepath,
+                db_policies),
+            media_type="text/turtle")
+    elif accept == 'text/rego':
+        return Response(
+            content=r_serialize(
+                db,
+                db_policies),
+            media_type="application/json")
+    else:
+        policies = []
+        for db_policy in db_policies:
+            policies.append(serialize_policy(db_policy))
+        return policies
+
+
 @router.get("/{policy_id}", response_model=schemas.Policy,
             responses=policies_not_json_responses, summary="Get a policy")
 def read_policy(
         policy_id: str,
         fiware_service: Optional[str] = Header(
             None),
-    fiware_servicepath: Optional[str] = Header(
+        fiware_servicepath: Optional[str] = Header(
             '/#'),
         accept: Optional[str] = Header(
             None),
-        skip: int = 0,
-        limit: int = 100,
         db: Session = Depends(get_db)):
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)

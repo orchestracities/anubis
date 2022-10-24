@@ -61,6 +61,12 @@ Create a new Tenant
 | 404 | Not found |
 | 422 | Validation Error |
 
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
+
 ### /v1/tenants/{tenant_id}
 
 #### GET
@@ -230,6 +236,57 @@ List supported Agent Types
 | 404 | Not found |
 | 422 | Validation Error |
 
+### /v1/policies/me
+
+#### GET
+##### Summary:
+
+List policies for a given Tenant and Service Path that apply to me
+
+##### Description:
+
+Policies can be filtered by:
+  - Access Mode
+  - Agent
+  - Agent Type
+  - Resource
+  - Resource Type
+In case an JWT token is passed over, user id, roles and groups are used to
+filter policies that are only valid for him.
+# TODO if no token, we should return policies for foaf:Agent!
+To return policies from a service path tree, you can used the wildchar "#".
+For example, using `/Path1/#` you will obtain policies for all subpaths,
+such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| mode | query |  | No | string |
+| agent | query |  | No | string |
+| resource | query |  | No | string |
+| resource_type | query |  | No | string |
+| agent_type | query |  | No | string |
+| skip | query |  | No | integer |
+| limit | query |  | No | integer |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+| accept | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 404 | Not found |
+| 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
+
 ### /v1/policies/
 
 #### GET
@@ -246,7 +303,7 @@ Policies can be filtered by:
   - Resource
   - Resource Type
 In case an JWT token is passed over, user id, roles and groups are used to
-filter policies that are only valid for him.
+filter policies that are only valid for him. Unless the user is super admin or tenant admin.
 To return policies from a service path tree, you can used the wildchar "#".
 For example, using `/Path1/#` you will obtain policies for all subpaths,
 such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
@@ -262,7 +319,6 @@ such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
 | agent_type | query |  | No | string |
 | skip | query |  | No | integer |
 | limit | query |  | No | integer |
-| authorization | header |  | No | string |
 | fiware-service | header |  | No | string |
 | fiware-servicepath | header |  | No | string |
 | accept | header |  | No | string |
@@ -274,6 +330,12 @@ such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
 | 200 | Success |
 | 404 | Not found |
 | 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
 
 #### POST
 ##### Summary:
@@ -307,8 +369,6 @@ Get a policy
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | policy_id | path |  | Yes | string |
-| skip | query |  | No | integer |
-| limit | query |  | No | integer |
 | fiware-service | header |  | No | string |
 | fiware-servicepath | header |  | No | string |
 | accept | header |  | No | string |
@@ -391,7 +451,6 @@ In case an JWT token is passed over ...
 | toDate | query |  | No | dateTime |
 | skip | query |  | No | integer |
 | limit | query |  | No | integer |
-| authorization | header |  | No | string |
 | fiware-service | header |  | No | string |
 | fiware-servicepath | header |  | No | string |
 
@@ -402,6 +461,12 @@ In case an JWT token is passed over ...
 | 200 | Successful Response |
 | 404 | Not found |
 | 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
 
 #### POST
 ##### Summary:
@@ -423,12 +488,17 @@ Create Audit Logs
 
 Get an Audit Log
 
+##### Description:
+
+TODO:
+Logs can be filtered by:
+In case an JWT token is passed over ...
+
 ##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | audit_id | path |  | Yes | string |
-| authorization | header |  | No | string |
 | fiware-service | header |  | No | string |
 | fiware-servicepath | header |  | No | string |
 
@@ -439,6 +509,12 @@ Get an Audit Log
 | 200 | Successful Response |
 | 404 | Not found |
 | 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
 
 #### DELETE
 ##### Summary:
@@ -460,6 +536,19 @@ Delete an Audit Log for a given Tenant and Service Path
 | 204 | Successful Response |
 | 404 | Not found |
 | 422 | Validation Error |
+
+### /
+
+#### GET
+##### Summary:
+
+Return Anubis API endpoints
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
 
 ### /v1/
 

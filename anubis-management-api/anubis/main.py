@@ -8,6 +8,7 @@ from anubis.audit import models as a_models
 from anubis.version import ANUBIS_VERSION
 from fastapi.openapi.utils import get_openapi
 from anubis.database import engine
+import uvicorn
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -44,11 +45,18 @@ app.add_middleware(
 # TODO auth
 # https://docs.authlib.org/en/latest/client/fastapi.html
 # https://developer.okta.com/blog/2020/12/17/build-and-secure-an-api-in-python-with-fastapi
-# TODO create "tenant" in keycloak
 
 app.include_router(t.router)
 app.include_router(p.router)
 app.include_router(a.router)
+
+
+@app.get("/", summary="Return Anubis API endpoints")
+async def root():
+    return {
+        "v1_url": "/v1",
+        "version_url": "/version",
+        "ping_url": "/ping"}
 
 
 @app.get("/v1/", summary="Return Anubis API endpoints")
@@ -56,7 +64,7 @@ async def v1_root():
     return {
         "tenants_url": "/v1/tenants",
         "policies_url": "/v1/policies",
-        "resources_url": "/v1/resources"}
+        "audit_url": "/v1/audit"}
 
 
 @app.get("/version/", summary="Return the version of the Anubis API")
@@ -92,3 +100,6 @@ def custom_openapi():
 
 
 app.openapi = custom_openapi
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8050)

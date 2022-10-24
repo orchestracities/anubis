@@ -1,26 +1,41 @@
 @prefix acl: <http://www.w3.org/ns/auth/acl#> .
+@prefix oc-acl: <http://voc.orchestracities.io/oc-acl#> .
+@prefix entity: <https://tenant1.orion.url/v2/entities/> .
 @prefix tenant: <https://tenant.url/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 tenant:policy1 a acl:Authorization ;
-    acl:agentClass <acl:agentClass:Admin> ;
+    acl:agentClass acl:agentClass:Admin ;
     acl:default </> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Control> .
+    acl:accessToClass oc-acl:entity ;
+    acl:mode acl:Control .
 
 tenant:policy2 a acl:Authorization ;
-    acl:agentClass <acl:AuthenticatedAgent> ;
+    acl:agentClass acl:AuthenticatedAgent ;
     acl:default </> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Read> .
+    acl:accessToClass oc-acl:entity ;
+    acl:mode acl:Read .
 
 tenant:policy3 a acl:Authorization ;
-    acl:agentClass <acl:agentClass:Admin> ;
+    acl:agentClass acl:agentClass:Admin ;
     acl:default </> ;
-    acl:accessToClass <policy> ;
-    acl:mode <acl:Control> .
+    acl:accessToClass oc-acl:policy ;
+    acl:mode acl:Control .
 
 tenant:policy4 a acl:Authorization ;
-    acl:agentClass <acl:agentGroup:User> ;
-    acl:accessTo </v2/entities/some_entity> ;
-    acl:accessToClass <entity> ;
-    acl:mode <acl:Read> .
+    acl:agentClass acl:agentGroup:User ;
+    acl:accessTo entity:some_entity ;
+    acl:accessToClass oc-acl:entity ;
+    acl:mode acl:Read .
+
+tenant:policy5 a acl:Authorization ;
+    acl:agentClass acl:agentGroup:User ;
+    acl:accessTo entity:some_entity ;
+    acl:accessToClass oc-acl:entity ;
+    acl:mode oc-acl:Delete .
+
+tenant:policy6 a acl:Authorization ;
+    acl:agentClass foaf:Agent ;
+    acl:accessTo entity:some_entity ;
+    acl:accessToClass oc-acl:entity ;
+    acl:mode oc-acl:Delete .

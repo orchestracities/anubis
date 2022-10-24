@@ -8,9 +8,11 @@ if [ $status -eq 7 ]; then
     exit 1
 fi
 
-echo "Downloading Keycloak scripts..."
+echo "Downloading Keycloak scripts and realm..."
+mkdir -p ../keycloak
 cd ../keycloak
-wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.4/oc-custom.jar -O oc-custom.jar
+wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.6/oc-custom.jar -O oc-custom.jar
+wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/realm-export-empty.json -O realm-export.json
 cd ..
 
 echo "Deploying services via Docker Compose..."
@@ -50,29 +52,58 @@ fi
 docker run --env MONGO_DB="mongodb://mongo:27017/graphql" --name=populateDB --network=anubis_envoymesh orchestracities/configuration-api node main/mongo/populateDB.js
 docker rm -f populateDB
 
+
+echo "Obtaining token from Keycloak..."
+
+export json=$( curl -sS --location --request POST 'http://localhost:8080/realms/default/protocol/openid-connect/token' \
+--header 'Host: keycloak:8080' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'username=admin@mail.com' \
+--data-urlencode 'password=admin' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'client_id=configuration')
+
+export token=$( jq -r ".access_token" <<<"$json" )
+
+echo ""
+echo "decoded token:"
+echo ""
+
+jq -R 'split(".") | .[1] | @base64d | fromjson' <<< $( jq -r ".access_token" <<<"$json" )
+
+echo ""
 echo "Setting up tenant Tenant1..."
+echo ""
 curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
   -H 'accept: */*' \
+  -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \
   -d '{
   "name": "Tenant1"
 }'
 
+echo ""
 echo "Setting up tenant Tenant2..."
+echo ""
+
 curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
   -H 'accept: */*' \
+  -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \
   -d '{
   "name": "Tenant2"
 }'
 
+echo ""
 echo "Setting up policy that allows creating entities under tenant Tenant1 and path / ..."
+echo ""
 
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -86,6 +117,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -99,6 +131,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -112,6 +145,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -125,6 +159,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -138,6 +173,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -151,6 +187,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -164,6 +201,7 @@ curl -s -i -X 'POST' \
 curl -s -i -X 'POST' \
 'http://127.0.0.1:8085/v1/policies/' \
 -H 'accept: */*' \
+-H "Authorization: Bearer $token" \
 -H 'fiware-service: Tenant1' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
@@ -175,10 +213,12 @@ curl -s -i -X 'POST' \
 }'
 
 if [[ $1 == "silent" ]]; then
+  echo ""
   echo "Demo deployed!"
 else
+  echo ""
   echo "Your browser will open at: http://localhost:3000"
-  echo "User: admin / Password: admin"
+  echo "User: admin@mail.com / Password: admin"
   if [ "$(uname)" == "Darwin" ]; then
       open http://localhost:3000
   elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
