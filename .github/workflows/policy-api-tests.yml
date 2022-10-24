@@ -65,10 +65,10 @@ jobs:
         working-directory: ./scripts
         run: |
           ./test_audit_logs.sh
-      - name: Clean up
-        working-directory: ./scripts
-        run: |
-          ./clean.sh
+      # - name: Clean up
+      #   working-directory: ./scripts
+      #   run: |
+      #     ./clean.sh
   # opa:
   #   runs-on: ubuntu-latest
   #   steps:
