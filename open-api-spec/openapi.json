@@ -1498,6 +1498,194 @@
         }
       }
     },
+    "/v1/resources/": {
+      "get": {
+        "tags": [
+          "resources"
+        ],
+        "summary": "List resources managed (for a given Tenant and Service Path)",
+        "operationId": "resources_v1_resources__get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Owner",
+              "type": "string"
+            },
+            "name": "owner",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Resources V1 Resources  Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resource"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/resources/mine": {
+      "get": {
+        "tags": [
+          "resources"
+        ],
+        "summary": "List resources owned by me",
+        "operationId": "my_resources_v1_resources_mine_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response My Resources V1 Resources Mine Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resource"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      }
+    },
     "/": {
       "get": {
         "summary": "Return Anubis API endpoints",
@@ -1778,6 +1966,34 @@
               "type": "string"
             },
             "default": []
+          }
+        }
+      },
+      "Resource": {
+        "title": "Resource",
+        "required": [
+          "id",
+          "type",
+          "tenant",
+          "servicePath"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "tenant": {
+            "title": "Tenant",
+            "type": "string"
+          },
+          "servicePath": {
+            "title": "Servicepath",
+            "type": "string"
           }
         }
       },
