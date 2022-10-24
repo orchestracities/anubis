@@ -17,6 +17,8 @@
 
 ### Continuous Integration
 
+- Support automatic issue generation from TODOs
+
 ### Technical debt
 
 ## 0.4
