@@ -12,7 +12,7 @@ echo "Downloading Keycloak scripts and realm..."
 mkdir -p ../keycloak
 cd ../keycloak
 wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.6/oc-custom.jar -O oc-custom.jar
-wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/realm-export.json -O realm-export.json
+wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/realm-export-empty.json -O realm-export.json
 cd ..
 
 echo "Deploying services via Docker Compose..."
