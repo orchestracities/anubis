@@ -11,3 +11,6 @@ anubis-management-api/.idea/*
 *.bin
 policy-governance-middleware/node_modules/
 policy-governance-middleware/data.json
+.idea
+*/*.pyc
+*.pyc
