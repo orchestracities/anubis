@@ -4,6 +4,10 @@
 
 ### New features
 
+- Endpoint for listing managed resources (i.e. resources for which there is
+  an `acl:Control` policy)
+- Middleware for policy distribution
+
 ### Bug fixes
 
 ### Documentation
