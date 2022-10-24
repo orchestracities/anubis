@@ -1,6 +1,6 @@
 from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response, Header
-from . import operations, models, schemas
+from . import operations, schemas
 from ..dependencies import get_db
 from sqlalchemy.orm import Session
 import os
