@@ -543,6 +543,63 @@ Delete an Audit Log for a given Tenant and Service Path
 | 404 | Not found |
 | 422 | Validation Error |
 
+### /v1/resources/
+
+#### GET
+##### Summary:
+
+List resources managed (for a given Tenant and Service Path)
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| resource_type | query |  | No | string |
+| owner | query |  | No | string |
+| skip | query |  | No | integer |
+| limit | query |  | No | integer |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+### /v1/resources/mine
+
+#### GET
+##### Summary:
+
+List resources owned by me
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| resource_type | query |  | No | string |
+| skip | query |  | No | integer |
+| limit | query |  | No | integer |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
+
 ### /
 
 #### GET
@@ -664,6 +721,15 @@ Simple healthcheck endpoint
 | resource_type | string |  | Yes |
 | mode | [ string ] |  | No |
 | agent | [ string ] |  | No |
+
+#### Resource
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | string |  | Yes |
+| type | string |  | Yes |
+| tenant | string |  | Yes |
+| servicePath | string |  | Yes |
 
 #### ServicePath
 
