@@ -4,6 +4,9 @@
 
 ### New features
 
+- Endpoint for listing managed resources (i.e. resources for which there is
+  an `acl:Control` policy)
+- Middleware for policy distribution
 - Anonymize IP and email in logs
 - Create Tenant in Keycloak on Tenant creation on the API
 - Create group Admin as Tenant subgroup on Tenant creation
