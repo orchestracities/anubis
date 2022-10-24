@@ -12,13 +12,16 @@ def get_resources(
         resource_type: str = None,
         owner: str = None,
         skip: int = 0,
-        limit: int = 100 ):
+        limit: int = 100):
     db_policies = db.query(
-        pm.Policy.access_to, pm.Policy.resource_type, tm.ServicePath.path, tm.Tenant.name).distinct().join(
-            pm.Policy.mode).filter(
-                pm.Mode.iri == default.CONTROL_MODE_IRI).join(
-            pm.Policy.service_path).join(
-            tm.ServicePath.tenant)
+        pm.Policy.access_to,
+        pm.Policy.resource_type,
+        tm.ServicePath.path,
+        tm.Tenant.name).distinct().join(
+        pm.Policy.mode).filter(
+            pm.Mode.iri == default.CONTROL_MODE_IRI).join(
+                pm.Policy.service_path).join(
+        tm.ServicePath.tenant)
     if resource_type:
         db_policies = db_policies.filter(
             pm.Policy.resource_type.contains(resource_type))
