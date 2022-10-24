@@ -236,60 +236,68 @@ app.post('/resource/mobile/send', async(req, res) => {
 })
 
 // Endpoint for providing a resource
-app.post('/resource/provide', async(req, res) => {
-  if (!Object.keys(req.body).length) {
-   return res.status(400).json({
-     message: "Request body cannot be empty",
-   })
+app.post('/resource/:resourceId/provide', async(req, res) => {
+  if (!req.params.resourceId) {
+    return res.status(400).json({
+      message: "resourceId parameters cannot be empty",
+    })
   }
-  var { resource } = req.body
-  if (!resource) {
-   res.status(400).json({
-     message: "Ensure you sent a resource field",
-   })
+  var resource = req.params['resourceId']
+
+  var payload = { resource: resource }
+
+  if (is_private_org == "true") {
+    if (!req.headers['fiware-Service']) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    payload['fiware-Service'] = req.headers['fiware-Service']
+    payload['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    console.log(payload)
   }
 
-  const bytes = json.encode({ resource: resource })
+  const bytes = json.encode(payload)
   const hash = await sha256.digest(bytes)
   const cid = CID.create(1, json.code, hash)
   await node.contentRouting.provide(cid)
   providedResources.push(resource)
 
-  console.log(`Provided policy for resource ${resource}`)
-  res.end(`Provided policy for resource ${resource}`)
+  message = `Registered as policy provider for resource ${resource}`
+
+  console.log(message)
+  res.end(message)
 })
 
 // Endpoint for subscribing to a resource topic
-app.post('/resource/subscribe', async(req, res) => {
-  if (!Object.keys(req.body).length) {
-   return res.status(400).json({
-     message: "Request body cannot be empty",
-   })
+app.post('/resource/:resourceId/subscribe', async(req, res) => {
+  if (!req.params.resourceId) {
+    return res.status(400).json({
+      message: "resourceId parameters cannot be empty",
+    })
   }
-  var { resource, policy, service, servicepath } = req.body
-  if (!resource) {
-   res.status(400).json({
-     message: "Ensure you sent a resource field",
-   })
-  }
-  if (!service) {
-   res.status(400).json({
-     message: "Ensure you sent a service field",
-   })
-  }
-  if (!servicepath) {
-   res.status(400).json({
-     message: "Ensure you sent a servicepath field",
-   })
+  var resource = req.params['resourceId']
+
+  var payload = { resource: resource }
+
+  if (is_private_org == "true") {
+    if (!req.headers['fiware-Service']) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    payload['fiware-Service'] = req.headers['fiware-Service']
+    payload['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    console.log(payload)
   }
 
   const topics = await node.pubsub.getTopics()
-  if (!topics.includes(resource)) {
-    await node.pubsub.subscribe(resource)
-    console.log(`Subscribed to ${resource}`)
+  if (!topics.includes(payload)) {
+    await node.pubsub.subscribe(payload)
+    console.log(`Subscribed to ${payload}`)
   }
 
-  const bytes = json.encode({ resource: resource })
+  const bytes = json.encode(payload)
   const hash = await sha256.digest(bytes)
   const cid = CID.create(1, json.code, hash)
 
@@ -301,7 +309,7 @@ app.post('/resource/subscribe', async(req, res) => {
     res.end(`Subscribed to ${resource}, no other providers found`)
     return
   }
-  console.log(`Syncing with other providers for ${resource}...`)
+  console.log(`Syncing with other providers for ${resource} ...`)
   for (const provider of providers) {
     var providerPolicyApi = null
     await axios({
@@ -317,24 +325,32 @@ app.post('/resource/subscribe', async(req, res) => {
     if(!providerPolicyApi) {
       continue
     }
-    await axios({
-      method: 'post',
-      url: `http://${anubis_api_uri}/v1/tenants/`,
-      data: {"name": service}
-    })
-    .then(async function (response) {
-      console.log(`Created Tenant ${service}`)
-    })
-    .catch(function (error) {
-      console.log(`No new Tenant created`)
-    })
+//do we need to create a tenant? i don't think (unless it's
+//private org and tenant does not exist, but then we will have to
+//create also service) -> first check it does not exist!
+// problema è l'id: deve essere consistente?
+//    await axios({
+//      method: 'post',
+//      url: `http://${anubis_api_uri}/v1/tenants/`,
+//      data: {"name": service}
+//    })
+//    .then(async function (response) {
+//      console.log(`Created Tenant ${service}`)
+//    })
+//    .catch(function (error) {
+//      console.log(`No new Tenant created`)
+//   })
+//
+    var headers = {}
+    if (is_private_org == "true") {
+      headers['fiware-Service'] = req.headers['fiware-Service']
+      headers['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    }
+    //if no headers I should get all policies on a resource
     await axios({
       method: 'get',
       url: `http://${providerPolicyApi}/v1/policies`,
-      headers: {
-        'fiware-Service': service,
-        'fiware-Servicepath': servicepath
-      },
+      headers: headers,
       params: {
         'resource': resource
       }
@@ -343,6 +359,7 @@ app.post('/resource/subscribe', async(req, res) => {
       for (const policy_entry of response.data) {
         // TODO: Concurrency
         if(is_private_org != "true") {
+          //also authenticated agents are ok
           var filtered_agents = policy_entry.agent.filter(a => !a.includes("acl:agent:"))
           if(filtered_agents.length > 0) {
             continue
@@ -350,11 +367,8 @@ app.post('/resource/subscribe', async(req, res) => {
         }
         await axios({
           method: 'post',
-          url: `http://${anubis_api_uri}/v1/policies`,
-          headers: {
-            'fiware-Service': service,
-            'fiware-Servicepath': servicepath
-          },
+          url: `http://${anubis_api_uri}/v1/policies?noRoute=true`,
+          headers: headers,
           data: policy_entry
         })
         .then(function (r) {

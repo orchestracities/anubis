@@ -30,6 +30,9 @@ services:
       - DB_USER=admin
       - DB_PASSWORD=password
       - DB_NAME=anubis
+      - KEYCLOACK_ENABLED=True
+      - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
+      - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
     ports:
       - "8085:8000"
     volumes:
@@ -56,6 +59,9 @@ services:
       - DB_USER=admin
       - DB_PASSWORD=password
       - DB_NAME=anubis
+      - KEYCLOACK_ENABLED=True
+      - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
+      - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
     ports:
       - "8086:8000"
     volumes:
@@ -68,7 +74,7 @@ services:
     build:
       context: ./policy-governance-middleware
       dockerfile: Dockerfile
-    image: orchestracities/middleware:test
+    image: orchestracities/anubis-middleware:test
     networks:
       - envoymesh
     environment:
@@ -86,7 +92,7 @@ services:
     build:
       context: ./policy-governance-middleware
       dockerfile: Dockerfile
-    image: orchestracities/middleware:test
+    image: orchestracities/anubis-middleware:test
     networks:
       - envoymesh
     environment:
@@ -105,8 +111,8 @@ services:
     image: openpolicyagent/opa:0.38.1-envoy-3
     environment:
       - AUTH_API_URI=http://policy-api1:8000/v1/policies/
-      - VALID_ISSUERS=http://keycloak:8080/auth/realms/master
-      - VALID_AUDIENCE=client1
+      - VALID_ISSUERS=http://keycloak:8080/realms/master
+      - VALID_AUDIENCE=ngsi;configuration
     ports:
       - "9191:9191"
       - "8282:8282"
@@ -132,8 +138,8 @@ services:
     image: openpolicyagent/opa:0.38.1-envoy-3
     environment:
       - AUTH_API_URI=http://policy-api2:8000/v1/policies/
-      - VALID_ISSUERS=http://keycloak:8080/auth/realms/master
-      - VALID_AUDIENCE=client1
+      - VALID_ISSUERS=http://keycloak:8080/realms/master
+      - VALID_AUDIENCE=ngsi;configuration
     ports:
       - "9192:9191"
       - "8283:8282"
@@ -187,18 +193,17 @@ services:
       - envoymesh
 
   keycloak:
-    image: jboss/keycloak:${KEYCLOAK_VERSION:-16.1.1}
-    # if your platform is linux/arm64 use the following image
-    #image: koolwithk/keycloak-arm:16.0.0
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-19.0.1}
     ports:
       - "8080:8080"
     volumes:
-      - ./keycloak/oc-custom.jar:/opt/jboss/keycloak/standalone/deployments/oc-custom.jar
-      - ./keycloak/realm-export.json:/opt/jboss/realm-export.json
+      - ./keycloak/oc-custom.jar:/opt/keycloak/providers/oc-custom.jar
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=password
-      - JAVA_TOOL_OPTIONS=-Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/jboss/realm-export.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_FEATURES=scripts
+    command: start-dev --import-realm
     networks:
       - envoymesh
 
