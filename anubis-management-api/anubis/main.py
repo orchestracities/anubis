@@ -5,7 +5,7 @@ from anubis.policies import routers as p
 from anubis.policies import models as p_models
 from anubis.audit import routers as a
 from anubis.audit import models as a_models
-from anubis.resources import routers as r
+from anubis.middleware import routers as m
 from anubis.version import ANUBIS_VERSION
 from fastapi.openapi.utils import get_openapi
 from anubis.database import engine
@@ -50,7 +50,7 @@ app.add_middleware(
 app.include_router(t.router)
 app.include_router(p.router)
 app.include_router(a.router)
-app.include_router(r.router)
+app.include_router(m.router)
 
 
 @app.get("/", summary="Return Anubis API endpoints")
@@ -66,7 +66,7 @@ async def v1_root():
     return {
         "tenants_url": "/v1/tenants",
         "policies_url": "/v1/policies",
-        "resources_url": "/v1/resources",
+        "middleware_url": "/v1/middleware",
         "audit_url": "/v1/audit"}
 
 
