@@ -5,7 +5,8 @@ from ..policies import models as pm
 from ..tenants import models as tm
 
 
-# TODO it would be good to have also the list of owners, but query needs to be defined
+# TODO it would be good to have also the list of owners, but query needs
+# to be defined
 def get_resources(
         db: Session,
         tenant: str = None,
