@@ -543,7 +543,7 @@ Delete an Audit Log for a given Tenant and Service Path
 | 404 | Not found |
 | 422 | Validation Error |
 
-### /v1/resources/
+### /v1/middleware/resources
 
 #### GET
 ##### Summary:
@@ -569,7 +569,7 @@ List resources managed (for a given Tenant and Service Path)
 | 404 | Not found |
 | 422 | Validation Error |
 
-### /v1/resources/mine
+### /v1/middleware/resources/mine
 
 #### GET
 ##### Summary:
@@ -599,6 +599,114 @@ List resources owned by me
 | Security Schema | Scopes |
 | --- | --- |
 | OptionalHTTPBearer | |
+
+### /v1/middleware/policies
+
+#### GET
+##### Summary:
+
+List policies for a given resource
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| resource | query |  | No | string |
+| resource_type | query |  | No | string |
+| skip | query |  | No | integer |
+| limit | query |  | No | integer |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+#### POST
+##### Summary:
+
+Create a policy for a given Tenant and Service Path
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| owner | header |  | No | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+### /v1/middleware/policies/{policy_id}
+
+#### GET
+##### Summary:
+
+Get a policy
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| policy_id | path |  | Yes | string |
+| fiware-service | header |  | No | string |
+| fiware-servicepath | header |  | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+#### PUT
+##### Summary:
+
+Update a policy for a given Tenant and Service Path
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| policy_id | path |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
+
+#### DELETE
+##### Summary:
+
+Delete a policy for a given Tenant and Service Path
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| policy_id | path |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | Successful Response |
+| 404 | Not found |
+| 422 | Validation Error |
 
 ### /
 
