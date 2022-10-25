@@ -130,7 +130,8 @@ def read_policy(
         db_service_path = ot.get_db_service_path(
             db, fiware_service, fiware_servicepath)
     db_policy = op.get_policy(db, policy_id=policy_id)
-    if not db_policy or (db_service_path and db_service_path[0].id != db_policy.service_path_id):
+    if not db_policy or (
+            db_service_path and db_service_path[0].id != db_policy.service_path_id):
         raise HTTPException(status_code=404, detail="Policy not found")
     return rp.serialize_policy(db_policy)
 
@@ -164,19 +165,21 @@ def create_policy(
     # a corresponding registered resource in the database and use
     # the resource service and service path. if not we use `Default` service
     else:
-        resources = operations.get_resources(db,
-                                             tenant=None,
-                                             service_path=None,
-                                             resource=policy.access_to,
-                                             resource_type=policy.resource_type,
-                                             owner=owner)
+        resources = operations.get_resources(
+            db,
+            tenant=None,
+            service_path=None,
+            resource=policy.access_to,
+            resource_type=policy.resource_type,
+            owner=owner)
         if resources and hasattr(resources, "__len__") and len(resources) > 0:
             db_service_path = ot.get_db_service_path(
                 db, resources[0].name, resources[0].path)
             db_service_path_id = list(map(ot.compute_id, db_service_path))
             if len(resources) != 1:
-                logging.warning("While looking for a resource we found multiple instances in different tenants. "
-                                "We pick only the first one.")
+                logging.warning(
+                    "While looking for a resource we found multiple instances in different tenants. "
+                    "We pick only the first one.")
         else:
             db_service_path = ot.get_db_service_path(db, 'Default', '/')
             if not db_service_path:
