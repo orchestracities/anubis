@@ -33,6 +33,7 @@ services:
       - KEYCLOACK_ENABLED=True
       - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
       - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
+      - MIDDLEWARE_ENDPOINT=http://middleware1:8098
     ports:
       - "8085:8000"
     volumes:
@@ -62,6 +63,7 @@ services:
       - KEYCLOACK_ENABLED=True
       - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
       - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
+      - MIDDLEWARE_ENDPOINT=http://middleware2:8098
     ports:
       - "8086:8000"
     volumes:
