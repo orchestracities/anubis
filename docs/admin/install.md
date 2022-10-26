@@ -1,5 +1,7 @@
 # Install
 
+## Policy Management API
+
 Anubis is available as a [docker container](https://hub.docker.com/r/orchestracities/anubis-management-api)
 and as a python [package](https://pypi.org/project/anubis-policy-api/).
 
@@ -23,7 +25,7 @@ $ pip install anubis-policy-api
 
 This will allow you to reuse Anubis apis also for other projects.
 
-## Environment variables
+### Environment variables
 
 | Variale                        | Description |
 | ------------------------------ | ----------- |
@@ -43,3 +45,23 @@ This will allow you to reuse Anubis apis also for other projects.
 | `DB_USER`                      | The user for the database.|
 | `DB_PASSWORD`                  | The password of the database user.|
 | `DB_NAME`                      | The name of the database.|
+
+## Policy Distribution API
+
+The policy distribution middleware is available as a [docker container](https://hub.docker.com/r/orchestracities/anubis-middleware).
+
+The middleware is an add-on the basic Anubis deployment (see above
+for requirements).
+
+An example [docker compose](https://raw.githubusercontent.com/orchestracities/anubis/master/docker-compose-middleware.yaml)
+in Anubis code repository that deploy all the dependencies and demonstrates
+how to create a network of middleware interacting with anubis management apis.
+
+### Environment variables
+
+| Variale                        | Description |
+| ------------------------------ | ----------- |
+| `SERVER_PORT`                  | Specifies the port where the middleware API is exposed. |
+| `ANUBIS_API_URI`               | Specifies the anubis api management instance linked to the middleware. |
+| `LISTEN_ADDRESS`               | Specifies the multiaddress format address the middleware listens on. |
+| `IS_PRIVATE_ORG`               | Set the middleware modality to public or private. |

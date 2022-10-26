@@ -123,7 +123,6 @@ specifically for the [NGSIv2 Context Broker](https://fiware-orion.readthedocs.io
 Anubis management, and JWT-based authentication. You can see Orion rules in this
 [rego file](config/opa-service/rego/context_broker_policy.rego).
 
-
 ## Policy Distribution
 
 The policy distribution architecture relies on [libp2p](https://libp2p.io/)
@@ -168,10 +167,10 @@ There are two distribution modalities:
 - *private*, i.e. when the different middleware belong to the same
   organisation. In this case:
 
-  - resources are considered to be univocally identifiable only within the same 
+  - resources are considered to be univocally identifiable only within the same
     service and service path;
 
-  - all policies are distributed (including the ones for roles and groups and 
+  - all policies are distributed (including the ones for roles and groups and
     `*` and `default` resource policies).
 
 ## Policies

@@ -218,12 +218,11 @@ There are two distribution modalities:
 - *private*, i.e. when the different middleware belong to the same
   organisation. In this case:
 
-  - resources are considered to be univocally identifiable only within the same 
+  - resources are considered to be univocally identifiable only within the same
     service and service path;
 
-  - all policies are distributed (including the ones for roles and groups and 
+  - all policies are distributed (including the ones for roles and groups and
     `*` and `default` resource policies).
-
 
 In the public modality, subscribers are required to define the service for
 which they subscribe on a certain resource. This guarantees that policies
@@ -238,7 +237,7 @@ curl --location --request POST 'http://localhost:8098/resource/urn:AirQuality:1/
 Resource discovery takes an important role in the distribution process,
 to this aim a specific endpoint is available in the management api. A resource
 is considered managed by Anubis if there is at least an `acl:Control` policy
-associated to it. The actors of policies with mode `acl:Control` are 
+associated to it. The actors of policies with mode `acl:Control` are
 considered as the owners of the resource.
 
 The policy distribution is based on discovery and publish/subscribe
