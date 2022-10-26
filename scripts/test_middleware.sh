@@ -1,74 +1,99 @@
-curl --location --request GET 'localhost:8086/v1/policies?resource=resource1' \
---header 'fiware-service: Mobile' \
---header 'fiware-servicepath: /'
+echo ""
+echo "Get metadata from node 1?"
+echo "==============================================================="
+
+export response=`curl -s -o /dev/null -w "%{http_code}" --request GET 'http://localhost:8098/metadata'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't get metadata"
+  exit 1
+fi
+
+echo ""
+echo "Get metadata from node 2?"
+echo "==============================================================="
+
+export response=`curl -s -o /dev/null -w "%{http_code}" --request GET 'http://localhost:8099/metadata'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't get metadata"
+  exit 1
+fi
 
 
-curl --location --request POST 'Localhost:8099/resource/subscribe' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "service": "Mobile",
-    "servicepath": "/",
-    "resource": "resource1"
-}'
+# TODO: THIS IS REQUIRED UNTIL WE DON'T INJECT SUBSCRITION IN LUA
+echo ""
+echo "Can subscribe node 1 for urn:AirQuality:1? (destination tenant 1)"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8098/resource/urn:AirQuality:1/subscribe' --header 'fiware-Service: Tenant1' --header 'fiware-Servicepath: /'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't subscribe"
+  exit 1
+fi
 
+echo ""
+echo "Can retrieve mobile data from node 2 for user admin@mail.com?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" --request GET 'http://localhost:8099/mobile/policies' --header 'user: admin@mail.com'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't get mobile data"
+  exit 1
+fi
 
-curl --location --request POST 'localhost:8098/resource/mobile/send' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "service": "Mobile",
-    "servicepath": "/",
-    "policies": [
-        {
-            "usrMail": "test@gmail.com",
-            "usrData": [
-                {
-                    "id": "resource1",
-                    "description": "test",
-                    "children": [
-                        {
-                            "id": "f2d0ab66-6aba-4aea-b6c4-aabc66cbe34f",
-                            "actorType": "acl:AuthenticatedAgent",
-                            "mode": ",acl:Write"
-                        },
-                        {
-                            "id": "66d44dc6-00a6-4134-9b12-37879b5cc0a4",
-                            "actorType": "acl:AuthenticatedAgent",
-                            "mode": ",acl:Write,acl:Control"
-                        },
-                        {
-                            "id": "f3e7a891-7320-476b-905f-9bf9e2b9b176",
-                            "actorType": "acl:agent:test@gmail.com",
-                            "mode": ",acl:Write"
-                        }
-                    ]
-                },
-                {
-                    "id": "Urn:xxx:yyy-ecab956c-d2d9-4e69-bafc-a1d899d3280b",
-                    "description": "test2",
-                    "children": []
-                },
-                {
-                    "id": "resource2",
-                    "description": "test3",
-                    "children": []
-                }
-            ]
-        }
-    ]
-}'
+echo ""
+echo "Node 1 has 3 policies for urn:AirQuality:1 in Tenant1"
+echo "==============================================================="
+export response=`curl -s -X 'GET' 'http://localhost:8085/v1/policies/?resource=urn%3AAirQuality%3A1&skip=0&limit=100' -H 'accept: application/json' -H 'fiware-service: Tenant1' -H 'fiware-servicepath: /#' | jq length`
+if [ $response == "3" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR"
+  exit 1
+fi
 
+echo ""
+echo "Node 2 has 0 policies for urn:AirQuality:1 in Tenant2"
+echo "==============================================================="
+export response=`curl -s -X 'GET' 'http://localhost:8086/v1/policies/?resource=urn%3AAirQuality%3A1&skip=0&limit=100' -H 'accept: application/json' -H 'fiware-service: Tenant2' -H 'fiware-servicepath: /#' | jq length`
+if [ $response == "0" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR"
+  exit 1
+fi
 
-curl --location --request POST 'Localhost:8099/resource/provide' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "resource": "resource1"
-}'
+echo ""
+echo "Can subscribe node 2 for urn:AirQuality:1 (destination tenant 2)?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8099/resource/urn:AirQuality:1/subscribe' --header 'fiware-Service: Tenant2' --header 'fiware-Servicepath: /'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't subscribe"
+  exit 1
+fi
 
-
-curl --location --request POST 'localhost:8099/resource/mobile/retrieve' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "service": "Mobile",
-    "servicepath": "/",
-    "resource": "resource1" 
-}'
+echo ""
+echo "Node 2 now has 3 policies for urn:AirQuality:1 in Tenant2"
+echo "==============================================================="
+export response=`curl -s -X 'GET' 'http://localhost:8086/v1/policies/?resource=urn%3AAirQuality%3A1&skip=0&limit=100' -H 'accept: application/json' -H 'fiware-service: Tenant2' -H 'fiware-servicepath: /#' | jq length`
+if [ $response == "3" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR"
+  exit 1
+fi

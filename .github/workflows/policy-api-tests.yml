@@ -65,10 +65,18 @@ jobs:
         working-directory: ./scripts
         run: |
           ./test_audit_logs.sh
-      # - name: Clean up
-      #   working-directory: ./scripts
-      #   run: |
-      #     ./clean.sh
+  e2e-middleware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup demo
+        working-directory: ./scripts
+        run: |
+          ./run_demo_with_middleware.sh
+      - name: Test CORS
+        working-directory: ./scripts
+        run: |
+          ./test_middleware.sh
   # opa:
   #   runs-on: ubuntu-latest
   #   steps:
