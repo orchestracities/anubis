@@ -174,14 +174,15 @@ a valid `JWT token` the api endpoint: `http://myapi/resources/urn:mycool:resourc
 A different Rego rule can be defined to work on another API using
 a different authentication mechanism.
 
-### Policy Distribution (under development)
+### Policy Distribution
 
 The policy distribution architecture relies on [libp2p](https://libp2p.io/)
 middleware to distribute policies across differed Policies Administration
-Points. The architecture decouples the PAP from the distribution middleware to:
+Points. The architecture decouples the PAP from the distribution middleware.
+This allows:
 
-- Allow different PAP to share the same distribution node.
-- Allow deployment without the distribution functionalities (and hence
+- different PAP to share the same distribution node.
+- deployment without the distribution functionalities (and hence
 with a smaller footprint), when this is not required.
 
 The distribution middleware is called Policy Distribution Point.
@@ -202,10 +203,45 @@ The distribution middleware is called Policy Distribution Point.
     └──────────────┘        └──────────────┘
 ```
 
-N.B.: Generic policies (i.e. that apply to any resource of a given type) are
-distributed only if nodes belong to the same domain.
+There are two distribution modalities:
 
-The policy distribution works based on discovery and publish subscribe
+- *public*, i.e. when the different middleware belong to different
+  organisations in the public internet. In this case:
+
+  - resources are considered to be univocally identifiable (if they have
+    the same id they are the same resource);
+
+  - only user specific policies are distributed;
+
+  - only resource specific policies are distributed.
+
+- *private*, i.e. when the different middleware belong to the same
+  organisation. In this case:
+
+  - resources are considered to be univocally identifiable only within the same 
+    service and service path;
+
+  - all policies are distributed (including the ones for roles and groups and 
+    `*` and `default` resource policies).
+
+
+In the public modality, subscribers are required to define the service for
+which they subscribe on a certain resource. This guarantees that policies
+are stored in the correct service. e.g.:
+
+```bash
+curl --location --request POST 'http://localhost:8098/resource/urn:AirQuality:1/subscribe' \
+--header 'fiware-Service: Tenant1' \
+--header 'fiware-Servicepath: /'
+```
+
+Resource discovery takes an important role in the distribution process,
+to this aim a specific endpoint is available in the management api. A resource
+is considered managed by Anubis if there is at least an `acl:Control` policy
+associated to it. The actors of policies with mode `acl:Control` are 
+considered as the owners of the resource.
+
+The policy distribution is based on discovery and publish/subscribe
 mechanisms. Key interactions are described in the following sections.
 
 #### Create a policy for an existing resource
@@ -219,13 +255,13 @@ In this interaction, when a new policy is created in the PAP 1:
     1. The Policy Distribution Point 1
         creates a topic for the resource to which
         the policy is related
-    1. The Policy Distribution Point 1 registers a content provider
+    1. The Policy Distribution Point 1 registers as a content provider
        for the given resource.
 1. At this point, (if not yet registered to the topic), the Policy Distribution
 Point 1 register itself to the topic.
 1. The Policy Distribution 1 create a message on the topic.
-1. Other Policy Distribution Points registered to the topic are notified.
-1. Consequently, notified Policy Distribution Points update related
+1. Other Policy Distribution Points subscribed to the topic are notified.
+1. Consequently, the notified Policy Distribution Points update related
 PAPs.
 
 #### Create a new resource in a PEP

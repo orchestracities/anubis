@@ -11,7 +11,7 @@ Anubis is designed with the following scenarios in mind:
   Platform Y can rely on policies attached to Data 1 to provide access,
   without User A having to re-develop the policies in Platform Y.
 
-1. (To be supported). Enable data owners to apply/change policies
+1. Enable data owners to apply/change policies
   everywhere/anytime by supporting distributed synchronization of
   access control policies. Suppose two different platforms
   A and B adopts Anubis, when Data 1 is transferred from Platform A to

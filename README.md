@@ -123,6 +123,57 @@ specifically for the [NGSIv2 Context Broker](https://fiware-orion.readthedocs.io
 Anubis management, and JWT-based authentication. You can see Orion rules in this
 [rego file](config/opa-service/rego/context_broker_policy.rego).
 
+
+## Policy Distribution
+
+The policy distribution architecture relies on [libp2p](https://libp2p.io/)
+middleware to distribute policies across differed Policies Administration
+Points. The architecture decouples the PAP from the distribution middleware.
+This allows:
+
+- different PAP to share the same distribution node.
+- deployment without the distribution functionalities (and hence
+with a smaller footprint), when this is not required.
+
+The distribution middleware is called Policy Distribution Point.
+
+```ascii
+    ┌──────────────┐        ┌──────────────┐
+    │   Policy     │        │    Policy    │
+    │ Distribution │◄──────►│Administration│
+    │   Point 1    │        │    Point 1   │
+    └──────────────┘        └──────────────┘
+           ▲
+         2 │
+           ▼
+    ┌──────────────┐        ┌──────────────┐
+    │   Policy     │        │    Policy    │
+    │ Distribution │◄──────►│Administration│
+    │   Point 2    │        │    Point 2   │
+    └──────────────┘        └──────────────┘
+```
+
+There are two distribution modalities:
+
+- *public*, i.e. when the different middleware belong to different
+  organisations in the public internet. In this case:
+
+  - resources are considered to be univocally identifiable (if they have
+    the same id they are the same resource);
+
+  - only user specific policies are distributed;
+
+  - only resource specific policies are distributed.
+
+- *private*, i.e. when the different middleware belong to the same
+  organisation. In this case:
+
+  - resources are considered to be univocally identifiable only within the same 
+    service and service path;
+
+  - all policies are distributed (including the ones for roles and groups and 
+    `*` and `default` resource policies).
+
 ## Policies
 
 The formal policy specification is defined by the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
