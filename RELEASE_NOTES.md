@@ -13,6 +13,7 @@
 
 ### Bug fixes
 
+- Fix support for groups including `/` in the name
 - Change the keycloak config file to manage the token refresh
 - Missing database entry for oc-acl:Delete
 - Correct parsing / serialisation of policies (still something to be checked)

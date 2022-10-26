@@ -75,6 +75,21 @@ def test_policies(test_db):
     policy_id = response.headers["Policy-ID"]
     assert policy_id
 
+    # test group policy
+    response = client.post(
+        "/v1/policies/",
+        headers={
+            "fiware-service": "test",
+            "fiware-servicepath": "/"},
+        json={
+            "access_to": "resource:foobar:bar",
+            "resource_type": "entity",
+            "mode": ["acl:Read"],
+            "agent": ["acl:agentGroup:/Admin/Test"]})
+    assert response.status_code == 201
+    policy_id = response.headers["Policy-ID"]
+    assert policy_id
+
     # test policy creation without servicePath
     response = client.post(
         "/v1/policies/",
@@ -108,7 +123,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     assert response.status_code == 200
     body = response.json()
-    assert len(body) == 10
+    assert len(body) == 11
 
     response = client.get(
         "/v1/policies/",
@@ -125,7 +140,7 @@ def test_policies(test_db):
             "fiware-service": "test"})
     assert response.status_code == 200
     body = response.json()
-    assert len(body) == 11
+    assert len(body) == 12
 
     response = client.get(
         "/v1/policies/?agent_type=acl:agent",
@@ -143,7 +158,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 2
+    assert len(body) == 3
 
     response = client.get(
         "/v1/policies/?resource_type=entity",
@@ -152,7 +167,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 9
+    assert len(body) == 10
 
     response = client.get(
         "/v1/policies/?resource_type=entity&agent_type=acl:agent",
@@ -170,7 +185,7 @@ def test_policies(test_db):
             "fiware-servicepath": "/"})
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 2
+    assert len(body) == 3
 
     response = client.get(
         "/v1/policies/?resource_type=entity&agent_type=acl:agent&resource=resource",
