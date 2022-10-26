@@ -27,7 +27,7 @@ This will allow you to reuse Anubis apis also for other projects.
 
 ### Environment variables
 
-| Variale                        | Description |
+| Variable                       | Description |
 | ------------------------------ | ----------- |
 | `AUTH_API_URI`                 | Specifies the `URI` of the auth management API. |
 | `VALID_ISSUERS`                | Specifies the valid `issuers` of the auth tokens (coming from Keycloak). This can be a list of issuers, separated by `;`.|
@@ -40,6 +40,7 @@ This will allow you to reuse Anubis apis also for other projects.
 | `KEYCLOACK_ENABLED`            | Enable creation of tenant also in Keycloak.|
 | `TENANT_ADMIN_ROLE_ID`         | Specifies the path of the configuration file of the wac serialization.|
 | `KEYCLOACK_ADMIN_ENDPOINT`     | The endpoint of the admin api of Keycloak.|
+| `MIDDLEWARE_ENDPOINT`          | The endpoint of the policy distribution middleware (if `None` the policy distribution is disabled).|
 | `DB_TYPE`                      | The database type to be used by the API. Valid options for now are `postgres` and `sqlite`.|
 | `DB_HOST`                      | The host for the database.|
 | `DB_USER`                      | The user for the database.|
@@ -59,7 +60,7 @@ how to create a network of middleware interacting with anubis management apis.
 
 ### Environment variables
 
-| Variale                        | Description |
+| Variable                       | Description |
 | ------------------------------ | ----------- |
 | `SERVER_PORT`                  | Specifies the port where the middleware API is exposed. |
 | `ANUBIS_API_URI`               | Specifies the anubis api management instance linked to the middleware. |

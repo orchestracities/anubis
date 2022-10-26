@@ -341,6 +341,8 @@ For the policy API, the following env variables are also available:
 - `KEYCLOACK_ADMIN_ENDPOINT`: The endpoint of the admin api of Keycloak.
 - `DB_TYPE`: The database type to be used by the API. Valid options for
   now are `postgres` and `sqlite`.
+- `MIDDLEWARE_ENDPOINT`: The endpoint of the policy distribution middleware
+  (if `None` the policy distribution is disabled).
 
 If postgres is the database being used, the following variables are available
 as well:
@@ -349,6 +351,14 @@ as well:
 - `DB_USER`: The user for the database.
 - `DB_PASSWORD`: The password for the database user.
 - `DB_NAME`: The name of the database.
+
+The policy distribution middleware is an add-on the basic Anubis deployment.
+The following environment variables can be configured:
+
+- `SERVER_PORT`: The port where the middleware API is exposed.
+- `ANUBIS_API_URI`: The anubis management api instance linked to the middleware.
+- `LISTEN_ADDRESS`: The multiaddress format address the middleware listens on.
+- `IS_PRIVATE_ORG`: The middleware modality to public or private.
 
 For customizing the default policies that are created alongside a tenant, see
 [the configuration file](config/opa-service/default_policies.yml) that's mounted
