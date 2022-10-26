@@ -56,6 +56,8 @@ app.use(bp.urlencoded({ extended: true }))
 // Keeping track of resources being provided
 var providedResources = []
 
+var peers = []
+
 // Setting up the Libp2p node
 const node = await createLibp2p({
   addresses: {
@@ -91,156 +93,192 @@ app.get('/metadata', async(req, res) => {
 })
 
 // Endpoint for receiving resources from the mobile app
-app.post('/resource/mobile/retrieve', async(req, res) => {
-  if (!Object.keys(req.body).length) {
-   return res.status(400).json({
-     message: "Request body cannot be empty",
-   })
-  }
-  var { resource, service, servicepath } = req.body
-  if (!resource) {
-   res.status(400).json({
-     message: "Ensure you sent a resource field",
-   })
-  }
-  if (!service) {
-   res.status(400).json({
-     message: "Ensure you sent a service field",
-   })
-  }
-  if (!servicepath) {
-   res.status(400).json({
-     message: "Ensure you sent a servicepath field",
-   })
+app.get('/mobile/policies/', async(req, res) => {
+  var user = req.get('user')
+
+  // if we are in mode public we should not get any of these.
+  var service = null
+  var servicepath = null
+
+  if (is_private_org == "true") {
+    if (!req.get('fiware-Service')) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    service = req.get('fiware-Service')
+    servicepath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
   }
 
-  // TODO: Email of the user
-  var responseData = [
-      {
-          "usrMail": "test@gmail.com",
-          "usrData": [
-              {
-                  "id": resource,
-                  "description": "test",
-                  "children": []
-              }
-          ]
-      }
-  ]
-
-  const bytes = json.encode({ resource: resource })
-  const hash = await sha256.digest(bytes)
-  const cid = CID.create(1, json.code, hash)
-
-  var providers = []
-  try {
-    providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
+  var responseResources = []
+  var responseData = {
+    "user": user,
+    "resources": responseResources
   }
-  catch(error) {
-    res.end(`No providers for ${resource}`)
-    return
-  }
-  for (const provider of providers) {
+
+  var resources = new Map()
+
+  // retrieve all resources I own in the different middlewares
+  for (const peerId of peers){
     var providerPolicyApi = null
+    var peer = await node.peerStore.addressBook.get(peerId)
     await axios({
       method: 'get',
-      url: `http://${provider.multiaddrs[0].nodeAddress().address}:8098/metadata`
+      url: `http://${peer[0].multiaddr.nodeAddress().address}:8098/metadata`
     })
     .then(async function (response) {
       providerPolicyApi = response.data["policy_api_uri"]
     })
     .catch(function (error) {
-      console.log(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
+      console.log(`Can't retrieve policy API URL for provider ${peer[0].multiaddr.nodeAddress().address}`)
     })
     if(!providerPolicyApi) {
       continue
     }
+    var headers = {}
+
+    if (service) {
+      headers['fiware-Service'] = service
+      headers['fiware-Servicepath'] =  servicepath ? servicepath : '/'
+    }
+
     await axios({
       method: 'get',
-      url: `http://${providerPolicyApi}/v1/middleware/policies`,
-      headers: {
-        'fiware-Service': service,
-        'fiware-Servicepath': servicepath
-      },
+      url: `http://${providerPolicyApi}/v1/middleware/resources`,
+      headers: headers,
       params: {
-        'resource': resource
+        'owner': `acl:agent:${user}`
       }
     })
     .then(async function (response) {
-      for (const policy_entry of response.data) {
-        if(is_private_org != "true") {
-          var filtered_agents = policy_entry.agent.filter(a => !a.includes("acl:agent:"))
-          if(filtered_agents.length > 0) {
-            continue
-          }
-        }
-        responseData[0].usrData[0].children.push({"id": policy_entry["id"], "actorType": policy_entry["agent"], "mode": policy_entry["mode"]})
+      for (const resource of response.data){
+        if (!resources.has(resource.id)) resources.set(resource.id, resource)
       }
     })
     .catch(function (error) {
       console.log(error.response.data)
     })
   }
-  res.json({responseData})
+
+  for (const resource of resources.values()){
+    const bytes = json.encode({ resource: resource.id })
+    const hash = await sha256.digest(bytes)
+    const cid = CID.create(1, json.code, hash)
+
+    const newPolicies = new Map()
+    
+    var providers = []
+    try {
+      providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
+    }
+    catch(error) {
+     console.log(`No providers for ${resource.id}`)
+    }
+    for (const provider of providers) {
+      var providerPolicyApi = null
+      await axios({
+        method: 'get',
+        url: `http://${provider.multiaddrs[0].nodeAddress().address}:8098/metadata`
+      })
+      .then(async function (response) {
+        providerPolicyApi = response.data["policy_api_uri"]
+      })
+      .catch(function (error) {
+        console.log(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
+      })
+      if(!providerPolicyApi) {
+        continue
+      }
+      await axios({
+        method: 'get',
+        url: `http://${providerPolicyApi}/v1/middleware/policies`,
+        headers: headers,
+        params: {
+          'resource': resource.id
+        }
+      })
+      .then(async function (response) {
+        for (const policy_entry of response.data) {
+          const newPolicy = {"id": policy_entry["id"], "actorType": policy_entry["agent"], "mode": policy_entry["mode"]}
+          if (!newPolicies.has(newPolicy.id))
+            newPolicies.set(newPolicy.id,newPolicy)
+        }
+      })
+      .catch(function (error) {
+        console.log(error.response.data)
+      })
+    }
+    const newResource = {
+      "id": resource.id,
+      "resource_type": resource.type,
+      "policies":  Array.from(newPolicies.values())
+    }
+    responseResources.push(newResource)
+  }
+  res.json(responseData)
 })
 
 // Endpoint for providing a resource from the mobile app
-app.post('/resource/mobile/send', async(req, res) => {
+app.post('/mobile/policies', async(req, res) => {
   if (!Object.keys(req.body).length) {
    return res.status(400).json({
      message: "Request body cannot be empty",
    })
   }
-  var { policies, service, servicepath } = req.body
-  if (!policies) {
+
+  // if we are in mode public we should not get any of these.
+  var service = null
+  var servicepath = null
+
+  if (is_private_org == "true") {
+    if (!req.get('fiware-Service')) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    service = req.get('fiware-Service')
+    servicepath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
+    console.log(payload)
+  }
+
+  var { resources, user } = req.body
+
+  if (!resources) {
    res.status(400).json({
-     message: "Ensure you sent a policies field",
+     message: "Ensure you sent a set of resources",
    })
   }
-  if (!service) {
-   res.status(400).json({
-     message: "Ensure you sent a service field",
-   })
-  }
-  if (!servicepath) {
-   res.status(400).json({
-     message: "Ensure you sent a servicepath field",
-   })
-  }
-  for(const entry of policies) {
-    const usrMail = entry.usrMail
-    for(const resource of entry.usrData) {
+
+  for(const resource of resources) {
       const resId = resource.id
-      for(const policy of resource.children) {
-        var modes = []
-        for(const m of policy.mode.split(",")) {
-          modes.push(m)
-        }
-        modes = modes.filter(e => e != '')
+      const resType = resource.resource_type
+      for(const policy of resource.policies) {
         var new_policy = {
             "id": policy.id,
             "access_to": resId,
-            "resource_type": "mobile",
-            "mode": modes,
-            "agent": [
-                policy.actorType
-            ]
+            "resource_type": resType,
+            "mode": policy.mode,
+            "agent": policy.actorType
         }
+
         var message = {
           "action": "send_mobile",
           "policy": new_policy,
-          "service": service,
-          "servicepath": servicepath,
         }
+
+        if (service) {
+          message.service = service
+          message.servicePath =  servicepath ? servicepath : '/'
+        }
+
         message = JSON.stringify(message)
         await node.pubsub.publish(resId, uint8ArrayFromString(message)).catch(err => {
           console.error(err)
           res.end(`Error: ${err}`)
         })
       }
-    }
   }
-  res.json({})
+  res.end()
 })
 
 // Endpoint for providing a resource
@@ -279,7 +317,7 @@ app.post('/resource/:resourceId/provide', async(req, res) => {
 
 
 // Endpoint to check that a resource is managed by the middleware
-app.post('/resource/:resourceId/exists', async(req, res) => {
+app.get('/resource/:resourceId/exists', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
       message: "resourceId parameters cannot be empty",
@@ -340,9 +378,6 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     topic = payload['fiware-Service']+'#'+payload['fiware-Servicepath']+'#'+resource
     console.log(payload)
   }
-
-  console.log(req.get('fiware-Service'))
-  console.log(req.get('fiware-Servicepath'))
 
   const topics = await node.pubsub.getTopics()
   if (!topics.includes(topic)) {
@@ -577,25 +612,41 @@ async function processTopicMessage(evt) {
   const message = JSON.parse(uint8ArrayToString(evt.detail.data))
   console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic}`)
   var headers = {}
-  // if message.service:
-  //   headers['fiware-Service'] = message.service
-  // if message.servicePath:
-  //   headers['fiware-Servicepath'] = message.servicePath
-  // if(message.action == "send_mobile") {
-  //   await axios({
-  //     method: 'post',
-  //     url: `http://${anubis_api_uri}/v1/policies`,
-  //     headers: headers,
-  //     data: message.policy
-  //   })
-  //   .then(function (r) {
-  //     console.log(r)
-  //   })
-  //   .catch(function (err) {
-  //     console.log(err.response.data)
-  //   })
-  //   return
-  // }
+  if (message.service) {
+    headers['fiware-Service'] = message.service
+    headers['fiware-Servicepath'] = message.servicePath ? message.servicePath : '/'
+  }
+
+  if(message.action == "send_mobile") {
+    //policy exist? -> update otherwise create
+    var method = 'post'
+    var path =''
+    await axios({
+      method: 'get',
+      url: `http://${anubis_api_uri}/v1/middleware/policies/${message.policy.id}`,
+      headers: headers
+    })
+    .then(function (r) {
+      method = 'put'
+      path =`/${message.policy.id}`
+    })
+    .catch(function (err) {
+      console.log(err.response.data)
+    })
+    await axios({
+      method: method,
+      url: `http://${anubis_api_uri}/v1/middleware/policies${path}`,
+      headers: headers,
+      data: message.policy
+    })
+    .then(function (r) {
+      console.log("policy created/updated")
+    })
+    .catch(function (err) {
+      console.log(err.response.data)
+    })
+    return
+  }
 
   // let's retrieve the metadata from the node that contacted me
   var providerPolicyApi = null
@@ -708,11 +759,28 @@ var server = app.listen(server_port, async() => {
   console.log("Node started with:")
   node.getMultiaddrs().forEach((ma) => console.log(`${ma.toString()}`))
 
+  //why connecting twice??? also results in duplicated peers in the list!!!
   node.connectionManager.addEventListener('peer:connect', (evt) => {
     const connection = evt.detail
     console.log('Connection established to:', connection.remotePeer.toString())
+    const index = peers.indexOf(connection.remotePeer);
+    if (index < 0) {
+      //TODO: index of object does not work well, replace array with map
+      peers.push(connection.remotePeer)
+    }
   })
 
+
+  node.connectionManager.addEventListener('peer:disconnect', (evt) => {
+    const connection = evt.detail
+    console.log('Connection lost to:', connection.remotePeer.toString())
+    const index = peers.indexOf(connection.remotePeer);
+    if (index > -1) {
+      //TODO: index of object does not work well, replace array with map
+      peers.splice(index, 1);
+    }
+  })
+  
   node.addEventListener('peer:discovery', async(evt) => {
     const peer = evt.detail
     if (node.peerId.toString() == peer.id.toString()) {
@@ -730,7 +798,7 @@ var server = app.listen(server_port, async() => {
 
   await delay(1000)
 
-  console.log(node.peerId.toString())
+  console.log(`My id: ${node.peerId.toString()}`)
 
   var host = server.address().address
   var port = server.address().port
