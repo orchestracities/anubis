@@ -214,7 +214,7 @@ $ ./clean.sh
 
 #### Demo for distributed policy management
 
-To deploy the demo that includes two instances of the Auth API, 
+To deploy the demo that includes two instances of the Auth API,
 two instances of the distribution middleware (plus as well OPA, Keycloak,
 and a Context Broker), run the following script:
 

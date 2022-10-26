@@ -69,11 +69,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Setup demo
+      - name: Setup Middleware Demo
         working-directory: ./scripts
         run: |
           ./run_demo_with_middleware.sh
-      - name: Test CORS
+      - name: Test Middleware
         working-directory: ./scripts
         run: |
           ./test_middleware.sh
