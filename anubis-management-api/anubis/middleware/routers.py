@@ -170,8 +170,8 @@ def create_policy(
                 ot.create_tenant_service_path(
                     db, tenant_id=tid, service_path=new_service_path)
             except Exception as e:
-            # When several notifications are sent at the same time
-            # it can happen that the tenant is created meanwhile
+                # When several notifications are sent at the same time
+                # it can happen that the tenant is created meanwhile
                 db_service_path = ot.get_db_service_path(
                     db, fiware_service, fiware_servicepath)
         db_service_path_id = list(map(ot.compute_id, db_service_path))
@@ -202,11 +202,13 @@ def create_policy(
                     "Cannot find tenant {}. We will create a new one".format('Default'))
                 try:
                     ot.create_tenant(db, st.TenantCreate(name='Default'))
-                    db_service_path = ot.get_db_service_path(db, 'Default', '/')
+                    db_service_path = ot.get_db_service_path(
+                        db, 'Default', '/')
                 except Exception as e:
                     # When several notifications are sent at the same time
                     # it can happen that the tenant is created meanwhile
-                    db_service_path = ot.get_db_service_path(db, 'Default', '/')
+                    db_service_path = ot.get_db_service_path(
+                        db, 'Default', '/')
             db_service_path_id = list(map(ot.compute_id, db_service_path))
             if owner:
                 owner_policy = sp.PolicyCreate(
