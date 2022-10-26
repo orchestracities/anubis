@@ -1,0 +1,157 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "policy-governance-middleware",
+    "version": "1.0.0",
+    "license": {
+      "name": "Apache License v2"
+    },
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nThe policy governance middleware for Anubis"
+  },
+  "paths": {
+    "/metadata": {
+      "get": {
+        "summary": "/metadata",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/mobile/policies/": {
+      "get": {
+        "summary": "/mobile/policies/",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/mobile/policies": {
+      "post": {
+        "summary": "/mobile/policies",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/resource/{resourceId}/provide": {
+      "post": {
+        "summary": "/resource/{resourceId}/provide",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/resource/{resourceId}/exists": {
+      "get": {
+        "summary": "/resource/{resourceId}/exists",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/resource/{resourceId}/subscribe": {
+      "post": {
+        "summary": "/resource/{resourceId}/subscribe",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/resource/{resourceId}/policy/{policyId}": {
+      "post": {
+        "summary": "/resource/{resourceId}/policy/{policyId}",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "policyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/resource/{resourceId}/policy/{policyId}",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "policyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/resource/{resourceId}/policy/{policyId}",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "policyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,2448 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Anubis",
+    "description": "Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.",
+    "version": "0.5.0-dev"
+  },
+  "paths": {
+    "/v1/tenants/service_paths": {
+      "get": {
+        "tags": [
+          "services"
+        ],
+        "summary": "List all Service Paths",
+        "operationId": "read_service_paths_v1_tenants_service_paths_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Service Paths V1 Tenants Service Paths Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServicePath"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tenants/": {
+      "get": {
+        "tags": [
+          "services"
+        ],
+        "summary": "List all Tenants",
+        "operationId": "read_tenants_v1_tenants__get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Tenants V1 Tenants  Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tenant"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Create a new Tenant",
+        "operationId": "create_tenant_v1_tenants__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/tenants/{tenant_id}": {
+      "get": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Get a Tenant",
+        "operationId": "read_tenant_v1_tenants__tenant_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            },
+            "name": "tenant_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tenant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Delete a Tenant",
+        "operationId": "delete_service_v1_tenants__tenant_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            },
+            "name": "tenant_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tenants/{tenant_id}/service_paths": {
+      "get": {
+        "tags": [
+          "services"
+        ],
+        "summary": "List Service Paths inside a Tenant",
+        "operationId": "read_tenant_service_paths_v1_tenants__tenant_id__service_paths_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            },
+            "name": "tenant_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            },
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Tenant Service Paths V1 Tenants  Tenant Id  Service Paths Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServicePath"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Create a new Service Path inside a Tenant",
+        "operationId": "create_service_path_v1_tenants__tenant_id__service_paths_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            },
+            "name": "tenant_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServicePathCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tenants/{tenant_id}/service_paths/{service_path_id}": {
+      "get": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Get a Service Path inside a Tenant",
+        "operationId": "read_service_path_v1_tenants__tenant_id__service_paths__service_path_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            },
+            "name": "tenant_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Service Path Id",
+              "type": "string"
+            },
+            "name": "service_path_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicePath"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "services"
+        ],
+        "summary": "Delete a Service Path inside a Tenant",
+        "operationId": "delete_service_path_v1_tenants__tenant_id__service_paths__service_path_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            },
+            "name": "tenant_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Service Path Id",
+              "type": "string"
+            },
+            "name": "service_path_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/policies/access-modes": {
+      "get": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "List supported Access Modes",
+        "operationId": "read_modes_v1_policies_access_modes_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Modes V1 Policies Access Modes Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Mode"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/policies/agent-types": {
+      "get": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "List supported Agent Types",
+        "operationId": "read_modes_v1_policies_agent_types_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Modes V1 Policies Agent Types Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgentType"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/policies/me": {
+      "get": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "List policies for a given Tenant and Service Path that apply to me",
+        "description": "Policies can be filtered by:\n  - Access Mode\n  - Agent\n  - Agent Type\n  - Resource\n  - Resource Type\nIn case an JWT token is passed over, user id, roles and groups are used to\nfilter policies that are only valid for him.\n# TODO if no token, we should return policies for foaf:Agent!\nTo return policies from a service path tree, you can used the wildchar \"#\".\nFor example, using `/Path1/#` you will obtain policies for all subpaths,\nsuch as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.",
+        "operationId": "my_policies_v1_policies_me_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "type": "string"
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Agent",
+              "type": "string"
+            },
+            "name": "agent",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource",
+              "type": "string"
+            },
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Agent Type",
+              "type": "string"
+            },
+            "name": "agent_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Accept",
+              "type": "string",
+              "default": "application/json"
+            },
+            "name": "accept",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response My Policies V1 Policies Me Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Policy"
+                  }
+                }
+              },
+              "text/turtle": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": [
+                  "@prefix acl: <http://www.w3.org/ns/auth/acl#> .\n\n<http:/www.w3.org/ns/auth/0723f0fd-785d-4091-bcc7-964361602421> acl:accessTo </v2/entities/urn:pippo> ;\n    acl:agentClass <acl:AuthenticatedAgent> ;\n    acl:mode <acl:Read>,\n        <acl:Write> .\n\n<http:/www.w3.org/ns/auth/16bdc820-4177-4403-a3e5-7c12abb57751> acl:accessTo </v2/entities/> ;\n    acl:agentClass <acl:AuthenticatedAgent> ;\n    acl:mode <acl:Read> ."
+                ]
+              },
+              "text/rego": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": [
+                  "\n                    {\n                      \"user_permissions\": {\n                        \"admin@mail.com\": [\n                          {\n                            \"id\": \"16c79213-5f9a-42c0-a37f-307c3c1614c3\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"urn:ngsi-ld:AirQualityObserved:demo\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_user_permissions\": {},\n                      \"group_permissions\": {\n                        \"User\": [\n                          {\n                            \"id\": \"1180e176-a39b-4dd0-b261-1c030123395d\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/v2/entities/some_entity\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_group_permissions\": {},\n                      \"role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"eecd7954-03e9-4a58-9076-79c4c9fa26d5\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"91934c76-5017-44c4-9cc8-8fac8ebffa59\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6d0d3663-125a-494e-9f18-aa0d2e8725a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"cdd1530d-669d-41d2-b79e-62eb4f70428e\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0860514b-da0f-4e89-813b-4675aef1e2fe\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"15f707e6-efd5-481a-b624-ea90046876da\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0641364c-9215-4f2e-aa0b-577d6bb9a4a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"685f98a3-71cb-4867-86e5-939bb838786b\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"f0c9d421-5da5-439b-85b9-84d6636af9d8\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ],\n                        \"Admin\": [\n                          {\n                            \"id\": \"5700d831-4f59-4f2c-9aab-01ab010193cd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6caff4de-ce49-4cd3-a3d8-1a808bd4cbbd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      }\n                    }"
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/policies/": {
+      "get": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "List policies for a given Tenant and Service Path",
+        "description": "Policies can be filtered by:\n  - Access Mode\n  - Agent\n  - Agent Type\n  - Resource\n  - Resource Type\nIn case an JWT token is passed over, user id, roles and groups are used to\nfilter policies that are only valid for him. Unless the user is super admin or tenant admin.\nTo return policies from a service path tree, you can used the wildchar \"#\".\nFor example, using `/Path1/#` you will obtain policies for all subpaths,\nsuch as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.",
+        "operationId": "read_policies_v1_policies__get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "type": "string"
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Agent",
+              "type": "string"
+            },
+            "name": "agent",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource",
+              "type": "string"
+            },
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Agent Type",
+              "type": "string"
+            },
+            "name": "agent_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Accept",
+              "type": "string",
+              "default": "application/json"
+            },
+            "name": "accept",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Policies V1 Policies  Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Policy"
+                  }
+                }
+              },
+              "text/turtle": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": [
+                  "@prefix acl: <http://www.w3.org/ns/auth/acl#> .\n\n<http:/www.w3.org/ns/auth/0723f0fd-785d-4091-bcc7-964361602421> acl:accessTo </v2/entities/urn:pippo> ;\n    acl:agentClass <acl:AuthenticatedAgent> ;\n    acl:mode <acl:Read>,\n        <acl:Write> .\n\n<http:/www.w3.org/ns/auth/16bdc820-4177-4403-a3e5-7c12abb57751> acl:accessTo </v2/entities/> ;\n    acl:agentClass <acl:AuthenticatedAgent> ;\n    acl:mode <acl:Read> ."
+                ]
+              },
+              "text/rego": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": [
+                  "\n                    {\n                      \"user_permissions\": {\n                        \"admin@mail.com\": [\n                          {\n                            \"id\": \"16c79213-5f9a-42c0-a37f-307c3c1614c3\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"urn:ngsi-ld:AirQualityObserved:demo\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_user_permissions\": {},\n                      \"group_permissions\": {\n                        \"User\": [\n                          {\n                            \"id\": \"1180e176-a39b-4dd0-b261-1c030123395d\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/v2/entities/some_entity\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_group_permissions\": {},\n                      \"role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"eecd7954-03e9-4a58-9076-79c4c9fa26d5\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"91934c76-5017-44c4-9cc8-8fac8ebffa59\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6d0d3663-125a-494e-9f18-aa0d2e8725a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"cdd1530d-669d-41d2-b79e-62eb4f70428e\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0860514b-da0f-4e89-813b-4675aef1e2fe\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"15f707e6-efd5-481a-b624-ea90046876da\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0641364c-9215-4f2e-aa0b-577d6bb9a4a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"685f98a3-71cb-4867-86e5-939bb838786b\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"f0c9d421-5da5-439b-85b9-84d6636af9d8\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ],\n                        \"Admin\": [\n                          {\n                            \"id\": \"5700d831-4f59-4f2c-9aab-01ab010193cd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6caff4de-ce49-4cd3-a3d8-1a808bd4cbbd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      }\n                    }"
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "Create a policy for a given Tenant and Service Path",
+        "operationId": "create_policy_v1_policies__post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/policies/{policy_id}": {
+      "get": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "Get a policy",
+        "operationId": "read_policy_v1_policies__policy_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Accept",
+              "type": "string"
+            },
+            "name": "accept",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              },
+              "text/turtle": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": [
+                  "@prefix acl: <http://www.w3.org/ns/auth/acl#> .\n\n<http:/www.w3.org/ns/auth/0723f0fd-785d-4091-bcc7-964361602421> acl:accessTo </v2/entities/urn:pippo> ;\n    acl:agentClass <acl:AuthenticatedAgent> ;\n    acl:mode <acl:Read>,\n        <acl:Write> .\n\n<http:/www.w3.org/ns/auth/16bdc820-4177-4403-a3e5-7c12abb57751> acl:accessTo </v2/entities/> ;\n    acl:agentClass <acl:AuthenticatedAgent> ;\n    acl:mode <acl:Read> ."
+                ]
+              },
+              "text/rego": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": [
+                  "\n                    {\n                      \"user_permissions\": {\n                        \"admin@mail.com\": [\n                          {\n                            \"id\": \"16c79213-5f9a-42c0-a37f-307c3c1614c3\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"urn:ngsi-ld:AirQualityObserved:demo\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_user_permissions\": {},\n                      \"group_permissions\": {\n                        \"User\": [\n                          {\n                            \"id\": \"1180e176-a39b-4dd0-b261-1c030123395d\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/v2/entities/some_entity\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_group_permissions\": {},\n                      \"role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"eecd7954-03e9-4a58-9076-79c4c9fa26d5\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"91934c76-5017-44c4-9cc8-8fac8ebffa59\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6d0d3663-125a-494e-9f18-aa0d2e8725a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"cdd1530d-669d-41d2-b79e-62eb4f70428e\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"*\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0860514b-da0f-4e89-813b-4675aef1e2fe\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"15f707e6-efd5-481a-b624-ea90046876da\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"Tenant1\",\n                            \"resource_type\": \"tenant\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"0641364c-9215-4f2e-aa0b-577d6bb9a4a3\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"685f98a3-71cb-4867-86e5-939bb838786b\",\n                            \"action\": \"acl:Write\",\n                            \"resource\": \"/\",\n                            \"resource_type\": \"service_path\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      },\n                      \"default_role_permissions\": {\n                        \"AuthenticatedAgent\": [\n                          {\n                            \"id\": \"f0c9d421-5da5-439b-85b9-84d6636af9d8\",\n                            \"action\": \"acl:Read\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ],\n                        \"Admin\": [\n                          {\n                            \"id\": \"5700d831-4f59-4f2c-9aab-01ab010193cd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"policy\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          },\n                          {\n                            \"id\": \"6caff4de-ce49-4cd3-a3d8-1a808bd4cbbd\",\n                            \"action\": \"acl:Control\",\n                            \"resource\": \"default\",\n                            \"resource_type\": \"entity\",\n                            \"service_path\": \"/\",\n                            \"tenant\": \"Tenant1\"\n                          }\n                        ]\n                      }\n                    }"
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "Update a policy for a given Tenant and Service Path",
+        "operationId": "update_v1_policies__policy_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "policies"
+        ],
+        "summary": "Delete a policy for a given Tenant and Service Path",
+        "operationId": "delete_policy_v1_policies__policy_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/audit/logs": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "List all Audit Logs",
+        "description": "TODO:\nLogs can be filtered by:\nIn case an JWT token is passed over ...",
+        "operationId": "read_audit_logs_v1_audit_logs_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            },
+            "name": "user",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource",
+              "type": "string"
+            },
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "type": "string"
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Decision",
+              "type": "string"
+            },
+            "name": "decision",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Type",
+              "type": "string"
+            },
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Service",
+              "type": "string"
+            },
+            "name": "service",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fromdate",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "fromDate",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Todate",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "toDate",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Audit Logs V1 Audit Logs Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditLog"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Create Audit Logs",
+        "operationId": "create_audit_log_v1_audit_logs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Opa Logs",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OpaDecisionLog"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/audit/logs/{audit_id}": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Get an Audit Log",
+        "description": "TODO:\nLogs can be filtered by:\nIn case an JWT token is passed over ...",
+        "operationId": "read_audit_log_v1_audit_logs__audit_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Audit Id",
+              "type": "string"
+            },
+            "name": "audit_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLog"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Delete an Audit Log for a given Tenant and Service Path",
+        "operationId": "delete_log_v1_audit_logs__audit_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Audit Id",
+              "type": "string"
+            },
+            "name": "audit_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/#"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/middleware/resources": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "List resources managed (for a given Tenant and Service Path)",
+        "operationId": "resources_v1_middleware_resources_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Owner",
+              "type": "string"
+            },
+            "name": "owner",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Resources V1 Middleware Resources Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resource"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/middleware/resources/mine": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "List resources owned by me",
+        "operationId": "my_resources_v1_middleware_resources_mine_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response My Resources V1 Middleware Resources Mine Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resource"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/middleware/policies": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "List policies for a given resource",
+        "operationId": "read_policies_v1_middleware_policies_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource",
+              "type": "string"
+            },
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Policies V1 Middleware Policies Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Create a policy for a given Tenant and Service Path",
+        "operationId": "create_policy_v1_middleware_policies_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Owner",
+              "type": "string"
+            },
+            "name": "owner",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/middleware/policies/{policy_id}": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Get a policy",
+        "operationId": "read_policy_v1_middleware_policies__policy_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Update a policy for a given Tenant and Service Path",
+        "operationId": "update_v1_middleware_policies__policy_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Delete a policy for a given Tenant and Service Path",
+        "operationId": "delete_policy_v1_middleware_policies__policy_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Return Anubis API endpoints",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/": {
+      "get": {
+        "summary": "Return Anubis API endpoints",
+        "operationId": "v1_root_v1__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/version/": {
+      "get": {
+        "summary": "Return the version of the Anubis API",
+        "operationId": "v1_version_version__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "summary": "Simple healthcheck endpoint",
+        "operationId": "pong_ping_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentType": {
+        "title": "AgentType",
+        "required": [
+          "iri",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "iri": {
+            "title": "Iri",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        }
+      },
+      "AuditLog": {
+        "title": "AuditLog",
+        "required": [
+          "id",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "service": {
+            "title": "Service",
+            "type": "string"
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string"
+          },
+          "resource_type": {
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "user": {
+            "title": "User",
+            "type": "string"
+          },
+          "remote_ip": {
+            "title": "Remote Ip",
+            "type": "string"
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "Mode": {
+        "title": "Mode",
+        "required": [
+          "iri",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "iri": {
+            "title": "Iri",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        }
+      },
+      "OpaDecisionLog": {
+        "title": "OpaDecisionLog",
+        "required": [
+          "decision_id",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "decision_id": {
+            "title": "Decision Id",
+            "type": "string"
+          },
+          "input": {
+            "title": "Input",
+            "type": "object"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "labels": {
+            "title": "Labels",
+            "type": "object"
+          },
+          "metrics": {
+            "title": "Metrics",
+            "type": "object"
+          },
+          "result": {
+            "title": "Result",
+            "type": "object"
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Policy": {
+        "title": "Policy",
+        "required": [
+          "id",
+          "access_to",
+          "resource_type"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "access_to": {
+            "title": "Access To",
+            "type": "string"
+          },
+          "resource_type": {
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "agent": {
+            "title": "Agent",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        }
+      },
+      "PolicyCreate": {
+        "title": "PolicyCreate",
+        "required": [
+          "access_to",
+          "resource_type"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "access_to": {
+            "title": "Access To",
+            "type": "string"
+          },
+          "resource_type": {
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "agent": {
+            "title": "Agent",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        }
+      },
+      "Resource": {
+        "title": "Resource",
+        "required": [
+          "id",
+          "type",
+          "tenant",
+          "servicePath"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "tenant": {
+            "title": "Tenant",
+            "type": "string"
+          },
+          "servicePath": {
+            "title": "Servicepath",
+            "type": "string"
+          }
+        }
+      },
+      "ServicePath": {
+        "title": "ServicePath",
+        "required": [
+          "path",
+          "id",
+          "tenant_id"
+        ],
+        "type": "object",
+        "properties": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "tenant_id": {
+            "title": "Tenant Id",
+            "type": "string"
+          },
+          "parent_id": {
+            "title": "Parent Id",
+            "type": "string"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          },
+          "children": {
+            "title": "Children",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServicePath"
+            },
+            "default": []
+          }
+        }
+      },
+      "ServicePathCreate": {
+        "title": "ServicePathCreate",
+        "required": [
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        }
+      },
+      "Tenant": {
+        "title": "Tenant",
+        "required": [
+          "name",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "service_paths": {
+            "title": "Service Paths",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServicePath"
+            },
+            "default": []
+          }
+        }
+      },
+      "TenantCreate": {
+        "title": "TenantCreate",
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "OptionalHTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "services",
+      "description": "Manage Tenants and Service Paths"
+    },
+    {
+      "name": "policies",
+      "description": "Manage Policies for each Tenant and Service Path within a Tenant."
+    }
+  ]
+}
