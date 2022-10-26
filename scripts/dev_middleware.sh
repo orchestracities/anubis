@@ -16,7 +16,7 @@ wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/r
 cd ..
 
 echo "Deploying services via Docker Compose..."
-docker-compose -f docker-compose-middleware.yaml up -d
+docker-compose -f docker-compose-middleware-dev.yaml up -d
 
 wait=0
 HOST="http://localhost:8080"
@@ -30,7 +30,7 @@ done
 
 if [ $wait -gt 60 ]; then
   echo "timeout while waiting services to be ready"
-  docker-compose -f docker-compose-middleware.yaml down -v --remove-orphans
+  docker-compose -f docker-compose-middleware-dev.yaml down -v --remove-orphans
   exit -1
 fi
 
@@ -68,7 +68,7 @@ echo ""
 jq -R 'split(".") | .[1] | @base64d | fromjson' <<< $( jq -r ".access_token" <<<"$json" )
 
 echo ""
-echo "Setting up tenant Tenant1 in node 1..."
+echo "Setting up tenant Tenant1..."
 echo ""
 curl -s -i -X 'POST' \
   'http://127.0.0.1:8085/v1/tenants/' \
@@ -80,11 +80,11 @@ curl -s -i -X 'POST' \
 }'
 
 echo ""
-echo "Setting up tenant Tenant2 in node 2..."
+echo "Setting up tenant Tenant2..."
 echo ""
 
 curl -s -i -X 'POST' \
-  'http://127.0.0.1:8086/v1/tenants/' \
+  'http://127.0.0.1:8085/v1/tenants/' \
   -H 'accept: */*' \
   -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \
@@ -93,7 +93,7 @@ curl -s -i -X 'POST' \
 }'
 
 echo ""
-echo "Setting up policy in node1 for tenant Tenant1 and path / for entity urn:AirQuality:1 ..."
+echo "Setting up policy that allows creating entities under tenant Tenant1 and path / ..."
 echo ""
 
 curl -s -i -X 'POST' \
@@ -104,10 +104,10 @@ curl -s -i -X 'POST' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
-"access_to": "urn:AirQuality:1",
+"access_to": "*",
 "resource_type": "entity",
 "mode": ["acl:Write"],
-"agent": ["acl:agent:admin@mail.com"]
+"agent": ["acl:AuthenticatedAgent"]
 }'
 
 curl -s -i -X 'POST' \
@@ -118,10 +118,10 @@ curl -s -i -X 'POST' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
-"access_to": "urn:AirQuality:1",
+"access_to": "*",
 "resource_type": "entity",
 "mode": ["acl:Control"],
-"agent": ["acl:agent:admin@mail.com"]
+"agent": ["acl:AuthenticatedAgent"]
 }'
 
 curl -s -i -X 'POST' \
@@ -132,10 +132,80 @@ curl -s -i -X 'POST' \
 -H 'fiware-servicepath: /' \
 -H 'Content-Type: application/json' \
 -d '{
-"access_to": "urn:AirQuality:1",
+"access_to": "*",
 "resource_type": "policy",
 "mode": ["acl:Read"],
 "agent": ["acl:AuthenticatedAgent"]
 }'
 
-echo "Demo deployed!"
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H "Authorization: Bearer $token" \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "*",
+"resource_type": "policy",
+"mode": ["acl:Write"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H "Authorization: Bearer $token" \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "Tenant1",
+"resource_type": "tenant",
+"mode": ["acl:Read"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H "Authorization: Bearer $token" \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "Tenant1",
+"resource_type": "tenant",
+"mode": ["acl:Write"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H "Authorization: Bearer $token" \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "/",
+"resource_type": "service_path",
+"mode": ["acl:Read"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+curl -s -i -X 'POST' \
+'http://127.0.0.1:8085/v1/policies/' \
+-H 'accept: */*' \
+-H "Authorization: Bearer $token" \
+-H 'fiware-service: Tenant1' \
+-H 'fiware-servicepath: /' \
+-H 'Content-Type: application/json' \
+-d '{
+"access_to": "/",
+"resource_type": "service_path",
+"mode": ["acl:Write"],
+"agent": ["acl:AuthenticatedAgent"]
+}'
+
+echo "Dev deployed!"
