@@ -469,17 +469,28 @@ def create_policy(
         middleware_url = os.environ.get('MIDDLEWARE_ENDPOINT', None)
         # we don't synch policies that are not specific to a resource
         if middleware_url and policy.access_to != 'default' and policy.access_to != '*':
-            headers = {"fiware-Service": fiware_service, "fiware-Servicepath": fiware_servicepath}
+            headers = {
+                "fiware-Service": fiware_service,
+                "fiware-Servicepath": fiware_servicepath}
             # if policy created, register yourself as a provider
             res = requests.post(
-                middleware_url + "/resource/"+policy.access_to+"/provide", headers=headers)
+                middleware_url +
+                "/resource/" +
+                policy.access_to +
+                "/provide",
+                headers=headers)
             if res.status_code != 200:
                 raise HTTPException(
                     status_code=res.status_code,
                     detail=res.text)
             # if policy created, send new notification
             res = requests.post(
-                middleware_url + "/resource/"+policy.access_to+"/policy/"+policy_id, headers=headers)
+                middleware_url +
+                "/resource/" +
+                policy.access_to +
+                "/policy/" +
+                policy_id,
+                headers=headers)
             if res.status_code != 200:
                 raise HTTPException(
                     status_code=res.status_code,
@@ -539,10 +550,17 @@ def update(
         middleware_url = os.environ.get('MIDDLEWARE_ENDPOINT', None)
         # we don't synch policies that are not specific to a resource
         if middleware_url and policy.access_to != 'default' and policy.access_to != '*':
-            headers = {"fiware-Service": fiware_service, "fiware-Servicepath": fiware_servicepath}
+            headers = {
+                "fiware-Service": fiware_service,
+                "fiware-Servicepath": fiware_servicepath}
             # if policy updated, send update notification
             res = requests.put(
-                middleware_url + "/resource/"+policy.access_to+"/policy/"+policy_id, headers=headers)
+                middleware_url +
+                "/resource/" +
+                policy.access_to +
+                "/policy/" +
+                policy_id,
+                headers=headers)
             if res.status_code != 200:
                 raise HTTPException(
                     status_code=res.status_code,
@@ -579,10 +597,17 @@ def delete_policy(
         middleware_url = os.environ.get('MIDDLEWARE_ENDPOINT', None)
         # we don't synch policies that are not specific to a resource
         if middleware_url and policy.access_to != 'default' and policy.access_to != '*':
-            headers = {"fiware-Service": fiware_service, "fiware-Servicepath": fiware_servicepath}
-            #if policy deleted, send delete notification
+            headers = {
+                "fiware-Service": fiware_service,
+                "fiware-Servicepath": fiware_servicepath}
+            # if policy deleted, send delete notification
             res = requests.delete(
-                middleware_url + "/resource/"+policy.access_to+"/policy/"+policy_id, headers=headers)
+                middleware_url +
+                "/resource/" +
+                policy.access_to +
+                "/policy/" +
+                policy_id,
+                headers=headers)
             if res.status_code != 200:
                 raise HTTPException(
                     status_code=res.status_code,
