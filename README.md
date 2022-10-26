@@ -212,8 +212,31 @@ $ cd scripts
 $ ./clean.sh
 ```
 
-In case you are using an ARM64 based architecture, before running the scripts,
-use the proper image (see comment in [docker-compose](docker-compose.yaml)).
+#### Demo for distributed policy management
+
+To deploy the demo that includes two instances of the Auth API, 
+two instances of the distribution middleware (plus as well OPA, Keycloak,
+and a Context Broker), run the following script:
+
+```bash
+$ cd scripts
+$ ./run_demo_with_middleware.sh
+```
+
+You can run a script to make a few test API calls. You can run the test
+script with:
+
+```bash
+$ cd scripts
+$ ./test_middleware.sh
+```
+
+To clean up the deployment after you're done, run:
+
+```bash
+$ cd scripts
+$ ./clean.sh
+```
 
 ## Installation
 
