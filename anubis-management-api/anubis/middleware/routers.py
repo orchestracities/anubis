@@ -159,13 +159,17 @@ def create_policy(
     # this is the case for private distribution
     if fiware_service:
         try:
-            db_service_path = ot.get_db_service_path(db, fiware_service, fiware_servicepath)
+            db_service_path = ot.get_db_service_path(
+                db, fiware_service, fiware_servicepath)
         except Exception:
-            logging.warning("Cannot find tenant {}. We will create a new one".format(fiware_service))
+            logging.warning(
+                "Cannot find tenant {}. We will create a new one".format(fiware_service))
             tid = ot.create_tenant(db, st.TenantCreate(fiware_service))
             new_service_path = st.ServicePathCreate(path=fiware_service)
-            ot.create_tenant_service_path(db, tenant_id=tid, service_path=new_service_path)
-            db_service_path = ot.get_db_service_path(db, fiware_service, fiware_servicepath)
+            ot.create_tenant_service_path(
+                db, tenant_id=tid, service_path=new_service_path)
+            db_service_path = ot.get_db_service_path(
+                db, fiware_service, fiware_servicepath)
         db_service_path_id = list(map(ot.compute_id, db_service_path))
     # in case of public distribution, we check if there is already a
     # a corresponding registered resource in the database and use
@@ -190,7 +194,8 @@ def create_policy(
             try:
                 db_service_path = ot.get_db_service_path(db, 'Default', '/')
             except Exception as e:
-                logging.warning("Cannot find tenant {}. We will create a new one".format('Default'))
+                logging.warning(
+                    "Cannot find tenant {}. We will create a new one".format('Default'))
                 ot.create_tenant(db, st.TenantCreate(name='Default'))
                 db_service_path = ot.get_db_service_path(db, 'Default', '/')
             db_service_path_id = list(map(ot.compute_id, db_service_path))
