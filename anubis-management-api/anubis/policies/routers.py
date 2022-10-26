@@ -417,16 +417,18 @@ def read_policy(
     else:
         return serialize_policy(db_policy)
 
-#TODO: 0. if at least provider exists (beyond the node itself), we should not
+# TODO: 0. if at least provider exists (beyond the node itself), we should not
 # create default policies in lua
-#TODO: 1. before creating a policy for a resource, subscribe to it.
-# should be done in lua on resource creation? yes, but in this case, 
+# TODO: 1. before creating a policy for a resource, subscribe to it.
+# should be done in lua on resource creation? yes, but in this case,
 # we need to be able to ensure that the synched policies are created
 # for the tenant where the new resource is created (i.e. we need to pass
-# the correct headers in the subscription process), otherwise 
+# the correct headers in the subscription process), otherwise
 # - in case of IS_PRIVATE_ORG=FALSE - we won't know the tenant for the resource
 # and we will create policy in tenant 'Default' which would
 # be wrong ).
+
+
 @router.post("/",
              response_class=Response,
              status_code=status.HTTP_201_CREATED,
@@ -498,7 +500,10 @@ def create_policy(
                     status_code=res.status_code,
                     detail=res.text)
     except HTTPException as e:
-        logging.warning("failed middleware synchronization for {}".format(urllib.parse.quote(policy.access_to)))
+        logging.warning(
+            "failed middleware synchronization for {}".format(
+                urllib.parse.quote(
+                    policy.access_to)))
         logging.error(e)
     return response
 
@@ -568,7 +573,10 @@ def update(
                     status_code=res.status_code,
                     detail=res.text)
     except HTTPException as e:
-        logging.warning("failed middleware synchronization for {}".format(urllib.parse.quote(policy.access_to)))
+        logging.warning(
+            "failed middleware synchronization for {}".format(
+                urllib.parse.quote(
+                    policy.access_to)))
         logging.error(e)
     return response
 
@@ -615,6 +623,9 @@ def delete_policy(
                     status_code=res.status_code,
                     detail=res.text)
     except HTTPException as e:
-        logging.warning("failed middleware synchronization for {}".format(urllib.parse.quote(db_policy.access_to)))
+        logging.warning(
+            "failed middleware synchronization for {}".format(
+                urllib.parse.quote(
+                    db_policy.access_to)))
         logging.error(e)
     return response
