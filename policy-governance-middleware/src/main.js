@@ -1,4 +1,5 @@
 import express from "express"
+import expressOasGenerator from 'express-oas-generator'
 import bp from "body-parser"
 import { createLibp2p } from 'libp2p'
 import { TCP } from '@libp2p/tcp'
@@ -21,10 +22,8 @@ import fs from 'fs'
 import { Multiaddr } from "@multiformats/multiaddr";
 import dns from "dns/promises";
 import cors from 'cors';
+import logger from 'logops';
 
-
-//TODO: https://www.npmjs.com/package/express-oas-generator
-//TODO: use something like logops for logging
 //TODO: set-up a code linter (see the configuration-api one)
 //TODO: set-up some unit testing
 //TODO: how to handle the special case of service paths that are (of course) duplicated?
@@ -49,6 +48,7 @@ if(listen_address.includes("dnsaddr") && options.host != 'localhost') {
 
 // Setting up Node app
 var app = express()
+expressOasGenerator.handleResponses(app, {})
 app.use(cors())
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
@@ -130,7 +130,7 @@ app.get('/mobile/policies/', async(req, res) => {
       providerPolicyApi = response.data["policy_api_uri"]
     })
     .catch(function (error) {
-      console.log(`Can't retrieve policy API URL for provider ${peer[0].multiaddr.nodeAddress().address}`)
+      logger.warn(`Can't retrieve policy API URL for provider ${peer[0].multiaddr.nodeAddress().address}`)
     })
     if(!providerPolicyApi) {
       continue
@@ -156,7 +156,7 @@ app.get('/mobile/policies/', async(req, res) => {
       }
     })
     .catch(function (error) {
-      console.log(error.response.data)
+      logger.warn(error.response.data)
     })
   }
 
@@ -172,7 +172,7 @@ app.get('/mobile/policies/', async(req, res) => {
       providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
     }
     catch(error) {
-     console.log(`No providers for ${resource.id}`)
+     logger.warn(`No providers for ${resource.id}`)
     }
     for (const provider of providers) {
       var providerPolicyApi = null
@@ -184,7 +184,7 @@ app.get('/mobile/policies/', async(req, res) => {
         providerPolicyApi = response.data["policy_api_uri"]
       })
       .catch(function (error) {
-        console.log(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
+        logger.warn(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
       })
       if(!providerPolicyApi) {
         continue
@@ -205,7 +205,7 @@ app.get('/mobile/policies/', async(req, res) => {
         }
       })
       .catch(function (error) {
-        console.log(error.response.data)
+        logger.error(error.response.data)
       })
     }
     const newResource = {
@@ -238,7 +238,7 @@ app.post('/mobile/policies', async(req, res) => {
     }
     service = req.get('fiware-Service')
     servicepath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
-    console.log(payload)
+    logger.debug(payload)
   }
 
   var { resources, user } = req.body
@@ -273,7 +273,7 @@ app.post('/mobile/policies', async(req, res) => {
 
         message = JSON.stringify(message)
         await node.pubsub.publish(resId, uint8ArrayFromString(message)).catch(err => {
-          console.error(err)
+          logger.error(err)
           res.end(`Error: ${err}`)
         })
       }
@@ -300,7 +300,7 @@ app.post('/resource/:resourceId/provide', async(req, res) => {
     }
     payload['fiware-Service'] = req.get('fiware-Service')
     payload['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
-    console.log(payload)
+    logger.debug(payload)
   }
 
   const bytes = json.encode(payload)
@@ -311,7 +311,7 @@ app.post('/resource/:resourceId/provide', async(req, res) => {
 
   var message = `Registered as policy provider for resource ${resource}`
 
-  console.log(message)
+  logger.info(message)
   res.end(message)
 })
 
@@ -335,7 +335,7 @@ app.get('/resource/:resourceId/exists', async(req, res) => {
     }
     payload['fiware-Service'] = req.get('fiware-Service')
     payload['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
-    console.log(payload)
+    logger.debug(payload)
   }
 
   const bytes = json.encode(payload)
@@ -376,13 +376,13 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     payload['fiware-Service'] = req.get('fiware-Service')
     payload['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = payload['fiware-Service']+'#'+payload['fiware-Servicepath']+'#'+resource
-    console.log(payload)
+    logger.debug(payload)
   }
 
   const topics = await node.pubsub.getTopics()
   if (!topics.includes(topic)) {
     await node.pubsub.subscribe(topic)
-    console.log(`Subscribed to ${topic}`)
+    logger.info(`Subscribed to ${topic}`)
   }
 
   const bytes = json.encode(payload)
@@ -397,7 +397,7 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     res.end(`Subscribed to ${topic}, no other providers found`)
     return
   }
-  console.log(`Syncing with other providers for ${resource} ...`)
+  logger.info(`Syncing with other providers for ${resource} ...`)
   for (const provider of providers) {
     var providerPolicyApi = null
     await axios({
@@ -408,7 +408,7 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
       providerPolicyApi = response.data["policy_api_uri"]
     })
     .catch(function (error) {
-      console.log(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
+      logger.warn(`Can't retrieve policy API URL for provider ${provider.multiaddrs[0].nodeAddress().address}`)
     })
     if(!providerPolicyApi) {
       continue
@@ -439,7 +439,6 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
         // while in public mode we don't use headers for the retrieval, to post resources in correct
         // tenant were we want the resource to be created, we leverage them (if any)
         if (req.get('fiware-Service')){
-          console.log('requests includes fiware_service')
           headers['fiware-Service'] = req.get('fiware-Service')
           headers['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
         }
@@ -450,22 +449,22 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
           data: policy_entry
         })
         .then(function (r) {
-          console.log(r.data)
+          logger.debug(r.data)
         })
         .catch(function (err) {
           if (err.response){
-            console.log(err.response.data)
+            logger.error(err.response.data)
           } else {
-            console.log(err.message)
+            logger.error(err.message)
           }
         })
       }
     })
     .catch(function (error) {
       if (error.response){
-        console.log(error.response.data)
+        logger.error(error.response.data)
       } else {
-        console.log(error.message)
+        logger.error(error.message)
       }
     })
   }
@@ -504,7 +503,7 @@ app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
     message.service = req.get('fiware-Service')
     message.servicePath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = message.service+'#'+message.servicePath+'#'+resource
-    console.log(message)
+    logger.debug(message)
   }
 
   message = JSON.stringify(message)
@@ -514,7 +513,7 @@ app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
   })
 
   res.end("Policy message sent: " + message)
-  console.log("Policy message sent: " + message)
+  logger.info("Policy message sent: " + message)
 })
 
 // Endpoint when a policy is updated
@@ -549,7 +548,7 @@ app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
     message.service = req.get('fiware-Service')
     message.servicePath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = message.service+'#'+message.servicePath+'#'+resource
-    console.log(message)
+    logger.debug(message)
   }
 
   message = JSON.stringify(message)
@@ -559,7 +558,7 @@ app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
   })
 
   res.end("Policy message sent: " + message)
-  console.log("Policy message sent: " + message)
+  logger.info("Policy message sent: " + message)
 })
 
 // Endpoint when a policy is deleted
@@ -594,7 +593,7 @@ app.delete('/resource/:resourceId/policy/:policyId', async(req, res) => {
     message.service = req.get('fiware-Service')
     message.servicePath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = message.service+'#'+message.servicePath+'#'+resource
-    console.log(message)
+    logger.debug(message)
   }
   message = JSON.stringify(message)
   await node.pubsub.publish(resource, uint8ArrayFromString(message)).catch(err => {
@@ -603,14 +602,14 @@ app.delete('/resource/:resourceId/policy/:policyId', async(req, res) => {
   })
 
   res.end("Policy message sent: " + message)
-  console.log("Policy message sent: " + message)
+  logger.info("Policy message sent: " + message)
 })
 
 // Function to process a message arriving on a topic (resource)
 async function processTopicMessage(evt) {
   const sender = await node.peerStore.addressBook.get(evt.detail.from)
   const message = JSON.parse(uint8ArrayToString(evt.detail.data))
-  console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic}`)
+  logger.info(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic}`)
   var headers = {}
   if (message.service) {
     headers['fiware-Service'] = message.service
@@ -631,7 +630,7 @@ async function processTopicMessage(evt) {
       path =`/${message.policy.id}`
     })
     .catch(function (err) {
-      console.log(err.response.data)
+      logger.error(err.response.data)
     })
     await axios({
       method: method,
@@ -640,10 +639,10 @@ async function processTopicMessage(evt) {
       data: message.policy
     })
     .then(function (r) {
-      console.log("policy created/updated")
+      logger.info("policy created/updated")
     })
     .catch(function (err) {
-      console.log(err.response.data)
+      logger.error(err.response.data)
     })
     return
   }
@@ -658,7 +657,7 @@ async function processTopicMessage(evt) {
     providerPolicyApi = response.data["policy_api_uri"]
   })
   .catch(function (error) {
-    console.log(error)
+    logger.error(error)
   })
   if(message.action == "delete") {
     await axios({
@@ -667,10 +666,10 @@ async function processTopicMessage(evt) {
       headers: headers
     })
     .then(function (r) {
-      console.log(`deleted policy ${message.policy_id}`)
+      logger.info(`deleted policy ${message.policy_id}`)
     })
     .catch(function (err) {
-      console.log(err)
+      logger.error(err)
     })
     return
   }
@@ -689,10 +688,10 @@ async function processTopicMessage(evt) {
         data: response.data
       })
       .then(function (r) {
-        console.log(`created policy ${message.policy_id}`)
+        logger.info(`created policy ${message.policy_id}`)
       })
       .catch(function (err) {
-        console.log(err.response.data)
+        logger.error(err.response.data)
       })
     }
     else if(message.action == "put") {
@@ -703,15 +702,15 @@ async function processTopicMessage(evt) {
         data: response.data
       })
       .then(function (r) {
-        console.log(`updated policy ${message.policy_id}`)
+        logger.info(`updated policy ${message.policy_id}`)
       })
       .catch(function (err) {
-        console.log(err)
+        logger.error(err)
       })
     }
   })
   .catch(function (error) {
-    console.log(error)
+    logger.error(error)
   })
 }
 
@@ -725,6 +724,8 @@ async function saveConfiguration() {
 }
 
 // Starting server
+expressOasGenerator.handleRequests()
+
 var server = app.listen(server_port, async() => {
 
   await node.start()
@@ -742,7 +743,7 @@ var server = app.listen(server_port, async() => {
         await node.contentRouting.provide(cid)
       }
       catch(err) {
-        console.log(`Failed to initially provide ${resource}`)
+        logger.error(`Failed to initially provide ${resource}`)
       }
     }
 
@@ -753,16 +754,16 @@ var server = app.listen(server_port, async() => {
     await saveConfiguration()
   }
   catch(err) {
-    console.log("Couldn't read any initial config")
+    logger.error("Couldn't read any initial config")
   }
 
-  console.log("Node started with:")
-  node.getMultiaddrs().forEach((ma) => console.log(`${ma.toString()}`))
+  logger.info("Node started with:")
+  node.getMultiaddrs().forEach((ma) => logger.info(`${ma.toString()}`))
 
   //why connecting twice??? also results in duplicated peers in the list!!!
   node.connectionManager.addEventListener('peer:connect', (evt) => {
     const connection = evt.detail
-    console.log('Connection established to:', connection.remotePeer.toString())
+    logger.info('Connection established to:', connection.remotePeer.toString())
     const index = peers.indexOf(connection.remotePeer);
     if (index < 0) {
       //TODO: index of object does not work well, replace array with map
@@ -773,7 +774,7 @@ var server = app.listen(server_port, async() => {
 
   node.connectionManager.addEventListener('peer:disconnect', (evt) => {
     const connection = evt.detail
-    console.log('Connection lost to:', connection.remotePeer.toString())
+    logger.info('Connection lost to:', connection.remotePeer.toString())
     const index = peers.indexOf(connection.remotePeer);
     if (index > -1) {
       //TODO: index of object does not work well, replace array with map
@@ -788,7 +789,7 @@ var server = app.listen(server_port, async() => {
     }
     var peerId = node.peerStore.addressBook.get(peer.id)
     if (!peerId) {
-      console.log('Discovered:', peer.id.toString())
+      logger.info('Discovered:', peer.id.toString())
       node.peerStore.addressBook.set(peer.id, peer.multiaddrs)
       node.dial(peer.id)
     }
@@ -798,9 +799,9 @@ var server = app.listen(server_port, async() => {
 
   await delay(1000)
 
-  console.log(`My id: ${node.peerId.toString()}`)
+  logger.info(`My id: ${node.peerId.toString()}`)
 
   var host = server.address().address
   var port = server.address().port
-  console.log("App listening at http://%s:%s", host, port)
+  logger.info("App listening at http://%s:%s", host, port)
 })
