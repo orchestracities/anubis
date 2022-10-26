@@ -27,6 +27,8 @@ import cors from 'cors';
 //TODO: use something like logops for logging
 //TODO: set-up a code linter (see the configuration-api one)
 //TODO: set-up some unit testing
+//TODO: how to handle the special case of service paths that are (of course) duplicated?
+
 
 // Configuration for the port used by this node
 const server_port = process.env.SERVER_PORT || 8098
@@ -248,18 +250,18 @@ app.post('/resource/:resourceId/provide', async(req, res) => {
       message: "resourceId parameters cannot be empty",
     })
   }
-  var resource = req.params['resourceId']
+  var resource = decodeURI(req.params['resourceId'])
 
   var payload = { resource: resource }
 
   if (is_private_org == "true") {
-    if (!req.headers['fiware-Service']) {
+    if (!req.get('fiware-Service')) {
       return res.status(400).json({
         message: "fiware-Service header cannot be empty",
       })
     }
-    payload['fiware-Service'] = req.headers['fiware-Service']
-    payload['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    payload['fiware-Service'] = req.get('fiware-Service')
+    payload['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     console.log(payload)
   }
 
@@ -283,18 +285,18 @@ app.post('/resource/:resourceId/exists', async(req, res) => {
       message: "resourceId parameters cannot be empty",
     })
   }
-  var resource = req.params['resourceId']
+  var resource = decodeURI(req.params['resourceId'])
 
   var payload = { resource: resource }
 
   if (is_private_org == "true") {
-    if (!req.headers['fiware-Service']) {
+    if (!req.get('fiware-Service')) {
       return res.status(400).json({
         message: "fiware-Service header cannot be empty",
       })
     }
-    payload['fiware-Service'] = req.headers['fiware-Service']
-    payload['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    payload['fiware-Service'] = req.get('fiware-Service')
+    payload['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     console.log(payload)
   }
 
@@ -321,23 +323,26 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
       message: "resourceId parameters cannot be empty",
     })
   }
-  var resource = req.params['resourceId']
+  var resource = decodeURI(req.params['resourceId'])
 
   var payload = { resource: resource }
 
   var topic = resource
 
   if (is_private_org == "true") {
-    if (!req.headers['fiware-Service']) {
+    if (!req.get('fiware-Service')) {
       return res.status(400).json({
         message: "fiware-Service header cannot be empty",
       })
     }
-    payload['fiware-Service'] = req.headers['fiware-Service']
-    payload['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    payload['fiware-Service'] = req.get('fiware-Service')
+    payload['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = payload['fiware-Service']+'#'+payload['fiware-Servicepath']+'#'+resource
     console.log(payload)
   }
+
+  console.log(req.get('fiware-Service'))
+  console.log(req.get('fiware-Servicepath'))
 
   const topics = await node.pubsub.getTopics()
   if (!topics.includes(topic)) {
@@ -375,8 +380,8 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     }
     var headers = {}
     if (is_private_org == "true") {
-      headers['fiware-Service'] = req.headers['fiware-Service']
-      headers['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+      headers['fiware-Service'] = req.get('fiware-Service')
+      headers['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     }
     //if no headers I should get all policies on a resource
     await axios({
@@ -395,6 +400,13 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
           if(filtered_agents.length > 0) {
             continue
           }
+        }
+        // while in public mode we don't use headers for the retrieval, to post resources in correct
+        // tenant were we want the resource to be created, we leverage them (if any)
+        if (req.get('fiware-Service')){
+          console.log('requests includes fiware_service')
+          headers['fiware-Service'] = req.get('fiware-Service')
+          headers['fiware-Servicepath'] =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
         }
         await axios({
           method: 'post',
@@ -438,7 +450,7 @@ app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
     })
   }
 
-  var resource = req.params['resourceId']
+  var resource = decodeURI(req.params['resourceId'])
   var policy_id = req.params['policyId']
 
   var message = {
@@ -449,13 +461,13 @@ app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
   var topic = resource
 
   if (is_private_org == "true") {
-    if (!req.headers['fiware-Service']) {
+    if (!req.get('fiware-Service')) {
       return res.status(400).json({
         message: "fiware-Service header cannot be empty",
       })
     }
-    message.service = req.headers['fiware-Service']
-    message.servicePath =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    message.service = req.get('fiware-Service')
+    message.servicePath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = message.service+'#'+message.servicePath+'#'+resource
     console.log(message)
   }
@@ -483,7 +495,7 @@ app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
     })
   }
 
-  var resource = req.params['resourceId']
+  var resource = decodeURI(req.params['resourceId'])
   var policy_id = req.params['policyId']
 
   var message = {
@@ -494,13 +506,13 @@ app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
   var topic = resource
 
   if (is_private_org == "true") {
-    if (!req.headers['fiware-Service']) {
+    if (!req.get('fiware-Service')) {
       return res.status(400).json({
         message: "fiware-Service header cannot be empty",
       })
     }
-    message.service = req.headers['fiware-Service']
-    message.servicePath =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    message.service = req.get('fiware-Service')
+    message.servicePath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = message.service+'#'+message.servicePath+'#'+resource
     console.log(message)
   }
@@ -528,7 +540,7 @@ app.delete('/resource/:resourceId/policy/:policyId', async(req, res) => {
     })
   }
 
-  var resource = req.params['resourceId']
+  var resource = decodeURI(req.params['resourceId'])
   var policy_id = req.params['policyId']
 
   var message = {
@@ -539,13 +551,13 @@ app.delete('/resource/:resourceId/policy/:policyId', async(req, res) => {
   var topic = resource
 
   if (is_private_org == "true") {
-    if (!req.headers['fiware-Service']) {
+    if (!req.req.get('fiware-Service')) {
       return res.status(400).json({
         message: "fiware-Service header cannot be empty",
       })
     }
-    message.service = req.headers['fiware-Service']
-    message.servicePath =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    message.service = req.get('fiware-Service')
+    message.servicePath =  req.get('fiware-Servicepath') ? req.get('fiware-Servicepath') : '/'
     topic = message.service+'#'+message.servicePath+'#'+resource
     console.log(message)
   }

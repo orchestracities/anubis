@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response, Header
 from . import operations, models, schemas
@@ -10,6 +11,7 @@ from ..utils import parse_auth_token, OptionalHTTPBearer
 import anubis.default as default
 import logging
 import requests
+import urllib
 
 
 auth_scheme = OptionalHTTPBearer()
@@ -476,7 +478,7 @@ def create_policy(
             res = requests.post(
                 middleware_url +
                 "/resource/" +
-                policy.access_to +
+                urllib.parse.quote(policy.access_to) +
                 "/provide",
                 headers=headers)
             if res.status_code != 200:
@@ -487,7 +489,7 @@ def create_policy(
             res = requests.post(
                 middleware_url +
                 "/resource/" +
-                policy.access_to +
+                urllib.parse.quote(policy.access_to) +
                 "/policy/" +
                 policy_id,
                 headers=headers)
@@ -496,7 +498,7 @@ def create_policy(
                     status_code=res.status_code,
                     detail=res.text)
     except HTTPException as e:
-        logging.warn("failed middleware synchronization")
+        logging.warning("failed middleware synchronization for {}".format(urllib.parse.quote(policy.access_to)))
         logging.error(e)
     return response
 
@@ -557,7 +559,7 @@ def update(
             res = requests.put(
                 middleware_url +
                 "/resource/" +
-                policy.access_to +
+                urllib.parse.quote(policy.access_to) +
                 "/policy/" +
                 policy_id,
                 headers=headers)
@@ -566,7 +568,7 @@ def update(
                     status_code=res.status_code,
                     detail=res.text)
     except HTTPException as e:
-        logging.warn("failed middleware synchronization")
+        logging.warning("failed middleware synchronization for {}".format(urllib.parse.quote(policy.access_to)))
         logging.error(e)
     return response
 
@@ -596,7 +598,7 @@ def delete_policy(
     try:
         middleware_url = os.environ.get('MIDDLEWARE_ENDPOINT', None)
         # we don't synch policies that are not specific to a resource
-        if middleware_url and policy.access_to != 'default' and policy.access_to != '*':
+        if middleware_url and db_policy.access_to != 'default' and db_policy.access_to != '*':
             headers = {
                 "fiware-Service": fiware_service,
                 "fiware-Servicepath": fiware_servicepath}
@@ -604,7 +606,7 @@ def delete_policy(
             res = requests.delete(
                 middleware_url +
                 "/resource/" +
-                policy.access_to +
+                urllib.parse.quote(db_policy.access_to) +
                 "/policy/" +
                 policy_id,
                 headers=headers)
@@ -612,4 +614,7 @@ def delete_policy(
                 raise HTTPException(
                     status_code=res.status_code,
                     detail=res.text)
+    except HTTPException as e:
+        logging.warning("failed middleware synchronization for {}".format(urllib.parse.quote(db_policy.access_to)))
+        logging.error(e)
     return response
