@@ -22,8 +22,14 @@ import { Multiaddr } from "@multiformats/multiaddr";
 import dns from "dns/promises";
 import cors from 'cors';
 
+
+//TODO: https://www.npmjs.com/package/express-oas-generator
+//TODO: use something like logops for logging
+//TODO: set-up a code linter (see the configuration-api one)
+//TODO: set-up some unit testing
+
 // Configuration for the port used by this node
-const server_port = process.env.SERVER_PORT || 8099
+const server_port = process.env.SERVER_PORT || 8098
 // Uri of the Anubis API connected to this middleware
 const anubis_api_uri = process.env.ANUBIS_API_URI || "127.0.0.1:8085"
 // The multiaddress format address this middleware listens on
@@ -149,7 +155,7 @@ app.post('/resource/mobile/retrieve', async(req, res) => {
     }
     await axios({
       method: 'get',
-      url: `http://${providerPolicyApi}/v1/policies`,
+      url: `http://${providerPolicyApi}/v1/middleware/policies`,
       headers: {
         'fiware-Service': service,
         'fiware-Servicepath': servicepath
@@ -263,14 +269,15 @@ app.post('/resource/:resourceId/provide', async(req, res) => {
   await node.contentRouting.provide(cid)
   providedResources.push(resource)
 
-  message = `Registered as policy provider for resource ${resource}`
+  var message = `Registered as policy provider for resource ${resource}`
 
   console.log(message)
   res.end(message)
 })
 
-// Endpoint for subscribing to a resource topic
-app.post('/resource/:resourceId/subscribe', async(req, res) => {
+
+// Endpoint to check that a resource is managed by the middleware
+app.post('/resource/:resourceId/exists', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
       message: "resourceId parameters cannot be empty",
@@ -291,10 +298,51 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     console.log(payload)
   }
 
+  const bytes = json.encode(payload)
+  const hash = await sha256.digest(bytes)
+  const cid = CID.create(1, json.code, hash)
+
+  var providers = []
+  try {
+    providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
+  }
+  catch(error) {
+    res.send(false)
+    return
+  }
+  res.send(true)
+})
+
+
+// Endpoint for subscribing to a resource topic
+app.post('/resource/:resourceId/subscribe', async(req, res) => {
+  if (!req.params.resourceId) {
+    return res.status(400).json({
+      message: "resourceId parameters cannot be empty",
+    })
+  }
+  var resource = req.params['resourceId']
+
+  var payload = { resource: resource }
+
+  var topic = resource
+
+  if (is_private_org == "true") {
+    if (!req.headers['fiware-Service']) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    payload['fiware-Service'] = req.headers['fiware-Service']
+    payload['fiware-Servicepath'] =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    topic = payload['fiware-Service']+'#'+payload['fiware-Servicepath']+'#'+resource
+    console.log(payload)
+  }
+
   const topics = await node.pubsub.getTopics()
-  if (!topics.includes(payload)) {
-    await node.pubsub.subscribe(payload)
-    console.log(`Subscribed to ${payload}`)
+  if (!topics.includes(topic)) {
+    await node.pubsub.subscribe(topic)
+    console.log(`Subscribed to ${topic}`)
   }
 
   const bytes = json.encode(payload)
@@ -306,7 +354,7 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     providers = await all(node.contentRouting.findProviders(cid, { timeout: 3000 }))
   }
   catch(error) {
-    res.end(`Subscribed to ${resource}, no other providers found`)
+    res.end(`Subscribed to ${topic}, no other providers found`)
     return
   }
   console.log(`Syncing with other providers for ${resource} ...`)
@@ -325,22 +373,6 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     if(!providerPolicyApi) {
       continue
     }
-//do we need to create a tenant? i don't think (unless it's
-//private org and tenant does not exist, but then we will have to
-//create also service) -> first check it does not exist!
-// problema è l'id: deve essere consistente?
-//    await axios({
-//      method: 'post',
-//      url: `http://${anubis_api_uri}/v1/tenants/`,
-//      data: {"name": service}
-//    })
-//    .then(async function (response) {
-//      console.log(`Created Tenant ${service}`)
-//    })
-//    .catch(function (error) {
-//      console.log(`No new Tenant created`)
-//   })
-//
     var headers = {}
     if (is_private_org == "true") {
       headers['fiware-Service'] = req.headers['fiware-Service']
@@ -349,7 +381,7 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
     //if no headers I should get all policies on a resource
     await axios({
       method: 'get',
-      url: `http://${providerPolicyApi}/v1/policies`,
+      url: `http://${providerPolicyApi}/v1/middleware/policies`,
       headers: headers,
       params: {
         'resource': resource
@@ -359,15 +391,14 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
       for (const policy_entry of response.data) {
         // TODO: Concurrency
         if(is_private_org != "true") {
-          //also authenticated agents are ok
-          var filtered_agents = policy_entry.agent.filter(a => !a.includes("acl:agent:"))
+          var filtered_agents = policy_entry.agent.filter(a => (!a.includes("acl:agent:") && !a.includes("acl:AuthenticatedAgent") && !a.includes("foaf:Agent")))
           if(filtered_agents.length > 0) {
             continue
           }
         }
         await axios({
           method: 'post',
-          url: `http://${anubis_api_uri}/v1/policies?noRoute=true`,
+          url: `http://${anubis_api_uri}/v1/middleware/policies`,
           headers: headers,
           data: policy_entry
         })
@@ -375,54 +406,62 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
           console.log(r.data)
         })
         .catch(function (err) {
-          console.log(err.response.data)
+          if (err.response){
+            console.log(err.response.data)
+          } else {
+            console.log(err.message)
+          }
         })
       }
     })
     .catch(function (error) {
-      console.log(error.response.data)
+      if (error.response){
+        console.log(error.response.data)
+      } else {
+        console.log(error.message)
+      }
     })
   }
   res.end(`Subscribed to ${resource}`)
 })
 
 // Endpoint when a new policy is created
-app.post('/resource/policy/new', async(req, res) => {
-  if (!Object.keys(req.body).length) {
-   return res.status(400).json({
-     message: "Request body cannot be empty",
-   })
+app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
+  if (!req.params.resourceId) {
+    return res.status(400).json({
+      message: "resourceId parameters cannot be empty",
+    })
   }
-  var { resource, policy, service, servicepath } = req.body
-  if (!resource) {
-   res.status(400).json({
-     message: "Ensure you sent a resource field",
-   })
+  if (!req.params.policyId) {
+    return res.status(400).json({
+      message: "policyId parameters cannot be empty",
+    })
   }
-  if (!policy) {
-   res.status(400).json({
-     message: "Ensure you sent a policy field",
-   })
-  }
-  if (!service) {
-   res.status(400).json({
-     message: "Ensure you sent a service field",
-   })
-  }
-  if (!servicepath) {
-   res.status(400).json({
-     message: "Ensure you sent a servicepath field",
-   })
-  }
+
+  var resource = req.params['resourceId']
+  var policy_id = req.params['policyId']
 
   var message = {
     "action": "post",
-    "policy_id": policy,
-    "service": service,
-    "servicepath": servicepath,
+    "policy_id": policy_id,
   }
+
+  var topic = resource
+
+  if (is_private_org == "true") {
+    if (!req.headers['fiware-Service']) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    message.service = req.headers['fiware-Service']
+    message.servicePath =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    topic = message.service+'#'+message.servicePath+'#'+resource
+    console.log(message)
+  }
+
   message = JSON.stringify(message)
-  await node.pubsub.publish(resource, uint8ArrayFromString(message)).catch(err => {
+  await node.pubsub.publish(topic, uint8ArrayFromString(message)).catch(err => {
     console.error(err)
     res.end(`Error: ${err}`)
   })
@@ -432,42 +471,42 @@ app.post('/resource/policy/new', async(req, res) => {
 })
 
 // Endpoint when a policy is updated
-app.post('/resource/policy/update', async(req, res) => {
-  if (!Object.keys(req.body).length) {
-   return res.status(400).json({
-     message: "Request body cannot be empty",
-   })
+app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
+  if (!req.params.resourceId) {
+    return res.status(400).json({
+      message: "resourceId parameters cannot be empty",
+    })
   }
-  var { resource, policy, service, servicepath } = req.body
-  if (!resource) {
-   res.status(400).json({
-     message: "Ensure you sent a resource field",
-   })
+  if (!req.params.policyId) {
+    return res.status(400).json({
+      message: "policyId parameters cannot be empty",
+    })
   }
-  if (!policy) {
-   res.status(400).json({
-     message: "Ensure you sent a policy field",
-   })
-  }
-  if (!service) {
-   res.status(400).json({
-     message: "Ensure you sent a service field",
-   })
-  }
-  if (!servicepath) {
-   res.status(400).json({
-     message: "Ensure you sent a servicepath field",
-   })
-  }
+
+  var resource = req.params['resourceId']
+  var policy_id = req.params['policyId']
 
   var message = {
     "action": "put",
-    "policy_id": policy,
-    "service": service,
-    "servicepath": servicepath,
+    "policy_id": policy_id,
   }
+
+  var topic = resource
+
+  if (is_private_org == "true") {
+    if (!req.headers['fiware-Service']) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    message.service = req.headers['fiware-Service']
+    message.servicePath =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    topic = message.service+'#'+message.servicePath+'#'+resource
+    console.log(message)
+  }
+
   message = JSON.stringify(message)
-  await node.pubsub.publish(resource, uint8ArrayFromString(message)).catch(err => {
+  await node.pubsub.publish(topic, uint8ArrayFromString(message)).catch(err => {
     console.error(err)
     res.end(`Error: ${err}`)
   })
@@ -477,39 +516,38 @@ app.post('/resource/policy/update', async(req, res) => {
 })
 
 // Endpoint when a policy is deleted
-app.post('/resource/policy/delete', async(req, res) => {
-  if (!Object.keys(req.body).length) {
-   return res.status(400).json({
-     message: "Request body cannot be empty",
-   })
+app.delete('/resource/:resourceId/policy/:policyId', async(req, res) => {
+  if (!req.params.resourceId) {
+    return res.status(400).json({
+      message: "resourceId parameters cannot be empty",
+    })
   }
-  var { resource, policy, service, servicepath } = req.body
-  if (!resource) {
-   res.status(400).json({
-     message: "Ensure you sent a resource field",
-   })
+  if (!req.params.policyId) {
+    return res.status(400).json({
+      message: "policyId parameters cannot be empty",
+    })
   }
-  if (!policy) {
-   res.status(400).json({
-     message: "Ensure you sent a policy field",
-   })
-  }
-  if (!service) {
-   res.status(400).json({
-     message: "Ensure you sent a service field",
-   })
-  }
-  if (!servicepath) {
-   res.status(400).json({
-     message: "Ensure you sent a servicepath field",
-   })
-  }
+
+  var resource = req.params['resourceId']
+  var policy_id = req.params['policyId']
 
   var message = {
     "action": "delete",
-    "policy_id": policy,
-    "service": service,
-    "servicepath": servicepath,
+    "policy_id": policy_id,
+  }
+
+  var topic = resource
+
+  if (is_private_org == "true") {
+    if (!req.headers['fiware-Service']) {
+      return res.status(400).json({
+        message: "fiware-Service header cannot be empty",
+      })
+    }
+    message.service = req.headers['fiware-Service']
+    message.servicePath =  req.headers['fiware-Servicepath'] ? req.headers['fiware-Servicepath'] : '/'
+    topic = message.service+'#'+message.servicePath+'#'+resource
+    console.log(message)
   }
   message = JSON.stringify(message)
   await node.pubsub.publish(resource, uint8ArrayFromString(message)).catch(err => {
@@ -526,35 +564,28 @@ async function processTopicMessage(evt) {
   const sender = await node.peerStore.addressBook.get(evt.detail.from)
   const message = JSON.parse(uint8ArrayToString(evt.detail.data))
   console.log(`Node received: ${uint8ArrayToString(evt.detail.data)} on topic ${evt.detail.topic}`)
-  if(message.action == "send_mobile") {
-    await axios({
-      method: 'post',
-      url: `http://${anubis_api_uri}/v1/tenants/`,
-      data: {"name": message.service}
-    })
-    .then(async function (response) {
-      console.log(`Created Tenant ${message.service}`)
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
-    await axios({
-      method: 'post',
-      url: `http://${anubis_api_uri}/v1/policies`,
-      headers: {
-        'fiware-Service': message.service,
-        'fiware-Servicepath': message.servicepath
-      },
-      data: message.policy
-    })
-    .then(function (r) {
-      console.log(r)
-    })
-    .catch(function (err) {
-      console.log(err.response.data)
-    })
-    return
-  }
+  var headers = {}
+  // if message.service:
+  //   headers['fiware-Service'] = message.service
+  // if message.servicePath:
+  //   headers['fiware-Servicepath'] = message.servicePath
+  // if(message.action == "send_mobile") {
+  //   await axios({
+  //     method: 'post',
+  //     url: `http://${anubis_api_uri}/v1/policies`,
+  //     headers: headers,
+  //     data: message.policy
+  //   })
+  //   .then(function (r) {
+  //     console.log(r)
+  //   })
+  //   .catch(function (err) {
+  //     console.log(err.response.data)
+  //   })
+  //   return
+  // }
+
+  // let's retrieve the metadata from the node that contacted me
   var providerPolicyApi = null
   await axios({
     method: 'get',
@@ -569,53 +600,33 @@ async function processTopicMessage(evt) {
   if(message.action == "delete") {
     await axios({
       method: 'delete',
-      url: `http://${anubis_api_uri}/v1/policies/${message.policy_id}`,
-      headers: {
-        'fiware-Service': message.service,
-        'fiware-Servicepath': message.servicepath
-      },
-      data: response.data
+      url: `http://${anubis_api_uri}/v1/middleware/policies/${message.policy_id}`,
+      headers: headers
     })
     .then(function (r) {
-      console.log(r)
+      console.log(`deleted policy ${message.policy_id}`)
     })
     .catch(function (err) {
       console.log(err)
     })
     return
   }
+  // in case we created or updated a policy, let's retrieve it
   await axios({
     method: 'get',
-    url: `http://${providerPolicyApi}/v1/policies/${message.policy_id}`,
-    headers: {
-      'fiware-Service': message.service,
-      'fiware-Servicepath': message.servicepath
-    }
+    url: `http://${providerPolicyApi}/v1/middleware/policies/${message.policy_id}`,
+    headers: headers
   })
   .then(async function (response) {
     if(message.action == "post") {
       await axios({
         method: 'post',
-        url: `http://${anubis_api_uri}/v1/tenants/`,
-        data: {"name": message.service}
-      })
-      .then(async function (response) {
-        console.log(`Created Tenant ${resource}`)
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
-      await axios({
-        method: 'post',
-        url: `http://${anubis_api_uri}/v1/policies`,
-        headers: {
-          'fiware-Service': message.service,
-          'fiware-Servicepath': message.servicepath
-        },
+        url: `http://${anubis_api_uri}/v1/middleware/policies`,
+        headers: headers,
         data: response.data
       })
       .then(function (r) {
-        console.log(r)
+        console.log(`created policy ${message.policy_id}`)
       })
       .catch(function (err) {
         console.log(err.response.data)
@@ -624,15 +635,12 @@ async function processTopicMessage(evt) {
     else if(message.action == "put") {
       await axios({
         method: 'put',
-        url: `http://${anubis_api_uri}/v1/policies/${message.policy_id}`,
-        headers: {
-          'fiware-Service': message.service,
-          'fiware-Servicepath': message.servicepath
-        },
+        url: `http://${anubis_api_uri}/v1/middleware/policies/${message.policy_id}`,
+        headers: headers,
         data: response.data
       })
       .then(function (r) {
-        console.log(r)
+        console.log(`updated policy ${message.policy_id}`)
       })
       .catch(function (err) {
         console.log(err)
@@ -678,7 +686,7 @@ var server = app.listen(server_port, async() => {
     for(const topic of data.topics) {
       node.pubsub.subscribe(topic)
     }
-
+    //TODO: we load data, but when to we write it? if we write right after creation there is data to store...
     await saveConfiguration()
   }
   catch(err) {
