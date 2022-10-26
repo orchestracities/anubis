@@ -18,7 +18,7 @@ jobs:
         working-directory: ./policy-governance-middleware
         run: |
           docker build -t orchestracities/anubis-middleware:latest .
-          docker run -p 127.0.0.1:8098:8098/tcp --name anubis -d orchestracities/anubis-middleware
+          docker run -p 127.0.0.1:8098:8098/tcp --name middleware -d orchestracities/anubis-middleware
       - name: Update Open API spec
         working-directory: ./scripts
         run: |
