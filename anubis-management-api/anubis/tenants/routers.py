@@ -208,7 +208,7 @@ def delete_service(
         try:
             # delete tenant
             res = requests.delete(
-                api_url + "/groups/"+tenant_id, headers=headers)
+                api_url + "/groups/" + tenant_id, headers=headers)
             if res.status_code != 204:
                 raise HTTPException(
                     status_code=res.status_code,
