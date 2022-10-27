@@ -12,6 +12,8 @@
 
 ### Documentation
 
+- Revise docs (including logo)
+
 ### Continuous Integration
 
 ### Technical debt
