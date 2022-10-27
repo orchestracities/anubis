@@ -1,6 +1,8 @@
 # Welcome to Anubis
 
-Anubis is a flexible Policy Enforcement solution
+<img src="logo.jpg"
+     alt="Anubis"
+     style="float: left; margin-right: 10px;" width="200"/>  Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
 In short we are dealing with policy portability :) What do you mean by that?
