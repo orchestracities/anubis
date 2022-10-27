@@ -43,7 +43,11 @@
             }
           }
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -102,7 +106,11 @@
             }
           }
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "put": {
