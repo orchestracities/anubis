@@ -1,6 +1,6 @@
 # Anubis Release Notes
 
-## 0.5-dev
+## 0.5
 
 ### New features
 
