@@ -8,3 +8,4 @@ anubis-management-api/.idea/*
 *.pyc
 .idea/*
 *.json
+*.bin

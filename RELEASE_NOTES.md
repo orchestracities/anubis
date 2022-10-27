@@ -25,6 +25,7 @@
 ### Continuous Integration
 
 - Support automatic issue generation from TODOs
+- Load tests
 
 ### Technical debt
 
