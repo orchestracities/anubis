@@ -107,6 +107,12 @@ Delete a Tenant
 | 404 | Not found |
 | 422 | Validation Error |
 
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| OptionalHTTPBearer | |
+
 ### /v1/tenants/{tenant_id}/service_paths
 
 #### GET
