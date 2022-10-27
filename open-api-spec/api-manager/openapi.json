@@ -1503,6 +1503,500 @@
         }
       }
     },
+    "/v1/middleware/resources": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "List resources managed (for a given Tenant and Service Path)",
+        "operationId": "resources_v1_middleware_resources_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Owner",
+              "type": "string"
+            },
+            "name": "owner",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Resources V1 Middleware Resources Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resource"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/middleware/resources/mine": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "List resources owned by me",
+        "operationId": "my_resources_v1_middleware_resources_mine_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response My Resources V1 Middleware Resources Mine Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resource"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OptionalHTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/middleware/policies": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "List policies for a given resource",
+        "operationId": "read_policies_v1_middleware_policies_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource",
+              "type": "string"
+            },
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Resource Type",
+              "type": "string"
+            },
+            "name": "resource_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Policies V1 Middleware Policies Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Create a policy for a given Tenant and Service Path",
+        "operationId": "create_policy_v1_middleware_policies_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Owner",
+              "type": "string"
+            },
+            "name": "owner",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string",
+              "default": "/"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/middleware/policies/{policy_id}": {
+      "get": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Get a policy",
+        "operationId": "read_policy_v1_middleware_policies__policy_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Service",
+              "type": "string"
+            },
+            "name": "fiware-service",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fiware-Servicepath",
+              "type": "string"
+            },
+            "name": "fiware-servicepath",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Update a policy for a given Tenant and Service Path",
+        "operationId": "update_v1_middleware_policies__policy_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "middleware"
+        ],
+        "summary": "Delete a policy for a given Tenant and Service Path",
+        "operationId": "delete_policy_v1_middleware_policies__policy_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            },
+            "name": "policy_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Return Anubis API endpoints",
@@ -1712,12 +2206,16 @@
       "Policy": {
         "title": "Policy",
         "required": [
+          "id",
           "access_to",
-          "resource_type",
-          "id"
+          "resource_type"
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
           "access_to": {
             "title": "Access To",
             "type": "string"
@@ -1741,10 +2239,6 @@
               "type": "string"
             },
             "default": []
-          },
-          "id": {
-            "title": "Id",
-            "type": "string"
           }
         }
       },
@@ -1756,6 +2250,10 @@
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
           "access_to": {
             "title": "Access To",
             "type": "string"
@@ -1779,6 +2277,34 @@
               "type": "string"
             },
             "default": []
+          }
+        }
+      },
+      "Resource": {
+        "title": "Resource",
+        "required": [
+          "id",
+          "type",
+          "tenant",
+          "servicePath"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "tenant": {
+            "title": "Tenant",
+            "type": "string"
+          },
+          "servicePath": {
+            "title": "Servicepath",
+            "type": "string"
           }
         }
       },

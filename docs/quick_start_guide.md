@@ -57,7 +57,7 @@ the keycloak scripts used to support multi-tenancy and launch docker compose:
     $ cd anubis
     $ source .env
     $ cd ../keycloak
-    $ wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.4/oc-custom.jar -O oc-custom.jar
+    $ wget https://github.com/orchestracities/keycloak-scripts/releases/download/v0.0.6/oc-custom.jar -O oc-custom.jar
     $ cd ..
     $ docker compose up -d
 

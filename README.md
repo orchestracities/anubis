@@ -123,6 +123,56 @@ specifically for the [NGSIv2 Context Broker](https://fiware-orion.readthedocs.io
 Anubis management, and JWT-based authentication. You can see Orion rules in this
 [rego file](config/opa-service/rego/context_broker_policy.rego).
 
+## Policy Distribution
+
+The policy distribution architecture relies on [libp2p](https://libp2p.io/)
+middleware to distribute policies across differed Policies Administration
+Points. The architecture decouples the PAP from the distribution middleware.
+This allows:
+
+- different PAP to share the same distribution node.
+- deployment without the distribution functionalities (and hence
+with a smaller footprint), when this is not required.
+
+The distribution middleware is called Policy Distribution Point.
+
+```ascii
+    ┌──────────────┐        ┌──────────────┐
+    │   Policy     │        │    Policy    │
+    │ Distribution │◄──────►│Administration│
+    │   Point 1    │        │    Point 1   │
+    └──────────────┘        └──────────────┘
+           ▲
+         2 │
+           ▼
+    ┌──────────────┐        ┌──────────────┐
+    │   Policy     │        │    Policy    │
+    │ Distribution │◄──────►│Administration│
+    │   Point 2    │        │    Point 2   │
+    └──────────────┘        └──────────────┘
+```
+
+There are two distribution modalities:
+
+- *public*, i.e. when the different middleware belong to different
+  organisations in the public internet. In this case:
+
+  - resources are considered to be univocally identifiable (if they have
+    the same id they are the same resource);
+
+  - only user specific policies are distributed;
+
+  - only resource specific policies are distributed.
+
+- *private*, i.e. when the different middleware belong to the same
+  organisation. In this case:
+
+  - resources are considered to be univocally identifiable only within the same
+    service and service path;
+
+  - all policies are distributed (including the ones for roles and groups and
+    `*` and `default` resource policies).
+
 ## Policies
 
 The formal policy specification is defined by the [oc-acl vocabulary](https://github.com/orchestracities/anubis-vocabulary/blob/master/oc-acl.ttl)
@@ -212,8 +262,31 @@ $ cd scripts
 $ ./clean.sh
 ```
 
-In case you are using an ARM64 based architecture, before running the scripts,
-use the proper image (see comment in [docker-compose](docker-compose.yaml)).
+#### Demo for distributed policy management
+
+To deploy the demo that includes two instances of the Auth API,
+two instances of the distribution middleware (plus as well OPA, Keycloak,
+and a Context Broker), run the following script:
+
+```bash
+$ cd scripts
+$ ./run_demo_with_middleware.sh
+```
+
+You can run a script to make a few test API calls. You can run the test
+script with:
+
+```bash
+$ cd scripts
+$ ./test_middleware.sh
+```
+
+To clean up the deployment after you're done, run:
+
+```bash
+$ cd scripts
+$ ./clean.sh
+```
 
 ## Installation
 
@@ -268,6 +341,8 @@ For the policy API, the following env variables are also available:
 - `KEYCLOACK_ADMIN_ENDPOINT`: The endpoint of the admin api of Keycloak.
 - `DB_TYPE`: The database type to be used by the API. Valid options for
   now are `postgres` and `sqlite`.
+- `MIDDLEWARE_ENDPOINT`: The endpoint of the policy distribution middleware
+  (if `None` the policy distribution is disabled).
 
 If postgres is the database being used, the following variables are available
 as well:
@@ -276,6 +351,14 @@ as well:
 - `DB_USER`: The user for the database.
 - `DB_PASSWORD`: The password for the database user.
 - `DB_NAME`: The name of the database.
+
+The policy distribution middleware is an add-on the basic Anubis deployment.
+The following environment variables can be configured:
+
+- `SERVER_PORT`: The port where the middleware API is exposed.
+- `ANUBIS_API_URI`: The anubis management api instance linked to the middleware.
+- `LISTEN_ADDRESS`: The multiaddress format address the middleware listens on.
+- `IS_PRIVATE_ORG`: The middleware modality to public or private.
 
 For customizing the default policies that are created alongside a tenant, see
 [the configuration file](config/opa-service/default_policies.yml) that's mounted

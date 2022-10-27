@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response, Header
 from . import operations, models, schemas
@@ -8,6 +9,9 @@ from ..wac import serialize as w_serialize
 from ..rego import serialize as r_serialize
 from ..utils import parse_auth_token, OptionalHTTPBearer
 import anubis.default as default
+import logging
+import requests
+import urllib
 
 
 auth_scheme = OptionalHTTPBearer()
@@ -413,6 +417,17 @@ def read_policy(
     else:
         return serialize_policy(db_policy)
 
+# TODO: 0. if at least provider exists (beyond the node itself), we should not
+# create default policies in lua
+# TODO: 1. before creating a policy for a resource, subscribe to it.
+# should be done in lua on resource creation? yes, but in this case,
+# we need to be able to ensure that the synched policies are created
+# for the tenant where the new resource is created (i.e. we need to pass
+# the correct headers in the subscription process), otherwise
+# - in case of IS_PRIVATE_ORG=FALSE - we won't know the tenant for the resource
+# and we will create policy in tenant 'Default' which would
+# be wrong ).
+
 
 @router.post("/",
              response_class=Response,
@@ -454,6 +469,42 @@ def create_policy(
         db=db, service_path_id=db_service_path_id[0], policy=policy).id
     response.headers["Policy-ID"] = policy_id
     response.status_code = status.HTTP_201_CREATED
+    try:
+        middleware_url = os.environ.get('MIDDLEWARE_ENDPOINT', None)
+        # we don't synch policies that are not specific to a resource
+        if middleware_url and policy.access_to != 'default' and policy.access_to != '*':
+            headers = {
+                "fiware-Service": fiware_service,
+                "fiware-Servicepath": fiware_servicepath}
+            # if policy created, register yourself as a provider
+            res = requests.post(
+                middleware_url +
+                "/resource/" +
+                urllib.parse.quote(policy.access_to) +
+                "/provide",
+                headers=headers)
+            if res.status_code != 200:
+                raise HTTPException(
+                    status_code=res.status_code,
+                    detail=res.text)
+            # if policy created, send new notification
+            res = requests.post(
+                middleware_url +
+                "/resource/" +
+                urllib.parse.quote(policy.access_to) +
+                "/policy/" +
+                policy_id,
+                headers=headers)
+            if res.status_code != 200:
+                raise HTTPException(
+                    status_code=res.status_code,
+                    detail=res.text)
+    except HTTPException as e:
+        logging.warning(
+            "failed middleware synchronization for {}".format(
+                urllib.parse.quote(
+                    policy.access_to)))
+        logging.error(e)
     return response
 
 
@@ -502,6 +553,31 @@ def update(
     response.headers["Policy-ID"] = operations.update_policy(
         db=db, policy_id=policy_id, policy=policy)
     response.status_code = status.HTTP_204_NO_CONTENT
+    try:
+        middleware_url = os.environ.get('MIDDLEWARE_ENDPOINT', None)
+        # we don't synch policies that are not specific to a resource
+        if middleware_url and policy.access_to != 'default' and policy.access_to != '*':
+            headers = {
+                "fiware-Service": fiware_service,
+                "fiware-Servicepath": fiware_servicepath}
+            # if policy updated, send update notification
+            res = requests.put(
+                middleware_url +
+                "/resource/" +
+                urllib.parse.quote(policy.access_to) +
+                "/policy/" +
+                policy_id,
+                headers=headers)
+            if res.status_code != 200:
+                raise HTTPException(
+                    status_code=res.status_code,
+                    detail=res.text)
+    except HTTPException as e:
+        logging.warning(
+            "failed middleware synchronization for {}".format(
+                urllib.parse.quote(
+                    policy.access_to)))
+        logging.error(e)
     return response
 
 
@@ -527,4 +603,29 @@ def delete_policy(
     operations.delete_policy(db=db, policy=db_policy)
     response.headers["Policy-ID"] = policy_id
     response.status_code = status.HTTP_204_NO_CONTENT
+    try:
+        middleware_url = os.environ.get('MIDDLEWARE_ENDPOINT', None)
+        # we don't synch policies that are not specific to a resource
+        if middleware_url and db_policy.access_to != 'default' and db_policy.access_to != '*':
+            headers = {
+                "fiware-Service": fiware_service,
+                "fiware-Servicepath": fiware_servicepath}
+            # if policy deleted, send delete notification
+            res = requests.delete(
+                middleware_url +
+                "/resource/" +
+                urllib.parse.quote(db_policy.access_to) +
+                "/policy/" +
+                policy_id,
+                headers=headers)
+            if res.status_code != 200:
+                raise HTTPException(
+                    status_code=res.status_code,
+                    detail=res.text)
+    except HTTPException as e:
+        logging.warning(
+            "failed middleware synchronization for {}".format(
+                urllib.parse.quote(
+                    db_policy.access_to)))
+        logging.error(e)
     return response

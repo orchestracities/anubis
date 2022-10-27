@@ -1,0 +1,41 @@
+{
+  "name": "policy-governance-middleware",
+  "version": "1.0.0",
+  "description": "The policy governance middleware for Anubis",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabriele Cerfoglio",
+  "license": "Apache License v2",
+  "engines": {
+    "node": ">=15.0.0"
+  },
+  "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^3.4.0",
+    "@chainsafe/libp2p-noise": "^7.0.1",
+    "@libp2p/bootstrap": "^2.0.0",
+    "@libp2p/floodsub": "^3.0.2",
+    "@libp2p/kad-dht": "^3.0.1",
+    "@libp2p/mdns": "^3.0.0",
+    "@libp2p/mplex": "^4.0.2",
+    "@libp2p/peer-id": "^1.1.15",
+    "@libp2p/peer-id-factory": "^1.0.18",
+    "@libp2p/pubsub-peer-discovery": "^6.0.0",
+    "@libp2p/tcp": "^3.0.2",
+    "@libp2p/websockets": "^3.0.1",
+    "@multiformats/multiaddr": "^10.3.3",
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "delay": "^5.0.0",
+    "express": "^4.18.1",
+    "express-oas-generator": "^1.0.45",
+    "libp2p": "0.37.3-05e8e7e",
+    "libp2p-gossipsub": "^0.13.0",
+    "logops": "^2.1.2",
+    "peer-id": "^0.16.0",
+    "pm2": "^5.2.0",
+    "uint8arrays": "^3.0.0"
+  }
+}
