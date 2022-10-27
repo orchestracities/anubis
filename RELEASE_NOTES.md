@@ -10,9 +10,11 @@
 - Add role tenant-admin to Admin subgroup on Tenant creation
 - Add user creating tenant to Admin subgroup
 - Add /me endpoint under /policy to retrieve policies that applies to a user
+- Delete Tenant in Keycloak on Tenant delete on the API
 
 ### Bug fixes
 
+- Fix support for groups including `/` in the name
 - Change the keycloak config file to manage the token refresh
 - Missing database entry for oc-acl:Delete
 - Correct parsing / serialisation of policies (still something to be checked)

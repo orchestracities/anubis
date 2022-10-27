@@ -189,12 +189,43 @@ def read_tenant(tenant_id: str, db: Session = Depends(get_db)):
 def delete_service(
         response: Response,
         tenant_id: str,
+        token: str = Depends(auth_scheme),
         db: Session = Depends(get_db)):
     db_tenant = operations.get_tenant(db, tenant_id=tenant_id)
     if not db_tenant:
         db_tenant = operations.get_tenant_by_name(db, name=tenant_id)
     if not db_tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
+    keycloak_enabled = os.environ.get(
+        'KEYCLOACK_ENABLED', 'False').lower() in (
+        'true', '1', 't')
+    if keycloak_enabled and token:
+        auth = "bearer " + token
+        headers = {"Content-Type": "application/json", "Authorization": auth}
+        api_url = os.environ.get(
+            'KEYCLOACK_ADMIN_ENDPOINT',
+            'http://localhost:8080/admin/realms/default')
+        try:
+            # delete tenant
+            res = requests.delete(
+                api_url + "/groups/" + tenant_id, headers=headers)
+            if res.status_code != 204:
+                raise HTTPException(
+                    status_code=res.status_code,
+                    detail=res.text)
+        except HTTPException as e:
+            raise HTTPException(
+                status_code=e.status_code,
+                detail=e.detail)
+        except Exception as e:
+            logging.debug(e)
+            raise HTTPException(
+                status_code=400,
+                detail="Tenant delete failed with Keycloak")
+    if keycloak_enabled and not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Token is missing: cannot authenticate with Keycloak")
     operations.delete_tenant(db=db, tenant=db_tenant)
     response.headers["Tenant-ID"] = tenant_id
     response.status_code = status.HTTP_204_NO_CONTENT
