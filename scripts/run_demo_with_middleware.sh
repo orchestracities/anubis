@@ -133,7 +133,7 @@ curl -s -i -X 'POST' \
 -H 'Content-Type: application/json' \
 -d '{
 "access_to": "urn:AirQuality:1",
-"resource_type": "policy",
+"resource_type": "entity",
 "mode": ["acl:Read"],
 "agent": ["acl:AuthenticatedAgent"]
 }'
