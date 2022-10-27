@@ -7,7 +7,7 @@ services:
       - ./config/envoy/v3.yaml:/etc/envoy/envoy.yaml
       - ./config/opa-service/lua:/etc/envoy/lua
     environment:
-      - loglevel=debug
+      - loglevel=error
     networks:
       - envoymesh
     ports:
@@ -58,7 +58,7 @@ services:
       - ./config/opa-service/opa.yaml:/opa.yaml
     command:
       - run
-      - --log-level=debug
+      - --log-level=error
       - --server
       - --config-file=/opa.yaml
       - --diagnostic-addr=0.0.0.0:8282
@@ -109,7 +109,7 @@ services:
     image: fiware/orion:${ORION_VERSION:-3.3.1}
     ports:
       - "1026:1026"
-    command: -logLevel DEBUG -noCache -dbhost mongo
+    command: -logLevel error -noCache -dbhost mongo
     depends_on:
       - mongo
     healthcheck:

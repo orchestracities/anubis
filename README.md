@@ -286,6 +286,43 @@ Similarly, a [configuration file](config/opa-service/default_wac_config.yml)
 for the wac serialization is available to configure the prefixes and URIs of
 the various resource types in relation to tenants.
 
+## Load Testing
+
+To measure the overhead introduced by Anubis, we developed a simple script.
+From the scripts folder, launch the demo set-up and then execute the script:
+
+```bash
+cd scripts
+./run_demo.sh
+./test_load.sh
+
+Run load test with Anubis in front of Orion
+===============================================================
+Requests      [total, rate, throughput]         50, 10.21, 10.06
+Duration      [total, attack, wait]             4.971s, 4.899s, 71.35ms
+Latencies     [min, mean, 50, 90, 95, 99, max]  69.158ms, 74.566ms, 74.024ms, 79.429ms, 84.087ms, 93.997ms, 93.997ms
+Bytes In      [total, mean]                     6550, 131.00
+Bytes Out     [total, mean]                     0, 0.00
+Success       [ratio]                           100.00%
+Status Codes  [code:count]                      200:50  
+Error Set:
+
+Run load test without Anubis in front of Orion
+===============================================================
+Requests      [total, rate, throughput]         50, 10.20, 10.20
+Duration      [total, attack, wait]             4.904s, 4.9s, 4.32ms
+Latencies     [min, mean, 50, 90, 95, 99, max]  3.241ms, 6.561ms, 5.462ms, 9.934ms, 20.038ms, 23.212ms, 23.212ms
+Bytes In      [total, mean]                     6550, 131.00
+Bytes Out     [total, mean]                     0, 0.00
+Success       [ratio]                           100.00%
+Status Codes  [code:count]                      200:50  
+Error Set:
+```
+
+As of today, Anubis introduces an average overhead of 69msec,
+while this is not a bad number, it's not impressive. Still
+there is a very good news, we know how to improve :) See #14.
+
 ## Test rego
 
 To test the rego policy locally:
