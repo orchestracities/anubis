@@ -48,6 +48,7 @@ if(listen_address.includes("dnsaddr") && options.host != 'localhost') {
 
 // Setting up Node app
 var app = express()
+// TODO: check if it is possible to improve auto generated openapi specs
 expressOasGenerator.handleResponses(app, {})
 app.use(cors())
 app.use(bp.json())
