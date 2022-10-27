@@ -106,10 +106,10 @@ services:
       - envoymesh
 
   upstream-service:
-    image: fiware/orion:${ORION_VERSION:-3.3.1}
+    image: fiware/orion-ld:${ORION_VERSION:-1.1.1}
     ports:
       - "1026:1026"
-    command: -logLevel error -noCache -dbhost mongo
+    command: -logLevel error -dbhost mongo
     depends_on:
       - mongo
     healthcheck:
