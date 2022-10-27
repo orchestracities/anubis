@@ -1,5 +1,17 @@
 # Anubis Release Notes
 
+## 0.6-dev
+
+### New features
+
+### Bug fixes
+
+### Documentation
+
+### Continuous Integration
+
+### Technical debt
+
 ## 0.5
 
 ### New features
