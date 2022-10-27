@@ -10,6 +10,7 @@
 - Add role tenant-admin to Admin subgroup on Tenant creation
 - Add user creating tenant to Admin subgroup
 - Add /me endpoint under /policy to retrieve policies that applies to a user
+- Delete Tenant in Keycloak on Tenant delete on the API
 
 ### Bug fixes
 
