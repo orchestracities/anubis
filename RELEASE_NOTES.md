@@ -4,7 +4,7 @@
 
 ### New features
 
-- Anonymize IP and email in logs
+- Anonymize IP and email in audit logs
 - Create Tenant in Keycloak on Tenant creation on the API
 - Create group Admin as Tenant subgroup on Tenant creation
 - Add role tenant-admin to Admin subgroup on Tenant creation
