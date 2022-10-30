@@ -158,20 +158,20 @@ There are two distribution modalities:
 - *public*, i.e. when the different middleware belong to different
   organisations in the public internet. In this case:
 
-  - resources are considered to be univocally identifiable (if they have
+    - resources are considered to be univocally identifiable (if they have
     the same id they are the same resource);
 
-  - only user specific policies are distributed;
+    - only user specific policies are distributed;
 
-  - only resource specific policies are distributed.
+    - only resource specific policies are distributed.
 
 - *private*, i.e. when the different middleware belong to the same
   organisation. In this case:
 
-  - resources are considered to be univocally identifiable only within the same
+    - resources are considered to be univocally identifiable only within the same
     service and service path;
 
-  - all policies are distributed (including the ones for roles and groups and
+    - all policies are distributed (including the ones for roles and groups and
     `*` and `default` resource policies).
 
 ## Policies
