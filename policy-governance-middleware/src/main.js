@@ -54,7 +54,7 @@ const __dirname = path.dirname(__filename);
 
 const openApiOptions = {
   info: {
-    version: '0.6.0-dev',
+    version: '0.6.0',
     title: 'Policy Distribution Middleware',
     description: 'This API enables the distributed management of policies for Anubis',
     license: {
