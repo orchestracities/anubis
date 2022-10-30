@@ -37,7 +37,8 @@ jobs:
           openapi-markdown -i open-api-spec/middleware/openapi.json -o docs/user/walkthrough-middleware.md
           sed -i '1 i\
           <!-- markdownlint-disable -->' docs/user/walkthrough-middleware.md
-          sed -i '/null/d' docs/user/walkthrough-middleware.md 
+          sed -i '/null/d' docs/user/walkthrough-middleware.md
+          sed -i '/### Terms of service/d' docs/user/walkthrough-middleware.md 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

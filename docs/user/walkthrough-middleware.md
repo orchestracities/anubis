@@ -4,7 +4,6 @@ This API enables the distributed management of policies for Anubis
 
 ## Version: 0.6.0-dev
 
-### Terms of service
 
 
 **License:** [Apache License v2](https://www.apache.org/licenses/LICENSE-2.0)
