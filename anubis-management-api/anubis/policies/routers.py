@@ -215,6 +215,8 @@ policies_not_json_responses = {
 }
 
 # TODO if no token, we should return policies for foaf:Agent!
+
+
 @router.get("/me",
             response_model=List[schemas.Policy],
             responses=policies_not_json_responses,
