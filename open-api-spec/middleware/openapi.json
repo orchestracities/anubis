@@ -13,6 +13,16 @@
   "servers": [],
   "components": {
     "schemas": {
+      "Metadata": {
+        "description": "A metadata entry",
+        "type": "object",
+        "properties": {
+          "policy_api_uri": {
+            "description": "Anubis API endpoint for this middleware",
+            "type": "string"
+          }
+        }
+      },
       "Policy": {
         "description": "A policy for a resource",
         "required": [
@@ -98,7 +108,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/Metadata"
                 }
               }
             }
@@ -168,7 +178,12 @@
         "summary": "Updates the policies linked to resources owned by a given user",
         "security": [],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
         },
         "parameters": [
           {
@@ -214,7 +229,12 @@
         "summary": "Register this middleware as a provider for a given resource",
         "security": [],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
         },
         "parameters": [
           {
@@ -259,7 +279,12 @@
         "summary": "Checks if there is a provider for this resource",
         "security": [],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
         },
         "parameters": [
           {
@@ -304,7 +329,12 @@
         "summary": "Subscribe this middleware to a given resource",
         "security": [],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
         },
         "parameters": [
           {
@@ -349,7 +379,12 @@
         "summary": "Notify this middleware that a new policy was created for a given resource",
         "security": [],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
         },
         "parameters": [
           {
@@ -402,7 +437,12 @@
         "summary": "Notify this middleware that a policy was updated for a given resource",
         "security": [],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
         },
         "parameters": [
           {
@@ -455,7 +495,12 @@
         "summary": "Notify this middleware that a policy was deleted for a given resource",
         "security": [],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
         },
         "parameters": [
           {

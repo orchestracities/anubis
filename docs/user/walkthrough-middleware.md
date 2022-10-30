@@ -68,7 +68,8 @@ Updates the policies linked to resources owned by a given user
 
 | Code | Description |
 | ---- | ----------- |
-| 200 |  |
+| 200 | Ok |
+| 400 | Failed |
 
 null
 
@@ -91,7 +92,8 @@ Register this middleware as a provider for a given resource
 
 | Code | Description |
 | ---- | ----------- |
-| 200 |  |
+| 200 | Ok |
+| 400 | Failed |
 
 null
 
@@ -114,7 +116,8 @@ Checks if there is a provider for this resource
 
 | Code | Description |
 | ---- | ----------- |
-| 200 |  |
+| 200 | Ok |
+| 400 | Failed |
 
 null
 
@@ -137,7 +140,8 @@ Subscribe this middleware to a given resource
 
 | Code | Description |
 | ---- | ----------- |
-| 200 |  |
+| 200 | Ok |
+| 400 | Failed |
 
 null
 
@@ -161,7 +165,8 @@ Notify this middleware that a new policy was created for a given resource
 
 | Code | Description |
 | ---- | ----------- |
-| 200 |  |
+| 200 | Ok |
+| 400 | Failed |
 
 null
 
@@ -183,7 +188,8 @@ Notify this middleware that a policy was updated for a given resource
 
 | Code | Description |
 | ---- | ----------- |
-| 200 |  |
+| 200 | Ok |
+| 400 | Failed |
 
 null
 
@@ -205,12 +211,21 @@ Notify this middleware that a policy was deleted for a given resource
 
 | Code | Description |
 | ---- | ----------- |
-| 200 |  |
+| 200 | Ok |
+| 400 | Failed |
 
 null
 
 ### Models
 
+
+#### Metadata
+
+A metadata entry
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| policy_api_uri | string | Anubis API endpoint for this middleware | No |
 
 #### Policy
 

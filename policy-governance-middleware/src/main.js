@@ -124,39 +124,43 @@ const node = await createLibp2p({
   }
 })
 
+/**
+ * A metadata entry
+ * @typedef {object} Metadata
+ * @property {string} policy_api_uri - Anubis API endpoint for this middleware
+ */
+ 
+ /**
+  * A policy for a resource
+  * @typedef {object} Policy
+  * @property {string} id.required - The id of the policy
+  * @property {array<string>} actorType.required - The subject of the policy 
+  * @property {array<string>} mode.required - The mode of the policy
+  */
+
+ /**
+ * A protected resource
+ * @typedef {object} Resource
+ * @property {string} id.required - The id of the resource
+ * @property {array<Policy>} policies.required - The policies that apply to the resource
+ */
+
+ /**
+ * Set of resources by a user
+ * @typedef {object} UserResources
+ * @property {string} user.required - The id of the user
+ * @property {array<Resource>} resources.required - The resources owned by the user
+ */
 
 /**
  * GET /metadata
  * @summary The metadata specific to the middleware node
- * @return {object} 200 - metadata response
+ * @return {Metadata} 200 - metadata response
  * @tags Metadata
  */
 app.get('/metadata', async(req, res) => {
   res.json({"policy_api_uri": anubis_api_uri})
 })
-
-
-/**
- * A policy for a resource
- * @typedef {object} Policy
- * @property {string} id.required - The id of the policy
- * @property {array<string>} actorType.required - The subject of the policy 
- * @property {array<string>} mode.required - The mode of the policy
- */
-
-/**
-* A protected resource
-* @typedef {object} Resource
-* @property {string} id.required - The id of the resource
-* @property {array<Policy>} policies.required - The policies that apply to the resource
-*/
-
-/**
-* Set of resources by a user
-* @typedef {object} UserResources
-* @property {string} user.required - The id of the user
-* @property {array<Resource>} resources.required - The resources owned by the user
-*/
 
 /**
  * GET /user/policies/
@@ -298,7 +302,8 @@ app.get('/user/policies/', async(req, res) => {
  * @param {UserResources} request.body.required - The policies to be stored in the middleware network - application/json
  * @param {string} fiware-Service.header - fiware service (only for private mode)
  * @param {string} fiware-Servicepath.header - fiware service path (only for private mode)
- * @return 200
+ * @return 200 - Ok
+ * @return 400 - Failed
  * @tags User
  */
 app.post('/mobile/policies', async(req, res) => {
@@ -369,7 +374,8 @@ app.post('/mobile/policies', async(req, res) => {
  * @param {string} resourceId.path.required - The resourceId provided
  * @param {string} fiware-Service.header - fiware service (only for private mode)
  * @param {string} fiware-Servicepath.header - fiware service path (only for private mode)
- * @return 200
+ * @return 200 - Ok
+ * @return 400 - Failed
  * @tags Resource
  */
 app.post('/resource/:resourceId/provide', async(req, res) => {
@@ -412,7 +418,8 @@ app.post('/resource/:resourceId/provide', async(req, res) => {
  * @param {string} resourceId.path.required - The resourceId checked
  * @param {string} fiware-Service.header - fiware service (only for private mode)
  * @param {string} fiware-Servicepath.header - fiware service path (only for private mode)
- * @return 200
+ * @return 200 - Ok
+ * @return 400 - Failed
  * @tags Resource
  */
 app.get('/resource/:resourceId/exists', async(req, res) => {
@@ -458,7 +465,8 @@ app.get('/resource/:resourceId/exists', async(req, res) => {
  * @param {string} resourceId.path.required - The resourceId provided
  * @param {string} fiware-Service.header - fiware service (required only in public mode)
  * @param {string} fiware-Servicepath.header - fiware service path (required only in public mode)
- * @return 200
+ * @return 200 - Ok
+ * @return 400 - Failed
  * @tags Resource
  */
 app.post('/resource/:resourceId/subscribe', async(req, res) => {
@@ -584,7 +592,8 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
  * @param {string} policyId.path.required - The policyId of the new policy
  * @param {string} fiware-Service.header - fiware service (required only in private mode)
  * @param {string} fiware-Servicepath.header - fiware service path (required only in private mode)
- * @return 200
+ * @return 200 - Ok
+ * @return 400 - Failed
  * @tags Resource
  */
 app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
@@ -638,7 +647,8 @@ app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
  * @param {string} policyId.path.required - The policyId of the policy updated
  * @param {string} fiware-Service.header - fiware service (required only in private mode)
  * @param {string} fiware-Servicepath.header - fiware service path (required only in private mode)
- * @return 200
+ * @return 200 - Ok
+ * @return 400 - Failed
  * @tags Resource
  */
 app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
@@ -692,7 +702,8 @@ app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
  * @param {string} policyId.path.required - The policyId of the policy deleted
  * @param {string} fiware-Service.header - fiware service (required only in private mode)
  * @param {string} fiware-Servicepath.header - fiware service path (required only in private mode)
- * @return 200
+ * @return 200 - Ok
+ * @return 400 - Failed
  * @tags Resource
  */
 app.delete('/resource/:resourceId/policy/:policyId', async(req, res) => {

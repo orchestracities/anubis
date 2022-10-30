@@ -13,11 +13,11 @@ Welcome to Anubis!
 
 ## What is the project about?
 
-<img src="docs/logo.jpg" alt="Anubis" style="float: left; margin-right: 10px;"
-width="200"/> Anubis is a flexible Policy Enforcement solution
+Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
-In short we are dealing with policy portability :)  What do you mean by that?
+<img src="docs/logo.jpg" alt="Anubis" style="float: left; margin-right: 10px;"
+width="200"/> In short we are dealing with policy portability :)  What do you mean by that?
 
 Let's think of a user that register some data in platform A.
 To control who can access his data he develops a set of policies.
