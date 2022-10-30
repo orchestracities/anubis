@@ -405,7 +405,8 @@ Error Set:
 
 As of today, Anubis introduces an average overhead of 69msec,
 while this is not a bad number, it's not impressive. Still
-there is a very good news, we know how to improve :) See #14.
+there is a very good news, we know how to improve :) See
+[#14](https://github.com/orchestracities/anubis/issues/14).
 
 ## Test rego
 

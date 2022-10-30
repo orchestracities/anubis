@@ -67,13 +67,13 @@ system for souls :)
 In the design and development of Anubis we tried to leverage different
 state-of-the-art solutions and standards:
 
-- [[W3C WAC](https://solid.github.io/web-access-control-spec/), one of the
+- [W3C WAC](https://solid.github.io/web-access-control-spec/), one of the
   reference vocabularies for expressing access control policies over web
   resources.
 - [W3C ODRL](https://www.w3.org/TR/odrl-model/), a policy expression language
   that allows representing statements about the usage of
   content and services.
-- [OAUTH2](https://oauth.net/2/)) and [OIDC](https://openid.net/connect/)
+- [OAUTH2](https://oauth.net/2/) and [OIDC](https://openid.net/connect/)
   the today reference protocols for authentication.
 - [OPA](https://www.openpolicyagent.org/) the state of the art solution
   for cloud native policy evaluation (not necessarily applied to access
@@ -209,21 +209,21 @@ There are two distribution modalities:
 - *public*, i.e. when the different middleware belong to different
   organisations in the public internet. In this case:
 
-  - resources are considered to be univocally identifiable (if they have
-    the same id they are the same resource);
+    - resources are considered to be univocally identifiable (if they have
+      the same id they are the same resource);
 
-  - only user specific policies are distributed;
+    - only user specific policies are distributed;
 
-  - only resource specific policies are distributed.
+    - only resource specific policies are distributed.
 
 - *private*, i.e. when the different middleware belong to the same
   organisation. In this case:
 
-  - resources are considered to be univocally identifiable only within the same
-    service and service path;
+    - resources are considered to be univocally identifiable only within the same
+      service and service path;
 
-  - all policies are distributed (including the ones for roles and groups and
-    `*` and `default` resource policies).
+    - all policies are distributed (including the ones for roles and groups and
+      `*` and `default` resource policies).
 
 In the public modality, subscribers are required to define the service for
 which they subscribe on a certain resource. This guarantees that policies
