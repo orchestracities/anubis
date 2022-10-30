@@ -1,5 +1,5 @@
 import express from "express"
-import expressOasGenerator from 'express-oas-generator'
+import expressJSDocSwagger from 'express-jsdoc-swagger'
 import bp from "body-parser"
 import { createLibp2p } from 'libp2p'
 import { TCP } from '@libp2p/tcp'
@@ -23,6 +23,8 @@ import { Multiaddr } from "@multiformats/multiaddr";
 import dns from "dns/promises";
 import cors from 'cors';
 import logger from 'logops';
+import path from 'path';
+import {fileURLToPath} from 'url';
 
 //TODO: set-up a code linter (see the configuration-api one)
 //TODO: set-up some unit testing
@@ -46,10 +48,44 @@ if(listen_address.includes("dnsaddr") && options.host != 'localhost') {
   listen_ma = new Multiaddr(listen_ma.toString().replace(options.host, lookup.address).replace("dnsaddr", "ip4"))
 }
 
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
+const openApiOptions = {
+  info: {
+    version: '0.6.0-dev',
+    title: 'Policy Distribution Middleware',
+    description: 'This API enables the distributed management of policies for Anubis',
+    license: {
+      name: 'Apache License v2',
+    },
+  },
+  baseDir: __dirname,
+  // Glob pattern to find your jsdoc files (multiple patterns can be added in an array)
+  filesPattern: '*.js',
+  // URL where SwaggerUI will be rendered
+  swaggerUIPath: '/docs',
+  // Expose OpenAPI UI
+  exposeSwaggerUI: true,
+  // Expose Open API JSON Docs documentation in `apiDocsPath` path.
+  exposeApiDocs: true,
+  // Open API JSON Docs endpoint.
+  apiDocsPath: '/api-spec/v3',
+  // Set non-required fields as nullable by default
+  notRequiredAsNullable: false,
+  // You can customize your UI options.
+  // you can extend swagger-ui-express config. You can checkout an example of this
+  // in the `example/configuration/swaggerOptions.js`
+  swaggerUiOptions: {},
+  // multiple option in case you want more that one instance
+  multiple: true,
+};
+
 // Setting up Node app
 var app = express()
 // TODO: check if it is possible to improve auto generated openapi specs
-expressOasGenerator.handleResponses(app, {})
+expressJSDocSwagger(app)(openApiOptions);
 app.use(cors())
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
@@ -88,13 +124,50 @@ const node = await createLibp2p({
   }
 })
 
-// Endpoint to retrieve node metadata
+
+/**
+ * GET /metadata
+ * @summary The metadata specific to the middleware node
+ * @return {object} 200 - metadata response
+ * @tags Metadata
+ */
 app.get('/metadata', async(req, res) => {
   res.json({"policy_api_uri": anubis_api_uri})
 })
 
-// Endpoint for receiving resources from the mobile app
-app.get('/mobile/policies/', async(req, res) => {
+
+/**
+ * A policy for a resource
+ * @typedef {object} Policy
+ * @property {string} id.required - The id of the policy
+ * @property {array<string>} actorType.required - The subject of the policy 
+ * @property {array<string>} mode.required - The mode of the policy
+ */
+
+/**
+* A protected resource
+* @typedef {object} Resource
+* @property {string} id.required - The id of the resource
+* @property {array<Policy>} policies.required - The policies that apply to the resource
+*/
+
+/**
+* Set of resources by a user
+* @typedef {object} UserResources
+* @property {string} user.required - The id of the user
+* @property {array<Resource>} resources.required - The resources owned by the user
+*/
+
+/**
+ * GET /user/policies/
+ * @summary Retrieves all the policies linked to resources owned by a given user
+ * @param {string} user.header.required - user for which resource policies are retrieved
+ * @param {string} fiware-Service.header - fiware service (only for private mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (only for private mode)
+ * @return {UserResources} 200 - return all policies of a given resource owner
+ * @tags User
+ */
+app.get('/user/policies/', async(req, res) => {
   var user = req.get('user')
 
   // if we are in mode public we should not get any of these.
@@ -219,7 +292,15 @@ app.get('/mobile/policies/', async(req, res) => {
   res.json(responseData)
 })
 
-// Endpoint for providing a resource from the mobile app
+/**
+ * POST /user/policies/
+ * @summary Updates the policies linked to resources owned by a given user
+ * @param {UserResources} request.body.required - The policies to be stored in the middleware network - application/json
+ * @param {string} fiware-Service.header - fiware service (only for private mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (only for private mode)
+ * @return 200
+ * @tags User
+ */
 app.post('/mobile/policies', async(req, res) => {
   if (!Object.keys(req.body).length) {
    return res.status(400).json({
@@ -282,7 +363,15 @@ app.post('/mobile/policies', async(req, res) => {
   res.end()
 })
 
-// Endpoint for providing a resource
+/**
+ * POST /resource/{resourceId}/provide
+ * @summary Register this middleware as a provider for a given resource
+ * @param {string} resourceId.path.required - The resourceId provided
+ * @param {string} fiware-Service.header - fiware service (only for private mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (only for private mode)
+ * @return 200
+ * @tags Resource
+ */
 app.post('/resource/:resourceId/provide', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
@@ -317,7 +406,15 @@ app.post('/resource/:resourceId/provide', async(req, res) => {
 })
 
 
-// Endpoint to check that a resource is managed by the middleware
+/**
+ * GET /resource/{resourceId}/exists
+ * @summary Checks if there is a provider for this resource
+ * @param {string} resourceId.path.required - The resourceId checked
+ * @param {string} fiware-Service.header - fiware service (only for private mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (only for private mode)
+ * @return 200
+ * @tags Resource
+ */
 app.get('/resource/:resourceId/exists', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
@@ -355,7 +452,15 @@ app.get('/resource/:resourceId/exists', async(req, res) => {
 })
 
 
-// Endpoint for subscribing to a resource topic
+/**
+ * POST /resource/{resourceId}/subscribe
+ * @summary Subscribe this middleware to a given resource
+ * @param {string} resourceId.path.required - The resourceId provided
+ * @param {string} fiware-Service.header - fiware service (required only in public mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (required only in public mode)
+ * @return 200
+ * @tags Resource
+ */
 app.post('/resource/:resourceId/subscribe', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
@@ -472,7 +577,16 @@ app.post('/resource/:resourceId/subscribe', async(req, res) => {
   res.end(`Subscribed to ${resource}`)
 })
 
-// Endpoint when a new policy is created
+/**
+ * POST /resource/{resourceId}/policy/{policyId}
+ * @summary Notify this middleware that a new policy was created for a given resource
+ * @param {string} resourceId.path.required - The resourceId of the resource for which the new policy creation is notified
+ * @param {string} policyId.path.required - The policyId of the new policy
+ * @param {string} fiware-Service.header - fiware service (required only in private mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (required only in private mode)
+ * @return 200
+ * @tags Resource
+ */
 app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
@@ -517,7 +631,16 @@ app.post('/resource/:resourceId/policy/:policyId', async(req, res) => {
   logger.info("Policy message sent: " + message)
 })
 
-// Endpoint when a policy is updated
+/**
+ * PUT /resource/{resourceId}/policy/{policyId}
+ * @summary Notify this middleware that a policy was updated for a given resource
+ * @param {string} resourceId.path.required - The resourceId of the resource for which the policy update is notified
+ * @param {string} policyId.path.required - The policyId of the policy updated
+ * @param {string} fiware-Service.header - fiware service (required only in private mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (required only in private mode)
+ * @return 200
+ * @tags Resource
+ */
 app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
@@ -562,7 +685,16 @@ app.put('/resource/:resourceId/policy/:policyId', async(req, res) => {
   logger.info("Policy message sent: " + message)
 })
 
-// Endpoint when a policy is deleted
+/**
+ * DELETE /resource/{resourceId}/policy/{policyId}
+ * @summary Notify this middleware that a policy was deleted for a given resource
+ * @param {string} resourceId.path.required - The resourceId of the resource for which the policy delete is notified
+ * @param {string} policyId.path.required - The policyId of the policy deleted
+ * @param {string} fiware-Service.header - fiware service (required only in private mode)
+ * @param {string} fiware-Servicepath.header - fiware service path (required only in private mode)
+ * @return 200
+ * @tags Resource
+ */
 app.delete('/resource/:resourceId/policy/:policyId', async(req, res) => {
   if (!req.params.resourceId) {
     return res.status(400).json({
@@ -725,8 +857,6 @@ async function saveConfiguration() {
 }
 
 // Starting server
-expressOasGenerator.handleRequests()
-
 var server = app.listen(server_port, async() => {
 
   await node.start()
