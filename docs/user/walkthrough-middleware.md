@@ -7,7 +7,7 @@ This API enables the distributed management of policies for Anubis
 ### Terms of service
 
 
-**License:** [Apache License v2]()
+**License:** [Apache License v2](https://www.apache.org/licenses/LICENSE-2.0)
 
 ### /metadata
 
@@ -27,7 +27,6 @@ The metadata specific to the middleware node
 | ---- | ----------- |
 | 200 | metadata response |
 
-null
 
 ### /user/policies/
 
@@ -50,7 +49,6 @@ Retrieves all the policies linked to resources owned by a given user
 | ---- | ----------- |
 | 200 | return all policies of a given resource owner |
 
-null
 
 #### POST
 ##### Summary:
@@ -71,7 +69,6 @@ Updates the policies linked to resources owned by a given user
 | 200 | Ok |
 | 400 | Failed |
 
-null
 
 ### /resource/{resourceId}/provide
 
@@ -95,7 +92,6 @@ Register this middleware as a provider for a given resource
 | 200 | Ok |
 | 400 | Failed |
 
-null
 
 ### /resource/{resourceId}/exists
 
@@ -119,7 +115,6 @@ Checks if there is a provider for this resource
 | 200 | Ok |
 | 400 | Failed |
 
-null
 
 ### /resource/{resourceId}/subscribe
 
@@ -143,7 +138,6 @@ Subscribe this middleware to a given resource
 | 200 | Ok |
 | 400 | Failed |
 
-null
 
 ### /resource/{resourceId}/policy/{policyId}
 
@@ -168,7 +162,6 @@ Notify this middleware that a new policy was created for a given resource
 | 200 | Ok |
 | 400 | Failed |
 
-null
 
 #### PUT
 ##### Summary:
@@ -191,7 +184,6 @@ Notify this middleware that a policy was updated for a given resource
 | 200 | Ok |
 | 400 | Failed |
 
-null
 
 #### DELETE
 ##### Summary:
@@ -214,7 +206,6 @@ Notify this middleware that a policy was deleted for a given resource
 | 200 | Ok |
 | 400 | Failed |
 
-null
 
 ### Models
 

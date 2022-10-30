@@ -5,7 +5,7 @@
     "description": "This API enables the distributed management of policies for Anubis",
     "license": {
       "name": "Apache License v2",
-      "url": ""
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
     },
     "termsOfService": "",
     "version": "0.6.0-dev"

@@ -59,7 +59,8 @@ const openApiOptions = {
     description: 'This API enables the distributed management of policies for Anubis',
     license: {
       name: 'Apache License v2',
-    },
+      url: 'https://www.apache.org/licenses/LICENSE-2.0',
+    }
   },
   baseDir: __dirname,
   // Glob pattern to find your jsdoc files (multiple patterns can be added in an array)

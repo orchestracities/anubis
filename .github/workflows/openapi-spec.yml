@@ -30,13 +30,14 @@ jobs:
           openapi-markdown -i open-api-spec/api-manager/openapi.json -o docs/user/walkthrough.md
           sed -i '1 i\
           <!-- markdownlint-disable -->' docs/user/walkthrough.md
-      - name: Generate walktrhough
+      - name: Generate walktrhough middleware
         working-directory: .
         run: |
           npm install -g openapi-markdown
           openapi-markdown -i open-api-spec/middleware/openapi.json -o docs/user/walkthrough-middleware.md
           sed -i '1 i\
           <!-- markdownlint-disable -->' docs/user/walkthrough-middleware.md
+          sed -i '/null/d' docs/user/walkthrough-middleware.md 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
