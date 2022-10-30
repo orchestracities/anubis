@@ -84,7 +84,6 @@ const openApiOptions = {
 
 // Setting up Node app
 var app = express()
-// TODO: check if it is possible to improve auto generated openapi specs
 expressJSDocSwagger(app)(openApiOptions);
 app.use(cors())
 app.use(bp.json())
