@@ -41,12 +41,12 @@ fi
 echo ""
 echo "Can retrieve mobile data from node 2 for user admin@mail.com?"
 echo "==============================================================="
-export response=`curl -s -o /dev/null -w "%{http_code}" --request GET 'http://localhost:8099/mobile/policies' --header 'user: admin@mail.com'`
+export response=`curl -s -o /dev/null -w "%{http_code}" --request GET 'http://localhost:8099/user/policies' --header 'user: admin@mail.com'`
 if [ $response == "200" ]
 then
   echo "PASSED"
 else
-  echo "ERROR: Can't get mobile data"
+  echo "ERROR: Can't get user data"
   exit 1
 fi
 
