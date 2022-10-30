@@ -22,6 +22,7 @@ nav:
       - 'Policies': 'user/policies.md'
       - 'Audit': 'user/audit.md'
       - 'API Walkthrough': 'user/walkthrough.md'
+      - 'Policy Distribuion API Walkthrough': 'user/walkthrough-middleware.md'
   - 'Installation & Administration Manual':
       - 'Introduction': 'admin/index.md'
       - 'Installing Anubis': 'admin/install.md'
