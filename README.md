@@ -239,6 +239,19 @@ To run this demo you'll need to have the following installed:
 
 ### Deployment
 
+To be able to create tenants, the hostname of the token issuer (Keycloak) in
+docker and in your local system, needs to be the same, to ensure that,
+add the following entry in your `/etc/hosts`:
+
+```console
+127.0.0.1       keycloak
+```
+
+> **NOTE**: If you don't want to edit your `/etc/hosts` and you are not
+interested in testing tenant creation and deletion, in the `.env` file replace
+`REACT_APP_OIDC_ISSUER=http://keycloak:8080/realms/default` with
+`REACT_APP_OIDC_ISSUER=http://localhost:8080/realms/default`.
+
 To deploy the demo that includes the Auth API, OPA, Keycloak, and a Context
 Broker, run the following script:
 
@@ -247,6 +260,8 @@ $ source .env
 $ cd scripts
 $ ./run_demo.sh
 ```
+
+You can now login with username `admin@mail.com` and password `admin`.
 
 You can run a script to make a few test API calls. You can run the test
 script with:
