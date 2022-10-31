@@ -19,7 +19,6 @@ Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
 In short we are dealing with policy portability :)  What do you mean by that?
-
 Let's think of a user that register some data in platform A.
 To control who can access his data he develops a set of policies.
 If he moves the data to platform B, most probably he will have to define again
