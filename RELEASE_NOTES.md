@@ -8,6 +8,8 @@
 
 ### Documentation
 
+- Fix logo alignment in README.MD
+
 ### Continuous Integration
 
 ### Technical debt
