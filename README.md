@@ -239,8 +239,9 @@ To run this demo you'll need to have the following installed:
 
 ### Deployment
 
-To be able to create tenants, the hostname of the token issuer (Keycloak) in
-docker and in your local system, needs to be the same, to ensure that,
+To enable tenant creation in both Anubis and Keycloak, for obvious security
+reasons, the hostname of the token issuer (Keycloak) in the docker services
+and in your browser, needs to be the same. To ensure that,
 add the following entry in your `/etc/hosts`:
 
 ```console
