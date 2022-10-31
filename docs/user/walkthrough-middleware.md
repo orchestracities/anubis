@@ -2,7 +2,7 @@
 # Policy Distribution Middleware
 This API enables the distributed management of policies for Anubis
 
-## Version: 0.6.0
+## Version: 0.7.0-dev
 
 
 
