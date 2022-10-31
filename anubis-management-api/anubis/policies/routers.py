@@ -214,6 +214,8 @@ policies_not_json_responses = {
     },
 }
 
+# TODO if no token, we should return policies for foaf:Agent!
+
 
 @router.get("/me",
             response_model=List[schemas.Policy],
@@ -242,9 +244,8 @@ def my_policies(
       - Agent Type
       - Resource
       - Resource Type
-    In case an JWT token is passed over, user id, roles and groups are used to
-    filter policies that are only valid for him.
-    # TODO if no token, we should return policies for foaf:Agent!
+    Requires a JWT token: contained user id, roles and groups are used to
+    filter policies that are only valid for the user.
     To return policies from a service path tree, you can used the wildchar "#".
     For example, using `/Path1/#` you will obtain policies for all subpaths,
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
@@ -325,8 +326,8 @@ def read_policies(
       - Agent Type
       - Resource
       - Resource Type
-    In case an JWT token is passed over, user id, roles and groups are used to
-    filter policies that are only valid for him. Unless the user is super admin or tenant admin.
+    In case an JWT token is passed over, user id is used to filter policies
+    where the owner is user id. Unless the user is super admin or tenant admin.
     To return policies from a service path tree, you can used the wildchar "#".
     For example, using `/Path1/#` you will obtain policies for all subpaths,
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
@@ -340,7 +341,6 @@ def read_policies(
     elif user_info and user_info['email']:
         owner = user_info['email']
     # we don't filter policies in case super admin or tenant admin
-    # TODO CHANGE LOGIC IT SHOULD LIST POLICIES I CONTROL
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,

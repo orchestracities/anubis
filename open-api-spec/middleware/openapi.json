@@ -1,94 +1,398 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "policy-governance-middleware",
-    "version": "1.0.0",
+    "title": "Policy Distribution Middleware",
+    "description": "This API enables the distributed management of policies for Anubis",
     "license": {
-      "name": "Apache License v2"
+      "name": "Apache License v2",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
     },
-    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nThe policy governance middleware for Anubis"
+    "termsOfService": "",
+    "version": "0.6.0"
+  },
+  "servers": [],
+  "components": {
+    "schemas": {
+      "Metadata": {
+        "description": "A metadata entry",
+        "type": "object",
+        "properties": {
+          "policy_api_uri": {
+            "description": "Anubis API endpoint for this middleware",
+            "type": "string"
+          }
+        }
+      },
+      "Policy": {
+        "description": "A policy for a resource",
+        "required": [
+          "id",
+          "actorType",
+          "mode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The id of the policy",
+            "type": "string"
+          },
+          "actorType": {
+            "description": "The subject of the policy",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mode": {
+            "description": "The mode of the policy",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Resource": {
+        "description": "A protected resource",
+        "required": [
+          "id",
+          "policies"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The id of the resource",
+            "type": "string"
+          },
+          "policies": {
+            "description": "The policies that apply to the resource",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Policy"
+            }
+          }
+        }
+      },
+      "UserResources": {
+        "description": "Set of resources by a user",
+        "required": [
+          "user",
+          "resources"
+        ],
+        "type": "object",
+        "properties": {
+          "user": {
+            "description": "The id of the user",
+            "type": "string"
+          },
+          "resources": {
+            "description": "The resources owned by the user",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            }
+          }
+        }
+      }
+    }
   },
   "paths": {
     "/metadata": {
       "get": {
-        "summary": "/metadata",
-        "responses": {},
-        "tags": []
+        "deprecated": false,
+        "summary": "The metadata specific to the middleware node",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "metadata response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Metadata"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "Metadata"
+        ]
       }
     },
-    "/mobile/policies/": {
+    "/user/policies/": {
       "get": {
-        "summary": "/mobile/policies/",
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/mobile/policies": {
+        "deprecated": false,
+        "summary": "Retrieves all the policies linked to resources owned by a given user",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "return all policies of a given resource owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResources"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user",
+            "in": "header",
+            "description": "user for which resource policies are retrieved",
+            "required": true,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (only for private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (only for private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "User"
+        ]
+      },
       "post": {
-        "summary": "/mobile/policies",
-        "responses": {},
-        "tags": []
+        "deprecated": false,
+        "summary": "Updates the policies linked to resources owned by a given user",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
+        },
+        "parameters": [
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (only for private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (only for private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserResources"
+              }
+            }
+          },
+          "description": "The policies to be stored in the middleware network",
+          "required": true
+        }
       }
     },
     "/resource/{resourceId}/provide": {
       "post": {
-        "summary": "/resource/{resourceId}/provide",
+        "deprecated": false,
+        "summary": "Register this middleware as a provider for a given resource",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
+        },
         "parameters": [
           {
             "name": "resourceId",
             "in": "path",
+            "description": "The resourceId provided",
             "required": true,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (only for private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (only for private mode)",
+            "required": false,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
           }
         ],
-        "responses": {},
-        "tags": []
+        "tags": [
+          "Resource"
+        ]
       }
     },
     "/resource/{resourceId}/exists": {
       "get": {
-        "summary": "/resource/{resourceId}/exists",
+        "deprecated": false,
+        "summary": "Checks if there is a provider for this resource",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
+        },
         "parameters": [
           {
             "name": "resourceId",
             "in": "path",
+            "description": "The resourceId checked",
             "required": true,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (only for private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (only for private mode)",
+            "required": false,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
           }
         ],
-        "responses": {},
-        "tags": []
+        "tags": [
+          "Resource"
+        ]
       }
     },
     "/resource/{resourceId}/subscribe": {
       "post": {
-        "summary": "/resource/{resourceId}/subscribe",
+        "deprecated": false,
+        "summary": "Subscribe this middleware to a given resource",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
+        },
         "parameters": [
           {
             "name": "resourceId",
             "in": "path",
+            "description": "The resourceId provided",
             "required": true,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (required only in public mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (required only in public mode)",
+            "required": false,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
           }
         ],
-        "responses": {},
-        "tags": []
+        "tags": [
+          "Resource"
+        ]
       }
     },
     "/resource/{resourceId}/policy/{policyId}": {
       "post": {
-        "summary": "/resource/{resourceId}/policy/{policyId}",
+        "deprecated": false,
+        "summary": "Notify this middleware that a new policy was created for a given resource",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
+        },
         "parameters": [
           {
             "name": "resourceId",
             "in": "path",
+            "description": "The resourceId of the resource for which the new policy creation is notified",
             "required": true,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
@@ -96,22 +400,57 @@
           {
             "name": "policyId",
             "in": "path",
+            "description": "The policyId of the new policy",
             "required": true,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (required only in private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (required only in private mode)",
+            "required": false,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
           }
         ],
-        "responses": {},
-        "tags": []
+        "tags": [
+          "Resource"
+        ]
       },
       "put": {
-        "summary": "/resource/{resourceId}/policy/{policyId}",
+        "deprecated": false,
+        "summary": "Notify this middleware that a policy was updated for a given resource",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
+        },
         "parameters": [
           {
             "name": "resourceId",
             "in": "path",
+            "description": "The resourceId of the resource for which the policy update is notified",
             "required": true,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
@@ -119,22 +458,57 @@
           {
             "name": "policyId",
             "in": "path",
+            "description": "The policyId of the policy updated",
             "required": true,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (required only in private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (required only in private mode)",
+            "required": false,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
           }
         ],
-        "responses": {},
-        "tags": []
+        "tags": [
+          "Resource"
+        ]
       },
       "delete": {
-        "summary": "/resource/{resourceId}/policy/{policyId}",
+        "deprecated": false,
+        "summary": "Notify this middleware that a policy was deleted for a given resource",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Failed"
+          }
+        },
         "parameters": [
           {
             "name": "resourceId",
             "in": "path",
+            "description": "The resourceId of the resource for which the policy delete is notified",
             "required": true,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
@@ -142,16 +516,52 @@
           {
             "name": "policyId",
             "in": "path",
+            "description": "The policyId of the policy deleted",
             "required": true,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Service",
+            "in": "header",
+            "description": "fiware service (required only in private mode)",
+            "required": false,
+            "deprecated": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fiware-Servicepath",
+            "in": "header",
+            "description": "fiware service path (required only in private mode)",
+            "required": false,
+            "deprecated": false,
             "schema": {
               "type": "string"
             }
           }
         ],
-        "responses": {},
-        "tags": []
+        "tags": [
+          "Resource"
+        ]
       }
     }
   },
-  "tags": []
+  "tags": [
+    {
+      "name": "Metadata",
+      "description": ""
+    },
+    {
+      "name": "Resource",
+      "description": ""
+    },
+    {
+      "name": "User",
+      "description": ""
+    }
+  ]
 }

@@ -13,7 +13,8 @@ Welcome to Anubis!
 
 ## What is the project about?
 
-Anubis is a flexible Policy Enforcement solution
+<img src="docs/logo.jpg" alt="Anubis" style="float: left; margin-right: 10px;"
+width="200"/> Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
 In short we are dealing with policy portability :)  What do you mean by that?
@@ -157,20 +158,20 @@ There are two distribution modalities:
 - *public*, i.e. when the different middleware belong to different
   organisations in the public internet. In this case:
 
-  - resources are considered to be univocally identifiable (if they have
+    - resources are considered to be univocally identifiable (if they have
     the same id they are the same resource);
 
-  - only user specific policies are distributed;
+    - only user specific policies are distributed;
 
-  - only resource specific policies are distributed.
+    - only resource specific policies are distributed.
 
 - *private*, i.e. when the different middleware belong to the same
   organisation. In this case:
 
-  - resources are considered to be univocally identifiable only within the same
+    - resources are considered to be univocally identifiable only within the same
     service and service path;
 
-  - all policies are distributed (including the ones for roles and groups and
+    - all policies are distributed (including the ones for roles and groups and
     `*` and `default` resource policies).
 
 ## Policies
@@ -238,6 +239,19 @@ To run this demo you'll need to have the following installed:
 
 ### Deployment
 
+To be able to create tenants, the hostname of the token issuer (Keycloak) in
+docker and in your local system, needs to be the same, to ensure that,
+add the following entry in your `/etc/hosts`:
+
+```console
+127.0.0.1       keycloak
+```
+
+> **NOTE**: If you don't want to edit your `/etc/hosts` and you are not
+interested in testing tenant creation and deletion, in the `.env` file replace
+`REACT_APP_OIDC_ISSUER=http://keycloak:8080/realms/default` with
+`REACT_APP_OIDC_ISSUER=http://localhost:8080/realms/default`.
+
 To deploy the demo that includes the Auth API, OPA, Keycloak, and a Context
 Broker, run the following script:
 
@@ -246,6 +260,8 @@ $ source .env
 $ cd scripts
 $ ./run_demo.sh
 ```
+
+You can now login with username `admin@mail.com` and password `admin`.
 
 You can run a script to make a few test API calls. You can run the test
 script with:
@@ -404,7 +420,8 @@ Error Set:
 
 As of today, Anubis introduces an average overhead of 69msec,
 while this is not a bad number, it's not impressive. Still
-there is a very good news, we know how to improve :) See #14.
+there is a very good news, we know how to improve :) See
+[#14](https://github.com/orchestracities/anubis/issues/14).
 
 ## Test rego
 

@@ -3,7 +3,7 @@
   "info": {
     "title": "Anubis",
     "description": "Anubis is a flexible Policy Enforcement solution that makes easier to reuse security policies across different services, assuming the policies entail the same resource.",
-    "version": "0.6.0-dev"
+    "version": "0.6.0"
   },
   "paths": {
     "/v1/tenants/service_paths": {
@@ -601,7 +601,7 @@
           "policies"
         ],
         "summary": "List policies for a given Tenant and Service Path that apply to me",
-        "description": "Policies can be filtered by:\n  - Access Mode\n  - Agent\n  - Agent Type\n  - Resource\n  - Resource Type\nIn case an JWT token is passed over, user id, roles and groups are used to\nfilter policies that are only valid for him.\n# TODO if no token, we should return policies for foaf:Agent!\nTo return policies from a service path tree, you can used the wildchar \"#\".\nFor example, using `/Path1/#` you will obtain policies for all subpaths,\nsuch as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.",
+        "description": "Policies can be filtered by:\n  - Access Mode\n  - Agent\n  - Agent Type\n  - Resource\n  - Resource Type\nRequires a JWT token: contained user id, roles and groups are used to\nfilter policies that are only valid for the user.\nTo return policies from a service path tree, you can used the wildchar \"#\".\nFor example, using `/Path1/#` you will obtain policies for all subpaths,\nsuch as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.",
         "operationId": "my_policies_v1_policies_me_get",
         "parameters": [
           {
@@ -757,7 +757,7 @@
           "policies"
         ],
         "summary": "List policies for a given Tenant and Service Path",
-        "description": "Policies can be filtered by:\n  - Access Mode\n  - Agent\n  - Agent Type\n  - Resource\n  - Resource Type\nIn case an JWT token is passed over, user id, roles and groups are used to\nfilter policies that are only valid for him. Unless the user is super admin or tenant admin.\nTo return policies from a service path tree, you can used the wildchar \"#\".\nFor example, using `/Path1/#` you will obtain policies for all subpaths,\nsuch as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.",
+        "description": "Policies can be filtered by:\n  - Access Mode\n  - Agent\n  - Agent Type\n  - Resource\n  - Resource Type\nIn case an JWT token is passed over, user id is used to filter policies\nwhere the owner is user id. Unless the user is super admin or tenant admin.\nTo return policies from a service path tree, you can used the wildchar \"#\".\nFor example, using `/Path1/#` you will obtain policies for all subpaths,\nsuch as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.",
         "operationId": "read_policies_v1_policies__get",
         "parameters": [
           {

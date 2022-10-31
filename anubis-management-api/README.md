@@ -47,9 +47,9 @@ The API is composed by three main paths:
     and service paths). Under the hood, this path also creates and stores
     information linked to policies:
 
-  * Agents (i.e. user or user groups definitions);
+    * Agents (i.e. user or user groups definitions);
 
-  * Modes (i.e. type of action requested on the resource);
+    * Modes (i.e. type of action requested on the resource);
 
 * `/v1/audits` providing audit logs, i.e. reports of policies' evaluations.
 
