@@ -13,7 +13,7 @@ Welcome to Anubis!
 
 ## What is the project about?
 
-<img src="docs/logo.jpg" alt="Anubis" align="left" alt="Anubis"  width="200" height="300"/>
+<img src="docs/logo.jpg" alt="Anubis" align="left" alt="Anubis" width="200" height="300"/>
 Anubis is a flexible Policy Enforcement solution
 that makes easier to reuse security policies across different services,
 assuming the policies entail the same resource.
