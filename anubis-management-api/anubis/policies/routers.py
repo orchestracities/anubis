@@ -50,7 +50,7 @@ def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @router.get("/agent-types",
             response_model=List[schemas.AgentType],
             summary="List supported Agent Types")
-def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_agent_types(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     types = operations.get_agent_types(db, skip=skip, limit=limit)
     return types
 
