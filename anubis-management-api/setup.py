@@ -54,11 +54,11 @@ setup(
         'opa-python-client==1.3.3',
         'pg8000==1.29.1',
         'pydantic==1.9.0',
-        'pyjwt==2.3.0',
+        'pyjwt==2.4.0',
         "pyparsing==3.0.8; python_full_version >= '3.6.8'",
         'pyyaml==6.0',
         'rdflib==6.1.1',
-        "requests==2.27.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
+        "requests==2.28.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
         'rfc3987==1.3.8',
         "scramp==1.4.1; python_version >= '3.6'",
         "setuptools==62.1.0; python_version >= '3.7'",
@@ -70,7 +70,7 @@ setup(
         'urllib3==1.26.9',
         'user-agent==0.1.10',
         'uuid==1.30',
-        'uvicorn==0.17.6'],
+        'uvicorn==0.18.1'],
     # Optional
     extras_require={"dev": []},  # Optional
     dependency_links=[],

@@ -18,9 +18,9 @@ jobs:
         python-version: ['3.9']
         database-type: ['sqlite', 'postgres']
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pipenv'
@@ -44,7 +44,7 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Setup demo
         working-directory: ./scripts
         run: |
@@ -68,7 +68,7 @@ jobs:
   e2e-middleware:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Setup Middleware Demo
         working-directory: ./scripts
         run: |
@@ -80,7 +80,7 @@ jobs:
   # opa:
   #   runs-on: ubuntu-latest
   #   steps:
-  #     - uses: actions/checkout@v1
+  #     - uses: actions/checkout@v3
   #     - name: Test Rego
   #       working-directory: ./scripts
   #       run: |
