@@ -12,6 +12,9 @@
 
 ### Continuous Integration
 
+- update libraries version in setup.py
+- update github action versions
+
 ### Technical debt
 
 ## 0.6
