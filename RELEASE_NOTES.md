@@ -6,14 +6,16 @@
 
 ### Bug fixes
 
+- Fix method name for retrieving agent types
+
 ### Documentation
 
 - Fix logo alignment in README.MD
 
 ### Continuous Integration
 
-- update libraries version in setup.py
-- update github action versions
+- Update libraries version in setup.py
+- Update github action versions
 
 ### Technical debt
 
