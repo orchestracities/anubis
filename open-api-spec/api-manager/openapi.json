@@ -541,7 +541,7 @@
           "policies"
         ],
         "summary": "List supported Agent Types",
-        "operationId": "read_modes_v1_policies_agent_types_get",
+        "operationId": "read_agent_types_v1_policies_agent_types_get",
         "parameters": [
           {
             "required": false,
@@ -570,7 +570,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Modes V1 Policies Agent Types Get",
+                  "title": "Response Read Agent Types V1 Policies Agent Types Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/AgentType"
