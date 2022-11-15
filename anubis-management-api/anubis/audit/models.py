@@ -28,3 +28,7 @@ class AuditLog(Base):
 
 def init_db():
     Base.metadata.create_all(bind=autocommit_engine)
+
+
+def drop_db():
+    Base.metadata.drop_all(bind=autocommit_engine)
