@@ -67,6 +67,10 @@ def init_db():
     Base.metadata.create_all(bind=autocommit_engine)
 
 
+def drop_db():
+    Base.metadata.drop_all(bind=autocommit_engine)
+
+
 @event.listens_for(AgentType.__table__, 'after_create')
 def insert_initial_agent_type_values(target, connection, **kw):
     db = SessionLocal()

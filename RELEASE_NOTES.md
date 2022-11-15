@@ -4,6 +4,8 @@
 
 ### New features
 
+- Add drop all for models
+
 ### Bug fixes
 
 - Fix method name for retrieving agent types
