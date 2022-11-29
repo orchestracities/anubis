@@ -16,7 +16,7 @@ wget https://raw.githubusercontent.com/orchestracities/keycloak-scripts/master/r
 cd ..
 
 echo "Deploying services via Docker Compose..."
-docker-compose up -d
+docker compose up -d
 
 wait=0
 HOST="http://localhost:8080"
@@ -30,7 +30,7 @@ done
 
 if [ $wait -gt 60 ]; then
   echo "timeout while waiting services to be ready"
-  docker-compose down -v
+  docker compose down -v
   exit -1
 fi
 
@@ -45,7 +45,7 @@ done
 
 if [ $wait -gt 60 ]; then
   echo "timeout while waiting services to be ready"
-  docker-compose down -v
+  docker compose down -v
   exit -1
 fi
 

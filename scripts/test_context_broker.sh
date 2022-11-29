@@ -51,6 +51,35 @@ fi
 
 echo ""
 
+echo "Can I create an entity in ServicePath / for Tenant1 without a token?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8000/v2/entities' \
+--header 'Content: application/json' \
+--header 'fiware-Service: Tenant1' \
+--header 'fiware-ServicePath: /' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "id": "urn:ngsi-ld:AirQualityObserved:demo",
+  "type": "AirQualityObserved",
+  "temperature": {
+    "type": "Number",
+    "value": 12.2,
+    "metadata": {}
+  }
+}'`
+if [ $response == "403" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can create entity"
+  exit 1
+fi
+
+echo ""
+
+
+echo ""
+
 echo "Can I create an entity in ServicePath / for Tenant1?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" --request POST 'http://localhost:8000/v2/entities' \
