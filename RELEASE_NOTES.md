@@ -9,6 +9,7 @@
 ### Bug fixes
 
 - Fix method name for retrieving agent types
+- Updated user policy path (#183)
 
 ### Documentation
 
