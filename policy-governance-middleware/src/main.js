@@ -306,7 +306,7 @@ app.get('/user/policies/', async(req, res) => {
  * @return 400 - Failed
  * @tags User
  */
-app.post('/mobile/policies', async(req, res) => {
+app.post('/user/policies', async(req, res) => {
   if (!Object.keys(req.body).length) {
    return res.status(400).json({
      message: "Request body cannot be empty",
