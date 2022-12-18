@@ -122,6 +122,8 @@ services:
 
   management-ui:
     image: orchestracities/management-ui
+    volumes:
+      - .env:/usr/share/nginx/.env
     ports:
       - "3000:80"
     networks:
