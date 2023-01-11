@@ -7,7 +7,7 @@ services:
       - ./config/envoy/v3.yaml:/etc/envoy/envoy.yaml
       - ./config/opa-service/lua:/etc/envoy/lua
     environment:
-      - loglevel=error
+      - loglevel=debug
     networks:
       - envoymesh
     ports:
@@ -35,6 +35,7 @@ services:
       - KEYCLOACK_ENABLED=True
       - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
       - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
+      - OPA_ENDPOINT=http://ext_authz-opa-service:8181
     ports:
       - "8085:8000"
     volumes:
@@ -58,7 +59,7 @@ services:
       - ./config/opa-service/opa.yaml:/opa.yaml
     command:
       - run
-      - --log-level=error
+      - --log-level=info
       - --server
       - --config-file=/opa.yaml
       - --diagnostic-addr=0.0.0.0:8282
