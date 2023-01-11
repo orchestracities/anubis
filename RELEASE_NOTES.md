@@ -5,6 +5,7 @@
 ### New features
 
 - Add drop all for models
+- Push model for policies
 
 ### Bug fixes
 
