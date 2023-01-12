@@ -636,6 +636,7 @@ def delete_policy(
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_policy = operations.get_policy(db, policy_id=policy_id)
+    db_service_path_id = list(map(so.compute_id, db_service_path))
     if not db_policy:
         raise HTTPException(status_code=404, detail="Policy not found")
     if db_service_path[0].id != db_policy.service_path_id:
