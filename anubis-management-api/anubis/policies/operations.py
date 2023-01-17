@@ -22,7 +22,7 @@ def get_policies_by_service_path(
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = -1,
+        limit: int = 10000,
         user_info: dict = None,
         owner: str = None):
     # TODO: filter policy that owner (email based) controls
