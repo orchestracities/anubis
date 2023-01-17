@@ -50,6 +50,7 @@ services:
       - AUTH_API_URI=http://policy-api:8000/v1/policies/
       - VALID_ISSUERS=http://keycloak:8080/realms/default
       - VALID_AUDIENCE=ngsi;configuration
+      - GOGC=2000
     ports:
       - "9191:9191"
       - "8282:8282"
@@ -64,9 +65,10 @@ services:
       - --config-file=/opa.yaml
       - --diagnostic-addr=0.0.0.0:8282
       - --set=plugins.envoy_ext_authz_grpc.addr=:9002
-      - /etc/rego/common.rego
-      - /etc/rego/context_broker_policy.rego
-      - /etc/rego/anubis_management_api_policy.rego
+      #- /etc/rego/common.rego
+      #- /etc/rego/context_broker_policy.rego
+      #- /etc/rego/anubis_management_api_policy.rego
+      - /etc/rego/nop.rego
       - /etc/rego/audit.rego
     networks:
       - envoymesh
