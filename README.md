@@ -336,6 +336,7 @@ The following environment variables are used by the rego policy for
 configuration (see the [docker-compose file](docker-compose.yaml)):
 
 - `AUTH_API_URI`: Specifies the URI of the auth management API.
+- `OPA_ENDPOINT`: Specifies the `URI` of the OPA API.
 - `VALID_ISSUERS`: Specifies the valid issuers of the auth tokens
   (coming from Keycloak). This can be a list of issuers, separated by `;`.
 - `VALID_AUDIENCE`: The valid aud value for token verification.
@@ -430,7 +431,7 @@ PASSED
 
 As of today, Anubis introduces an average overhead of ~35msec to upstream
 service requests, and supports up to 130rps. Tests have been run with 4 CPUs /
-8GB RAM docker setup on an MacBook Pro 14. Compared to previous release, 
+8GB RAM docker setup on an MacBook Pro 14. Compared to previous release,
 authorization overhead improvement is ~1.9x and rps improvement is 2.6x
 (mainly thanks to [#14](https://github.com/orchestracities/anubis/issues/14)).
 
