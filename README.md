@@ -458,7 +458,7 @@ Error Set:
 
 This basically means that basic Envoy + OPA set-up introduces and overhead of
 ~13msec, and that the rest of the overhead (~22msec) is due to policy
-evaluation. It could be that we could further optimize policies (cf #196).
+evaluation. It could be that we could further optimize policies (cf [#196](https://github.com/orchestracities/anubis/issues/196)).
 
 > NOTE: OPA is written in GOLANG, and policy evaluation performance may be
 heavily affected by [Go Garbage Collector](https://tip.golang.org/doc/gc-guide).
