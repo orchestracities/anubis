@@ -74,7 +74,7 @@ services:
   opa_init_script:
     image: alpine:3.17.1
     environment:
-      - AUTH_API_URI=http://policy-api:8000/v1/policies/
+      - AUTH_API_URI=http://policy-api:8000
       - OPA_ENDPOINT=http://ext_authz-opa-service:8181
     volumes:
       - ./scripts/init_opa.sh:/etc/init_opa.sh
