@@ -65,10 +65,10 @@ services:
       - --config-file=/opa.yaml
       - --diagnostic-addr=0.0.0.0:8282
       - --set=plugins.envoy_ext_authz_grpc.addr=:9002
-      #- /etc/rego/common.rego
-      #- /etc/rego/context_broker_policy.rego
-      #- /etc/rego/anubis_management_api_policy.rego
-      - /etc/rego/nop.rego
+      - /etc/rego/common.rego
+      - /etc/rego/context_broker_policy.rego
+      - /etc/rego/anubis_management_api_policy.rego
+      #- /etc/rego/nop.rego
       - /etc/rego/audit.rego
     networks:
       - envoymesh
