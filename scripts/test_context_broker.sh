@@ -181,14 +181,25 @@ else
   exit 1
 fi
 
-echo "Are the policies present in OPA?"
+echo "Are the policies of Tenant2 present in OPA?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" 'http://localhost:8181/v1/data/Tenant2/policies'`
 if [ $response == "200" ]
 then
   echo "PASSED"
 else
-  echo "ERROR: Policies haven't been pushed to OPA"
+  echo "ERROR: Policies of Tenant2 haven't been pushed to OPA"
+  exit 1
+fi
+
+echo "Are the policies of Tenant1 present in OPA?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" 'http://localhost:8181/v1/data/Tenant1/policies'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Policies of Tenant1 haven't been pushed to OPA"
   exit 1
 fi
 

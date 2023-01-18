@@ -509,24 +509,7 @@ def create_policy(
                 urllib.parse.quote(
                     policy.access_to)))
         logging.error(e)
-    if os.environ.get('OPA_ENDPOINT'):
-        opa_url = os.environ.get('OPA_ENDPOINT', 'http://127.0.0.1:8181')
-        db_policies = operations.get_policies_by_service_path(
-            db,
-            tenant=fiware_service,
-            service_path_id=db_service_path_id)
-        policies = r_serialize(db, db_policies)
-        policies = json.loads(policies)
-        res = requests.put(
-            opa_url +
-            "/v1/data/" +
-            fiware_service +
-            "/policies",
-            json=policies)
-        if res.status_code != 204:
-            raise HTTPException(
-                status_code=res.status_code,
-                detail="Failed to update policies in OPA")
+    update_opa_policies(db, fiware_service, db_service_path_id)
     return response
 
 
@@ -600,24 +583,7 @@ def update(
                 urllib.parse.quote(
                     policy.access_to)))
         logging.error(e)
-    if os.environ.get('OPA_ENDPOINT'):
-        opa_url = os.environ.get('OPA_ENDPOINT', 'http://127.0.0.1:8181')
-        db_policies = operations.get_policies_by_service_path(
-            db,
-            tenant=fiware_service,
-            service_path_id=db_service_path_id)
-        policies = r_serialize(db, db_policies)
-        policies = json.loads(policies)
-        res = requests.put(
-            opa_url +
-            "/v1/data/" +
-            fiware_service +
-            "/policies",
-            json=policies)
-        if res.status_code != 204:
-            raise HTTPException(
-                status_code=res.status_code,
-                detail="Failed to update policies in OPA")
+    update_opa_policies(db, fiware_service, db_service_path_id)
     return response
 
 
@@ -669,6 +635,11 @@ def delete_policy(
                 urllib.parse.quote(
                     db_policy.access_to)))
         logging.error(e)
+    update_opa_policies(db, fiware_service, db_service_path_id)
+    return response
+
+
+def update_opa_policies(db, fiware_service, db_service_path_id):
     if os.environ.get('OPA_ENDPOINT'):
         opa_url = os.environ.get('OPA_ENDPOINT')
         db_policies = operations.get_policies_by_service_path(
@@ -687,4 +658,3 @@ def delete_policy(
             raise HTTPException(
                 status_code=res.status_code,
                 detail="Failed to update policies in OPA")
-    return response
