@@ -10,14 +10,18 @@ function OBJDEF:context_broker_request(request_handle)
      table.insert(chunks, substring)
   end
   token = decodejwt:decode_jwt(chunks[2])
-  content_type = request_handle:headers():get("content-type")
-  if content_type == "application/json" then
-    local body = request_handle:body()
-    local body_size = body:length()
-    local body_bytes = body:getBytes(0, body_size)
-    local raw_json_text = tostring(body_bytes)
-    lua_value = JSON:decode(raw_json_text)
-    access_to = lua_value.id
+  access_to = nil
+  request_method = request_handle:headers():get(":method")
+  if request_method == "POST" then
+    content_type = request_handle:headers():get("content-type")
+    if content_type == "application/json" then
+      local body = request_handle:body()
+      local body_size = body:length()
+      local body_bytes = body:getBytes(0, body_size)
+      local raw_json_text = tostring(body_bytes)
+      lua_value = JSON:decode(raw_json_text)
+      access_to = lua_value.id
+    end
   end
   request_handle:streamInfo():dynamicMetadata():set("envoy.filters.http.lua", "request.info", {
     request_method = request_handle:headers():get(":method"),
