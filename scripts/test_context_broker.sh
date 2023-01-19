@@ -181,6 +181,8 @@ else
   exit 1
 fi
 
+echo ""
+
 echo "Are the policies of Tenant2 present in OPA?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" 'http://localhost:8181/v1/data/Tenant2/policies'`
@@ -192,6 +194,46 @@ else
   exit 1
 fi
 
+echo ""
+
+echo "Is the number of policies in Tenant2 what we expect?"
+echo "==============================================================="
+export response=`curl -s -X 'GET' 'http://localhost:8181/v1/data/Tenant2/policies'`
+export policies=`echo $response | jq -r '.result.default_role_permissions.Admin | length'`
+if [ $policies == 2 ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: The number of default Admin policies present is not correct, expected 2, but got ${policies}"
+  exit 1
+fi
+export policies=`echo $response | jq -r '.result.default_role_permissions.AuthenticatedAgent | length'`
+if [ $policies == 1 ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: The number of default AuthenticatedAgent policies present is not correct, expected 1, but got ${policies}"
+  exit 1
+fi
+export policies=`echo $response | jq -r '.result.group_permissions.User | length'`
+if [ $policies == 2 ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: The number of group User policies present is not correct, expected 2, but got ${policies}"
+  exit 1
+fi
+export policies=`echo $response | jq -r '.result.role_permissions.Agent | length'`
+if [ $policies == 1 ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: The number of role Agent policies present is not correct, expected 1, but got ${policies}"
+  exit 1
+fi
+
+echo ""
+
 echo "Are the policies of Tenant1 present in OPA?"
 echo "==============================================================="
 export response=`curl -s -o /dev/null -w "%{http_code}" 'http://localhost:8181/v1/data/Tenant1/policies'`
@@ -200,6 +242,28 @@ then
   echo "PASSED"
 else
   echo "ERROR: Policies of Tenant1 haven't been pushed to OPA"
+  exit 1
+fi
+
+echo ""
+
+echo "Is the number of policies in Tenant1 what we expect?"
+echo "==============================================================="
+export response=`curl -s -X 'GET' 'http://localhost:8181/v1/data/Tenant1/policies'`
+export policies=`echo $response | jq -r '.result.role_permissions.AuthenticatedAgent | length'`
+if [ $policies == 8 ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: The number of AuthenticatedAgent policies present is not correct, expected 8, but got ${policies}"
+  exit 1
+fi
+export policies=`echo $response | jq -r '.result.user_permissions."admin@mail.com" | length'`
+if [ $policies == 1 ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: The number of user admin@mail.com policies present is not correct, expected 1, but got ${policies}"
   exit 1
 fi
 
