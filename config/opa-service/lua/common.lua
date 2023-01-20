@@ -4,15 +4,14 @@ local decodejwt = (loadfile "/etc/envoy/lua/decodejwt.lua")()
 local JSON = (loadfile "/etc/envoy/lua/JSON.lua")()
 
 function OBJDEF:context_broker_request(request_handle)
-  chunks = {}
-  raw_auth_header = request_handle:headers():get("authorization")
-  for substring in raw_auth_header:gmatch("%S+") do
-     table.insert(chunks, substring)
-  end
-  token = decodejwt:decode_jwt(chunks[2])
-  access_to = nil
   request_method = request_handle:headers():get(":method")
   if request_method == "POST" then
+    chunks = {}
+    raw_auth_header = request_handle:headers():get("authorization")
+    for substring in raw_auth_header:gmatch("%S+") do
+       table.insert(chunks, substring)
+    end
+    token = decodejwt:decode_jwt(chunks[2])
     content_type = request_handle:headers():get("content-type")
     if content_type == "application/json" then
       local body = request_handle:body()
@@ -22,70 +21,79 @@ function OBJDEF:context_broker_request(request_handle)
       lua_value = JSON:decode(raw_json_text)
       access_to = lua_value.id
     end
+    request_handle:streamInfo():dynamicMetadata():set("envoy.filters.http.lua", "request.info", {
+      request_method = request_method,
+      request_path = request_handle:headers():get(":path"),
+      fiwareservice = request_handle:headers():get("fiware-service"),
+      fiwareservicepath = request_handle:headers():get("fiware-servicepath"),
+      authority = request_handle:headers():get(":authority"),
+      userid = token.claims.email,
+      access_to = access_to
+    })
   end
-  request_handle:streamInfo():dynamicMetadata():set("envoy.filters.http.lua", "request.info", {
-    request_method = request_handle:headers():get(":method"),
-    request_path = request_handle:headers():get(":path"),
-    fiwareservice = request_handle:headers():get("fiware-service"),
-    fiwareservicepath = request_handle:headers():get("fiware-servicepath"),
-    authority = request_handle:headers():get(":authority"),
-    userid = token.claims.email,
-    access_to = access_to
-  })
 end
 
 function OBJDEF:context_broker_response(response_handle)
-  local meta = response_handle:streamInfo():dynamicMetadata():get("envoy.filters.http.lua")["request.info"]
-  if (meta.request_method == "POST" and meta.request_path == "/v2/entities" and meta.access_to and response_handle:headers():get(":status") == "201") then
-    local headers, body = response_handle:httpCall(
-    "policyapi-service",
-    {
-      [":method"] = "POST",
-      [":path"] = "/v1/policies/",
-      [":authority"] = meta.authority,
-      ["Content-Type"] = "application/json",
-      ["fiware-service"] = meta.fiwareservice,
-      ["fiware-servicepath"] = meta.fiwareservicepath,
-    },
-    '{"access_to": "'..meta.access_to..'", "resource_type": "entity", "mode": ["acl:Control"], "agent": ["acl:agent:'..meta.userid..'"]}',
-    5000,
-    false)
+  local meta = response_handle:streamInfo():dynamicMetadata():get("envoy.filters.http.lua")
+  if meta ~= nil then
+    meta = meta["request.info"]
+    if (meta.request_method == "POST" and meta.request_path == "/v2/entities" and meta.access_to and response_handle:headers():get(":status") == "201") then
+      local headers, body = response_handle:httpCall(
+      "policyapi-service",
+      {
+        [":method"] = "POST",
+        [":path"] = "/v1/policies/",
+        [":authority"] = meta.authority,
+        ["Content-Type"] = "application/json",
+        ["fiware-service"] = meta.fiwareservice,
+        ["fiware-servicepath"] = meta.fiwareservicepath,
+      },
+      '{"access_to": "'..meta.access_to..'", "resource_type": "entity", "mode": ["acl:Control"], "agent": ["acl:agent:'..meta.userid..'"]}',
+      5000,
+      false)
+    end
   end
 end
 
 function OBJDEF:management_api_request(request_handle)
-  chunks = {}
-  raw_auth_header = request_handle:headers():get("authorization")
-  for substring in raw_auth_header:gmatch("%S+") do
-     table.insert(chunks, substring)
+  request_method = request_handle:headers():get(":method")
+  if request_method == "POST" then
+    chunks = {}
+    raw_auth_header = request_handle:headers():get("authorization")
+    for substring in raw_auth_header:gmatch("%S+") do
+       table.insert(chunks, substring)
+    end
+    token = decodejwt:decode_jwt(chunks[2])
+    request_handle:streamInfo():dynamicMetadata():set("envoy.filters.http.lua", "request.info", {
+      request_method = request_method,
+      request_path = request_handle:headers():get(":path"),
+      fiwareservice = request_handle:headers():get("fiware-service"),
+      fiwareservicepath = request_handle:headers():get("fiware-servicepath"),
+      authority = request_handle:headers():get(":authority"),
+      userid = token.claims.email
+    })
   end
-  token = decodejwt:decode_jwt(chunks[2])
-  request_handle:streamInfo():dynamicMetadata():set("envoy.filters.http.lua", "request.info", {
-    request_method = request_handle:headers():get(":method"),
-    request_path = request_handle:headers():get(":path"),
-    fiwareservice = request_handle:headers():get("fiware-service"),
-    fiwareservicepath = request_handle:headers():get("fiware-servicepath"),
-    authority = request_handle:headers():get(":authority"),
-    userid = token.claims.email
-  })
 end
 
 function OBJDEF:management_api_response(response_handle)
-  local meta = response_handle:streamInfo():dynamicMetadata():get("envoy.filters.http.lua")["request.info"]
-  if (meta.request_method == "POST" and meta.request_path == "/v1/policies/" and response_handle:headers():get(":status") == "201") then
-    local headers, body = response_handle:httpCall(
-    "policyapi-service",
-    {
-      [":method"] = "POST",
-      [":path"] = "/v1/policies/",
-      [":authority"] = meta.authority,
-      ["Content-Type"] = "application/json",
-      ["fiware-service"] = meta.fiwareservice,
-      ["fiware-servicepath"] = meta.fiwareservicepath,
-    },
-    '{"access_to": "'..response_handle:headers():get("policy-id")..'", "resource_type": "policy", "mode": ["acl:Control"], "agent": ["acl:agent:'..meta.userid..'"]}',
-    5000,
-    false)
+  local meta = response_handle:streamInfo():dynamicMetadata():get("envoy.filters.http.lua")
+  if meta ~= nil then
+    meta = meta["request.info"]
+    if (meta.request_method == "POST" and meta.request_path == "/v1/policies/" and response_handle:headers():get(":status") == "201") then
+      local headers, body = response_handle:httpCall(
+      "policyapi-service",
+      {
+        [":method"] = "POST",
+        [":path"] = "/v1/policies/",
+        [":authority"] = meta.authority,
+        ["Content-Type"] = "application/json",
+        ["fiware-service"] = meta.fiwareservice,
+        ["fiware-servicepath"] = meta.fiwareservicepath,
+      },
+      '{"access_to": "'..response_handle:headers():get("policy-id")..'", "resource_type": "policy", "mode": ["acl:Control"], "agent": ["acl:agent:'..meta.userid..'"]}',
+      5000,
+      false)
+    end
   end
 end
 
