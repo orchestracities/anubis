@@ -38,7 +38,7 @@ check_policy {
 	current_path[2] == "policies"
   request.action in ["GET", "PUT", "PATCH", "DELETE"]
   policy_id := current_path[3]
-  e := data[_][_][_]
+  e := policies[_][_][_]
   match_policy_id_or_wildcard(e, policy_id)
   e.resource_type == "entity"
   control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/entities/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
@@ -63,7 +63,7 @@ check_policy {
 	current_path[2] == "policies"
   request.action in ["GET", "PUT", "PATCH", "DELETE"]
   policy_id := current_path[3]
-  e := data[_][_][_]
+  e := policies[_][_][_]
   match_policy_id_or_wildcard(e, policy_id)
   e.resource_type == "entity_type"
   control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/types/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
@@ -88,7 +88,7 @@ check_policy {
 	current_path[2] == "policies"
   request.action in ["GET", "PUT", "PATCH", "DELETE"]
   policy_id := current_path[3]
-  e := data[_][_][_]
+  e := policies[_][_][_]
   match_policy_id_or_wildcard(e, policy_id)
   e.resource_type == "subscriptions"
   control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/subscription/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}

@@ -336,6 +336,7 @@ The following environment variables are used by the rego policy for
 configuration (see the [docker-compose file](docker-compose.yaml)):
 
 - `AUTH_API_URI`: Specifies the URI of the auth management API.
+- `OPA_ENDPOINT`: Specifies the `URI` of the OPA API.
 - `VALID_ISSUERS`: Specifies the valid issuers of the auth tokens
   (coming from Keycloak). This can be a list of issuers, separated by `;`.
 - `VALID_AUDIENCE`: The valid aud value for token verification.
@@ -395,34 +396,93 @@ From the scripts folder, launch the demo set-up and then execute the script:
 cd scripts
 ./run_demo.sh
 ./test_load.sh
+Obtaining token from Keycloak...
+
+Create urn:ngsi-ld:AirQualityObserved:demo entity in ServicePath / for Tenant1
+===============================================================
+PASSED
 
 Run load test with Anubis in front of Orion
 ===============================================================
-Requests      [total, rate, throughput]         50, 10.21, 10.06
-Duration      [total, attack, wait]             4.971s, 4.899s, 71.35ms
-Latencies     [min, mean, 50, 90, 95, 99, max]  69.158ms, 74.566ms, 74.024ms, 79.429ms, 84.087ms, 93.997ms, 93.997ms
-Bytes In      [total, mean]                     6550, 131.00
+Requests      [total, rate, throughput]         1300, 130.11, 129.67
+Duration      [total, attack, wait]             10.026s, 9.992s, 33.83ms
+Latencies     [min, mean, 50, 90, 95, 99, max]  26.254ms, 37.653ms, 34.068ms, 49.952ms, 57.357ms, 84.527ms, 135.019ms
+Bytes In      [total, mean]                     170300, 131.00
 Bytes Out     [total, mean]                     0, 0.00
 Success       [ratio]                           100.00%
-Status Codes  [code:count]                      200:50  
+Status Codes  [code:count]                      200:1300  
 Error Set:
 
 Run load test without Anubis in front of Orion
 ===============================================================
-Requests      [total, rate, throughput]         50, 10.20, 10.20
-Duration      [total, attack, wait]             4.904s, 4.9s, 4.32ms
-Latencies     [min, mean, 50, 90, 95, 99, max]  3.241ms, 6.561ms, 5.462ms, 9.934ms, 20.038ms, 23.212ms, 23.212ms
-Bytes In      [total, mean]                     6550, 131.00
+Requests      [total, rate, throughput]         1300, 130.10, 130.08
+Duration      [total, attack, wait]             9.994s, 9.992s, 2.052ms
+Latencies     [min, mean, 50, 90, 95, 99, max]  1.699ms, 2.324ms, 2.059ms, 2.462ms, 3.111ms, 10.234ms, 16.981ms
+Bytes In      [total, mean]                     170300, 131.00
 Bytes Out     [total, mean]                     0, 0.00
 Success       [ratio]                           100.00%
-Status Codes  [code:count]                      200:50  
+Status Codes  [code:count]                      200:1300  
+Error Set:
+
+Delete urn:ngsi-ld:AirQualityObserved:demo entity in ServicePath / for Tenant1
+===============================================================
+PASSED
+```
+
+As of today, Anubis introduces an average overhead of ~35msec to upstream
+service requests, and supports up to 130rps. Tests have been run with 4 CPUs /
+8GB RAM docker setup on an MacBook Pro 14. Compared to previous release,
+authorization overhead improvement is ~1.9x and rps improvement is 2.6x
+(mainly thanks to [#14](https://github.com/orchestracities/anubis/issues/14)).
+
+We can consider the overhead, composed by two factors:
+
+1. The communication between Envoy Proxy and OPA.
+1. The evaluation of policies in OPA.
+
+We measured the approximated overhead introduced by the communication
+between Envoy and OPA by using an authorize always policy as the simplest
+possible policy in OPA. Resulting measurements (with the same configuration
+as above) are:
+
+```bash
+Requests      [total, rate, throughput]         1300, 130.11, 129.97
+Duration      [total, attack, wait]             10.002s, 9.992s, 10.096ms
+Latencies     [min, mean, 50, 90, 95, 99, max]  8.94ms, 15.034ms, 10.349ms, 13.437ms, 23.021ms, 159.123ms, 215.597ms
+Bytes In      [total, mean]                     170300, 131.00
+Bytes Out     [total, mean]                     0, 0.00
+Success       [ratio]                           100.00%
+Status Codes  [code:count]                      200:1300  
 Error Set:
 ```
 
-As of today, Anubis introduces an average overhead of 69msec,
-while this is not a bad number, it's not impressive. Still
-there is a very good news, we know how to improve :) See
-[#14](https://github.com/orchestracities/anubis/issues/14).
+This basically means that basic Envoy + OPA set-up introduces and overhead of
+~13msec, and that the rest of the overhead (~22msec) is due to policy
+evaluation. It could be that we could further optimize policies (cf [#196](https://github.com/orchestracities/anubis/issues/196)).
+
+> NOTE: OPA is written in GOLANG, and policy evaluation performance may be
+heavily affected by [Go Garbage Collector](https://tip.golang.org/doc/gc-guide).
+`GOGC` variable can be used to configure the trade-off between GC CPU and memory.
+
+To measure the approximated overhead, comment all policies in the
+`docker-compose.yaml` and uncomment the `nop.rego` policy:
+
+```yaml
+ext_authz-opa-service:
+  ...
+  command:
+    - run
+    - --log-level=error
+    - --server
+    - --config-file=/opa.yaml
+    - --diagnostic-addr=0.0.0.0:8282
+    - --set=plugins.envoy_ext_authz_grpc.addr=:9002
+    #- /etc/rego/common.rego
+    #- /etc/rego/context_broker_policy.rego
+    #- /etc/rego/anubis_management_api_policy.rego
+    - /etc/rego/nop.rego
+    - /etc/rego/audit.rego
+```
 
 ## Test rego
 
