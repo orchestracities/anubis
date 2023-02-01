@@ -12,6 +12,7 @@
 - Fix method name for retrieving agent types
 - Updated user policy path (#183)
 - Fix demo script configuration to UI 0.6 changes
+- Fix potential issue in LUA script for policy creation on entity creation
 
 ### Documentation
 
