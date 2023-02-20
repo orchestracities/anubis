@@ -498,7 +498,7 @@
             "schema": {
               "title": "Limit",
               "type": "integer",
-              "default": 100
+              "default": 1000
             },
             "name": "limit",
             "in": "query"
@@ -558,7 +558,7 @@
             "schema": {
               "title": "Limit",
               "type": "integer",
-              "default": 100
+              "default": 1000
             },
             "name": "limit",
             "in": "query"
@@ -664,7 +664,7 @@
             "schema": {
               "title": "Limit",
               "type": "integer",
-              "default": 100
+              "default": 1000
             },
             "name": "limit",
             "in": "query"
@@ -820,7 +820,7 @@
             "schema": {
               "title": "Limit",
               "type": "integer",
-              "default": 100
+              "default": 1000
             },
             "name": "limit",
             "in": "query"
