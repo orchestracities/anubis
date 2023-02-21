@@ -14,6 +14,8 @@ import requests
 import urllib
 import json
 
+defaultLimit = 1000
+
 
 auth_scheme = OptionalHTTPBearer()
 router = APIRouter(prefix="/v1/policies",
@@ -43,7 +45,7 @@ def serialize_policy(policy: models.Policy):
 @router.get("/access-modes",
             response_model=List[schemas.Mode],
             summary="List supported Access Modes")
-def read_modes(skip: int = 0, limit: int = 1000, db: Session = Depends(get_db)):
+def read_modes(skip: int = 0, limit: int = defaultLimit, db: Session = Depends(get_db)):
     modes = operations.get_modes(db, skip=skip, limit=limit)
     return modes
 
@@ -53,7 +55,7 @@ def read_modes(skip: int = 0, limit: int = 1000, db: Session = Depends(get_db)):
             summary="List supported Agent Types")
 def read_agent_types(
         skip: int = 0,
-        limit: int = 1000,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     types = operations.get_agent_types(db, skip=skip, limit=limit)
     return types
@@ -239,7 +241,7 @@ def my_policies(
         resource_type: Optional[str] = None,
         agent_type: Optional[str] = None,
         skip: int = 0,
-        limit: int = 1000,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     """
     Policies can be filtered by:
@@ -323,7 +325,7 @@ def read_policies(
         resource_type: Optional[str] = None,
         agent_type: Optional[str] = None,
         skip: int = 0,
-        limit: int = 1000,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     """
     Policies can be filtered by:
