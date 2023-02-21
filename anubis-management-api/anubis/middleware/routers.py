@@ -225,7 +225,7 @@ def create_policy(
     policies = []
     for agent in policy.agent:
         for mode in policy.mode:
-            db_policies = op.get_policies_by_service_path(
+            db_policies, counter = op.get_policies_by_service_path(
                 db=db,
                 tenant=fiware_service,
                 service_path_id=db_service_path_id,
@@ -261,7 +261,7 @@ def update(
     policies = []
     for agent in policy.agent:
         for mode in policy.mode:
-            db_policies = op.get_policies_by_service_path(
+            db_policies, counter = op.get_policies_by_service_path(
                 db=db,
                 tenant=None,
                 service_path_id=[db_policy.service_path_id],
