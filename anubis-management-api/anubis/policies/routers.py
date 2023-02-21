@@ -45,7 +45,10 @@ def serialize_policy(policy: models.Policy):
 @router.get("/access-modes",
             response_model=List[schemas.Mode],
             summary="List supported Access Modes")
-def read_modes(skip: int = 0, limit: int = defaultLimit, db: Session = Depends(get_db)):
+def read_modes(
+        skip: int = 0,
+        limit: int = defaultLimit,
+        db: Session = Depends(get_db)):
     modes = operations.get_modes(db, skip=skip, limit=limit)
     return modes
 
