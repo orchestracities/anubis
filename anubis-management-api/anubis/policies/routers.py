@@ -38,10 +38,6 @@ def serialize_policy(policy: models.Policy):
         agent=agents)
 
 
-# def compute_policy_id(policy: models.Policy):
-#    return policy.id
-
-
 @router.get("/access-modes",
             response_model=List[schemas.Mode],
             summary="List supported Access Modes")

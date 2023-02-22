@@ -6,6 +6,8 @@
 
 - Add drop all for models
 - Push model for policies
+- /me endpoint for policies shows foaf:Agent type policies when no token
+  provided
 
 ### Bug fixes
 
