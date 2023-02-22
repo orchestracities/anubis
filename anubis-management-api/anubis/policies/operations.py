@@ -25,9 +25,7 @@ def get_policies_by_service_path(
         resource_type: str = None,
         skip: int = 0,
         limit: int = defaultLimit,
-        user_info: dict = None,
-        owner: str = None):
-    # TODO: filter policy that owner (email based) controls
+        user_info: dict = None):
     if mode is not None and agent is not None:
         db_policies = db.query(
             models.Policy).join(
