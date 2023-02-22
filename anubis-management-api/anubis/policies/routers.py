@@ -14,6 +14,8 @@ import requests
 import urllib
 import json
 
+defaultLimit = 1000
+
 
 auth_scheme = OptionalHTTPBearer()
 router = APIRouter(prefix="/v1/policies",
@@ -43,7 +45,10 @@ def serialize_policy(policy: models.Policy):
 @router.get("/access-modes",
             response_model=List[schemas.Mode],
             summary="List supported Access Modes")
-def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_modes(
+        skip: int = 0,
+        limit: int = defaultLimit,
+        db: Session = Depends(get_db)):
     modes = operations.get_modes(db, skip=skip, limit=limit)
     return modes
 
@@ -53,7 +58,7 @@ def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
             summary="List supported Agent Types")
 def read_agent_types(
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     types = operations.get_agent_types(db, skip=skip, limit=limit)
     return types
@@ -239,7 +244,7 @@ def my_policies(
         resource_type: Optional[str] = None,
         agent_type: Optional[str] = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     """
     Policies can be filtered by:
@@ -270,7 +275,7 @@ def my_policies(
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_service_path_id = list(map(so.compute_id, db_service_path))
-    db_policies = operations.get_policies_by_service_path(
+    db_policies, counter = operations.get_policies_by_service_path(
         db,
         tenant=fiware_service,
         service_path_id=db_service_path_id,
@@ -282,6 +287,7 @@ def my_policies(
         skip=skip,
         limit=limit,
         user_info=user_info)
+    response.headers["Counter"] = str(counter)
     if accept == 'text/turtle':
         return Response(
             content=w_serialize(
@@ -308,6 +314,7 @@ def my_policies(
             responses=policies_not_json_responses,
             summary="List policies for a given Tenant and Service Path")
 def read_policies(
+        response: Response,
         token: str = Depends(auth_scheme),
         fiware_service: Optional[str] = Header(
             None),
@@ -321,7 +328,7 @@ def read_policies(
         resource_type: Optional[str] = None,
         agent_type: Optional[str] = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     """
     Policies can be filtered by:
@@ -355,7 +362,7 @@ def read_policies(
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_service_path_id = list(map(so.compute_id, db_service_path))
-    db_policies = operations.get_policies_by_service_path(
+    db_policies, counter = operations.get_policies_by_service_path(
         db,
         tenant=fiware_service,
         service_path_id=db_service_path_id,
@@ -367,6 +374,7 @@ def read_policies(
         skip=skip,
         limit=limit,
         owner=owner)
+    response.headers["Counter"] = str(counter)
     if accept == 'text/turtle':
         return Response(
             content=w_serialize(
@@ -455,7 +463,7 @@ def create_policy(
     policies = []
     for agent in policy.agent:
         for mode in policy.mode:
-            db_policies = operations.get_policies_by_service_path(
+            db_policies, counter = operations.get_policies_by_service_path(
                 db=db,
                 tenant=fiware_service,
                 service_path_id=db_service_path_id,
@@ -541,7 +549,7 @@ def update(
     policies = []
     for agent in policy.agent:
         for mode in policy.mode:
-            db_policies = operations.get_policies_by_service_path(
+            db_policies, counter = operations.get_policies_by_service_path(
                 db=db,
                 tenant=fiware_service,
                 service_path_id=db_service_path_id,
@@ -642,7 +650,7 @@ def delete_policy(
 def update_opa_policies(db, fiware_service, db_service_path_id):
     if os.environ.get('OPA_ENDPOINT'):
         opa_url = os.environ.get('OPA_ENDPOINT')
-        db_policies = operations.get_policies_by_service_path(
+        db_policies, counter = operations.get_policies_by_service_path(
             db,
             tenant=fiware_service,
             service_path_id=db_service_path_id)

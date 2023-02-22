@@ -5,6 +5,8 @@ from functools import reduce
 import uuid
 import anubis.default as default
 
+defaultLimit = 1000
+
 
 def get_policy(db: Session, policy_id: str):
     return db.query(
@@ -22,7 +24,7 @@ def get_policies_by_service_path(
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 10000,
+        limit: int = defaultLimit,
         user_info: dict = None,
         owner: str = None):
     # TODO: filter policy that owner (email based) controls
@@ -43,7 +45,8 @@ def get_policies_by_service_path(
         if user_info:
             db_policies = filter_policies_by_user_profile(
                 db_policies, tenant, user_info)
-        return db_policies.offset(skip).limit(limit).all()
+        counter = db_policies.count()
+        return db_policies.offset(skip).limit(limit).all(), counter
     elif mode is None and agent is not None:
         return get_policies_by_agent(
             db=db,
@@ -87,7 +90,7 @@ def get_policies_by_mode(
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         user_info: dict = None):
     db_policies = db.query(
         models.Policy).join(
@@ -112,7 +115,8 @@ def get_policies_by_mode(
     if user_info:
         db_policies = filter_policies_by_user_profile(
             db_policies, tenant, user_info)
-    return db_policies.offset(skip).limit(limit).all()
+    counter = db_policies.count()
+    return db_policies.offset(skip).limit(limit).all(), counter
 
 
 def get_policies_by_agent(
@@ -123,7 +127,7 @@ def get_policies_by_agent(
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         user_info: dict = None):
     db_policies = db.query(
         models.Policy).join(
@@ -139,7 +143,8 @@ def get_policies_by_agent(
     if user_info:
         db_policies = filter_policies_by_user_profile(
             db_policies, tenant, user_info)
-    return db_policies.offset(skip).limit(limit).all()
+    counter = db_policies.count()
+    return db_policies.offset(skip).limit(limit).all(), counter
 
 
 def _get_policies_by_service_path(
@@ -150,7 +155,7 @@ def _get_policies_by_service_path(
         resource: str = None,
         resource_type: str = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         user_info: dict = None):
     db_policies = db.query(
         models.Policy).filter(
@@ -173,14 +178,15 @@ def _get_policies_by_service_path(
     if user_info:
         db_policies = filter_policies_by_user_profile(
             db_policies, tenant, user_info)
-    return db_policies.offset(skip).limit(limit).all()
+    counter = db_policies.count()
+    return db_policies.offset(skip).limit(limit).all(), counter
 
 
 def get_policy_by_access_to(db: Session, access_to: str):
     return db.query(models.Policy).filter(models.Policy.access_to == access_to)
 
 
-def get_policies(db: Session, skip: int = 0, limit: int = 100):
+def get_policies(db: Session, skip: int = 0, limit: int = defaultLimit):
     return db.query(models.Policy).offset(skip).limit(limit).all()
 
 
@@ -289,7 +295,7 @@ def get_agent_by_iri(db: Session, agent_iri: str):
     return db.query(models.Agent).filter(models.Agent.iri == agent_iri).first()
 
 
-def get_agents(db: Session, skip: int = 0, limit: int = 100):
+def get_agents(db: Session, skip: int = 0, limit: int = defaultLimit):
     return db.query(models.Agent).offset(skip).limit(limit).all()
 
 
@@ -297,7 +303,7 @@ def get_agents_by_type(
         db: Session,
         agent_type_iri: str,
         skip: int = 0,
-        limit: int = 100):
+        limit: int = defaultLimit):
     return db.query(models.Agent).filter(models.Agent.type_iri ==
                                          agent_type_iri).offset(skip).limit(limit).all()
 
@@ -312,9 +318,9 @@ def create_agent(db: Session, agent_iri: str):
     return db_agent
 
 
-def get_modes(db: Session, skip: int = 0, limit: int = 100):
+def get_modes(db: Session, skip: int = 0, limit: int = defaultLimit):
     return db.query(models.Mode).offset(skip).limit(limit).all()
 
 
-def get_agent_types(db: Session, skip: int = 0, limit: int = 100):
+def get_agent_types(db: Session, skip: int = 0, limit: int = defaultLimit):
     return db.query(models.AgentType).offset(skip).limit(limit).all()
