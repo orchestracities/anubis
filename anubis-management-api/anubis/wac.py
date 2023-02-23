@@ -82,8 +82,16 @@ def serialize(
         agent_class_property = acl.agentClass
         agent_property = acl.agent
         for index, agent in enumerate(policy.agent):
-            agent = URIRef(agent.iri, acl)
-            g.add((policy_node, agent_class_property, agent))
+            if agent.iri.startswith("acl:agent:"):
+                agent_email = agent.iri.split(":")[2]
+                agent_name = agent_email.split("@")[0]
+                agent = URIRef("acl:agent:"+agent_name, acl)
+                g.add((policy_node, agent_class_property, agent))
+                g.add((agent, RDF.type, FOAF.Agent))
+                g.add((agent, FOAF.mbox, Literal(agent_email)))
+            else:
+                agent = URIRef(agent.iri, acl)
+                g.add((policy_node, agent_class_property, agent))
 
         if policy.access_to == "default":
             access_to_property = acl.default
