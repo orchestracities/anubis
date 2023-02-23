@@ -85,7 +85,7 @@ def serialize(
             if agent.iri.startswith("acl:agent:"):
                 agent_email = agent.iri.split(":")[2]
                 agent_name = agent_email.split("@")[0]
-                agent = URIRef("acl:agent:"+agent_name, acl)
+                agent = URIRef("acl:agent:" + agent_name, acl)
                 g.add((policy_node, agent_class_property, agent))
                 g.add((agent, RDF.type, FOAF.Agent))
                 g.add((agent, FOAF.mbox, Literal(agent_email)))
