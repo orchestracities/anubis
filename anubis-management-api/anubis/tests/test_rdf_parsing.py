@@ -65,7 +65,7 @@ def test_rdf_parsing(test_db):
             assert URIRef(
                 "https://tenant1.orion.url/v2/entities/test") == obj
         elif URIRef("http://www.w3.org/ns/auth/acl#agentClass") == pred:
-            assert URIRef("acl:agent:Gina@mail.com") == obj
+            assert URIRef("acl:agent:Gina") == obj
         elif URIRef("http://www.w3.org/ns/auth/acl#mode") == pred:
             assert URIRef("acl:Read") == obj
 
