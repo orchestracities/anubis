@@ -38,7 +38,7 @@ def test_rdf_parsing(test_db):
     assert response.status_code == 200
     g = Graph()
     g.parse(data=response.text)
-    assert len(g) == 25
+    assert len(g) == 29
 
     response = client.get(
         "/v1/policies/",
