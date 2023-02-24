@@ -30,6 +30,13 @@ check_policy {
   request.action in ["GET"]
   not current_path[3]
 }
+check_policy {
+	current_path := split(request.resource, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  request.action in ["GET"]
+  current_path[3] == "me"
+}
 
 # Check policy when trying to get an entity acl resource
 check_policy {
