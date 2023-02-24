@@ -31,10 +31,10 @@ check_policy {
   not current_path[3]
 }
 check_policy {
-	current_path := split(request.resource, "/")
+	current_path := split(path, "/")
 	current_path[1] == "v1"
 	current_path[2] == "policies"
-  request.action in ["GET"]
+  method in ["GET"]
   current_path[3] == "me"
 }
 
@@ -154,6 +154,12 @@ header_link = link {
   current_path := split(request.resource, "/")
   current_path[2] == "policies"
   current_path[3] == ""
+  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
+}
+header_link = link {
+  current_path := split(request.resource, "/")
+  current_path[2] == "policies"
+  current_path[3] == "me"
   link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
 }
 header_link = link {
