@@ -68,6 +68,9 @@ def test_rdf_parsing(test_db):
             assert URIRef("acl:agent:Gina") == obj
         elif URIRef("http://www.w3.org/ns/auth/acl#mode") == pred:
             assert URIRef("acl:Read") == obj
+        elif URIRef("http://xmlns.com/foaf/0.1/mbox") == pred:
+            assert subj == URIRef("acl:agent:Gina")
+            assert obj == Literal("Gina@mail.com")
 
     response = client.post(
         "/v1/policies/",
