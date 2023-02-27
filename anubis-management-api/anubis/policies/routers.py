@@ -38,10 +38,6 @@ def serialize_policy(policy: models.Policy):
         agent=agents)
 
 
-# def compute_policy_id(policy: models.Policy):
-#    return policy.id
-
-
 @router.get("/access-modes",
             response_model=List[schemas.Mode],
             summary="List supported Access Modes")
@@ -223,14 +219,13 @@ policies_not_json_responses = {
     },
 }
 
-# TODO if no token, we should return policies for foaf:Agent!
-
 
 @router.get("/me",
             response_model=List[schemas.Policy],
             responses=policies_not_json_responses,
             summary="List policies for a given Tenant and Service Path that apply to me")
 def my_policies(
+        response: Response,
         token: str = Depends(auth_scheme),
         fiware_service: Optional[str] = Header(
             None),
@@ -260,11 +255,14 @@ def my_policies(
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
     """
     user_info = parse_auth_token(token)
+    agent_type = None
+    if user_info and user_info['is_super_admin']:
+        user_info = None
+    elif user_info and user_info['tenants'] and fiware_service in user_info['tenants'] and "roles" in user_info['tenants'][fiware_service] and "tenant-admin" in user_info['tenants'][fiware_service]["roles"]:
+        user_info = None
     if not user_info:
-        raise HTTPException(
-            status_code=403,
-            detail='missing access token, cannot identify user'
-        )
+        agent_type = "foaf:Agent"
+        user_info = None
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,
@@ -344,14 +342,10 @@ def read_policies(
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
     """
     user_info = parse_auth_token(token)
-    owner = None
     if user_info and user_info['is_super_admin']:
-        owner = None
+        user_info = None
     elif user_info and user_info['tenants'] and fiware_service in user_info['tenants'] and "roles" in user_info['tenants'][fiware_service] and "tenant-admin" in user_info['tenants'][fiware_service]["roles"]:
-        owner = None
-    elif user_info and user_info['email']:
-        owner = user_info['email']
-    # we don't filter policies in case super admin or tenant admin
+        user_info = None
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,
@@ -372,8 +366,7 @@ def read_policies(
         resource=resource,
         resource_type=resource_type,
         skip=skip,
-        limit=limit,
-        owner=owner)
+        limit=limit)
     response.headers["Counter"] = str(counter)
     if accept == 'text/turtle':
         return Response(

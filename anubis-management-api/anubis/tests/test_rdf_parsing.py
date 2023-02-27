@@ -38,7 +38,7 @@ def test_rdf_parsing(test_db):
     assert response.status_code == 200
     g = Graph()
     g.parse(data=response.text)
-    assert len(g) == 25
+    assert len(g) == 29
 
     response = client.get(
         "/v1/policies/",
@@ -65,9 +65,12 @@ def test_rdf_parsing(test_db):
             assert URIRef(
                 "https://tenant1.orion.url/v2/entities/test") == obj
         elif URIRef("http://www.w3.org/ns/auth/acl#agentClass") == pred:
-            assert URIRef("acl:agent:Gina@mail.com") == obj
+            assert URIRef("acl:agent:Gina") == obj
         elif URIRef("http://www.w3.org/ns/auth/acl#mode") == pred:
             assert URIRef("acl:Read") == obj
+        elif URIRef("http://xmlns.com/foaf/0.1/mbox") == pred:
+            assert subj == URIRef("acl:agent:Gina")
+            assert obj == Literal("Gina@mail.com")
 
     response = client.post(
         "/v1/policies/",
