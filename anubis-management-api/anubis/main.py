@@ -41,6 +41,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=allowed_methods,
     allow_headers=allowed_headers,
+    expose_headers=["Counter"]
 )
 
 # TODO auth
