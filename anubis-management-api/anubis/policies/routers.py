@@ -263,7 +263,7 @@ def my_policies(
     if not user_info:
         agent_type = "foaf:Agent"
     else:
-        agent_type = "acl:agent:"+user_info["email"]
+        agent_type = "acl:agent:" + user_info["email"]
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_service_path_id = list(map(so.compute_id, db_service_path))
