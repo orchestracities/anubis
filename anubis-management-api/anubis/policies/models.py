@@ -8,7 +8,9 @@ from ..rego import serialize as r_serialize
 from uuid import uuid4
 
 import anubis.default as default
-import json, requests, os
+import json
+import requests
+import os
 
 
 policy_to_mode = Table(
@@ -72,16 +74,21 @@ def init_db():
 def drop_db():
     Base.metadata.drop_all(bind=autocommit_engine)
 
+
 def update_policies_in_opa():
-    if os.environ.get('OPA_ENDPOINT') and os.environ.get('HOURLY_OPA_POLICIES_REFRESH') == "True":
+    if os.environ.get('OPA_ENDPOINT') and os.environ.get(
+            'HOURLY_OPA_POLICIES_REFRESH') == "True":
         opa_url = os.environ.get('OPA_ENDPOINT')
         db = SessionLocal()
         tenants = db.query(Tenant).all()
         for tenant in tenants:
-            db_service_paths = db.query(ServicePath).filter(ServicePath.tenant_id == tenant.id).all()
+            db_service_paths = db.query(ServicePath).filter(
+                ServicePath.tenant_id == tenant.id).all()
             policies = []
             for db_service_path in db_service_paths:
-                path_policies = db.query(Policy).filter(Policy.service_path_id.startswith(db_service_path.id)).all()
+                path_policies = db.query(Policy).filter(
+                    Policy.service_path_id.startswith(
+                        db_service_path.id)).all()
                 policies = policies + path_policies
             policies = r_serialize(db, policies)
             policies = json.loads(policies)
@@ -95,7 +102,7 @@ def update_policies_in_opa():
                     json=policies)
                 if res.status_code != 204:
                     print("Failed scheduled update to policies in OPA")
-            except:
+            except BaseException:
                 print("Failed scheduled update to policies in OPA")
 
 

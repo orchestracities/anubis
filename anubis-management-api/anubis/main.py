@@ -11,7 +11,8 @@ from anubis.version import ANUBIS_VERSION
 from fastapi.openapi.utils import get_openapi
 from fastapi_utils.tasks import repeat_every
 from anubis.database import engine, SessionLocal
-import uvicorn, logging
+import uvicorn
+import logging
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -84,6 +85,7 @@ def on_startup():
     p_models.init_db()
     t_models.init_db()
     a_models.init_db()
+
 
 @app.on_event("startup")
 @repeat_every(seconds=3600, logger=logging)
