@@ -649,6 +649,7 @@ def update_opa_policies(db, fiware_service, db_service_path_id):
             service_path_id=db_service_path_id)
         policies = r_serialize(db, db_policies)
         policies = json.loads(policies)
+        # Not currently handling service paths
         res = requests.put(
             opa_url +
             "/v1/data/" +
