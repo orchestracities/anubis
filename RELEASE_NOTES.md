@@ -16,6 +16,7 @@
 - Fix demo script configuration to UI 0.6 changes
 - Fix potential issue in LUA script for policy creation on entity creation
 - Added counter header in responses to policy GETs
+- Fixed issues with /me endpoint not retrieving policies correctly
 
 ### Documentation
 
