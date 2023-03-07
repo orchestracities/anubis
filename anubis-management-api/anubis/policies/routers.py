@@ -257,19 +257,13 @@ def my_policies(
     user_info = parse_auth_token(token)
     agent_type = None
     if user_info and user_info['is_super_admin']:
-        user_info = None
+        agent_type = None
     elif user_info and user_info['tenants'] and fiware_service in user_info['tenants'] and "roles" in user_info['tenants'][fiware_service] and "tenant-admin" in user_info['tenants'][fiware_service]["roles"]:
-        user_info = None
+        agent_type = None
     if not user_info:
         agent_type = "foaf:Agent"
-        user_info = None
-    if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
-        raise HTTPException(
-            status_code=422,
-            detail='agent_type {} is not a valid agent type. Valid types are {} or {}'.format(
-                agent_type,
-                default.DEFAULT_AGENTS,
-                default.DEFAULT_AGENT_TYPES))
+    else:
+        agent_type = "acl:agent:" + user_info["email"]
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_service_path_id = list(map(so.compute_id, db_service_path))
@@ -279,12 +273,28 @@ def my_policies(
         service_path_id=db_service_path_id,
         mode=mode,
         agent=agent,
-        agent_type=agent_type,
+        agent_type="foaf:Agent",
         resource=resource,
         resource_type=resource_type,
         skip=skip,
         limit=limit,
-        user_info=user_info)
+        user_info=None)
+    # Maybe do this for groups and roles too?
+    if user_info:
+        db_policies_user, counter_user = operations.get_policies_by_service_path(
+            db,
+            tenant=fiware_service,
+            service_path_id=db_service_path_id,
+            mode=mode,
+            agent=agent,
+            agent_type=agent_type,
+            resource=resource,
+            resource_type=resource_type,
+            skip=skip,
+            limit=limit,
+            user_info=user_info)
+        db_policies = db_policies + db_policies_user
+        counter = counter + counter_user
     response.headers["Counter"] = str(counter)
     if accept == 'text/turtle':
         return Response(

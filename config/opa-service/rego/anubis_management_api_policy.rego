@@ -144,26 +144,19 @@ path_matches_policy(entry, request) {
 
 # Set the header link for the policies
 header_link = link {
-  current_path := split(request.resource, "/")
+  current_path := split(path, "/")
   current_path[2] == "policies"
-  current_path[3]
   not current_path[3] == ""
   link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"policy"])
 }
 header_link = link {
-  current_path := split(request.resource, "/")
+  current_path := split(path, "/")
   current_path[2] == "policies"
   current_path[3] == ""
   link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
 }
 header_link = link {
-  current_path := split(request.resource, "/")
-  current_path[2] == "policies"
-  current_path[3] == "me"
-  link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
-}
-header_link = link {
-  current_path := split(request.resource, "/")
+  current_path := split(path, "/")
   current_path[2] == "policies"
   not current_path[3]
   link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
