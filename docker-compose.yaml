@@ -36,6 +36,7 @@ services:
       - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
       - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
       - OPA_ENDPOINT=http://ext_authz-opa-service:8181
+      - HOURLY_OPA_POLICIES_REFRESH=True
     ports:
       - "8085:8000"
     volumes:

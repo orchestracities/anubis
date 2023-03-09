@@ -1,4 +1,4 @@
-from .policies.models import Policy
+# from .policies.models import Policy
 from .policies import operations as po
 from .tenants import operations as to
 from sqlalchemy.orm import Session
@@ -6,7 +6,7 @@ from .default import AUTHENTICATED_AGENT_ID
 import json
 
 
-def serialize(db: Session, policies: [Policy]):
+def serialize(db: Session, policies):
     if len(policies) > 0:
         rego = {
             "user_permissions": {},

@@ -5,7 +5,7 @@
 ### New features
 
 - Add drop all for models
-- Push model for policies
+- Push model for policies, plus scheduler for pushing on the hour
 - /me endpoint for policies shows foaf:Agent type policies when no token
   provided
 

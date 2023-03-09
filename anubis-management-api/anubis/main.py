@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI, Response
 from anubis.tenants import routers as t
 from anubis.tenants import models as t_models
+from anubis.tenants import operations as t_operations
 from anubis.policies import routers as p
 from anubis.policies import models as p_models
 from anubis.audit import routers as a
@@ -8,8 +9,10 @@ from anubis.audit import models as a_models
 from anubis.middleware import routers as m
 from anubis.version import ANUBIS_VERSION
 from fastapi.openapi.utils import get_openapi
-from anubis.database import engine
+from fastapi_utils.tasks import repeat_every
+from anubis.database import engine, SessionLocal
 import uvicorn
+import logging
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -82,6 +85,12 @@ def on_startup():
     p_models.init_db()
     t_models.init_db()
     a_models.init_db()
+
+
+@app.on_event("startup")
+@repeat_every(seconds=3600, logger=logging)
+def update_policies_in_opa_task():
+    p_models.update_policies_in_opa()
 
 
 @app.get("/ping", summary="Simple healthcheck endpoint")
