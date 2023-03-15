@@ -17,6 +17,7 @@
 - Fix potential issue in LUA script for policy creation on entity creation
 - Added counter header in responses to policy GETs
 - Fixed issues with /me endpoint not retrieving policies correctly
+- Ordering for polciies and tenants to avoid pagination issues
 
 ### Documentation
 
