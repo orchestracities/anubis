@@ -44,7 +44,7 @@ def get_policies_by_service_path(
             db_policies = filter_policies_by_user_profile(
                 db_policies, tenant, user_info)
         counter = db_policies.count()
-        return db_policies.offset(skip).limit(limit).all(), counter
+        return db_policies.order_by(models.Policy.id.asc()).offset(skip).limit(limit).all(), counter
     elif mode is None and agent is not None:
         return get_policies_by_agent(
             db=db,
@@ -114,7 +114,7 @@ def get_policies_by_mode(
         db_policies = filter_policies_by_user_profile(
             db_policies, tenant, user_info)
     counter = db_policies.count()
-    return db_policies.offset(skip).limit(limit).all(), counter
+    return db_policies.order_by(models.Policy.id.asc()).offset(skip).limit(limit).all(), counter
 
 
 def get_policies_by_agent(
@@ -142,7 +142,7 @@ def get_policies_by_agent(
         db_policies = filter_policies_by_user_profile(
             db_policies, tenant, user_info)
     counter = db_policies.count()
-    return db_policies.offset(skip).limit(limit).all(), counter
+    return db_policies.order_by(models.Policy.id.asc()).offset(skip).limit(limit).all(), counter
 
 
 def _get_policies_by_service_path(
@@ -177,7 +177,7 @@ def _get_policies_by_service_path(
         db_policies = filter_policies_by_user_profile(
             db_policies, tenant, user_info)
     counter = db_policies.count()
-    return db_policies.offset(skip).limit(limit).all(), counter
+    return db_policies.order_by(models.Policy.id.asc()).offset(skip).limit(limit).all(), counter
 
 
 def get_policy_by_access_to(db: Session, access_to: str):
@@ -185,7 +185,7 @@ def get_policy_by_access_to(db: Session, access_to: str):
 
 
 def get_policies(db: Session, skip: int = 0, limit: int = defaultLimit):
-    return db.query(models.Policy).offset(skip).limit(limit).all()
+    return db.query(models.Policy).order_by(models.Policy.id.asc()).offset(skip).limit(limit).all()
 
 
 def filter_policies_by_user_profile(db_policies, tenant, user_info):

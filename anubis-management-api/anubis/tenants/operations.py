@@ -24,7 +24,7 @@ def get_tenant_by_name(db: Session, name: str):
 
 
 def get_tenants(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Tenant).offset(skip).limit(limit).all()
+    return db.query(models.Tenant).order_by(models.Tenant.name.asc()).offset(skip).limit(limit).all()
 
 
 def create_tenant(
@@ -69,7 +69,7 @@ def delete_tenant(db: Session, tenant: models.Tenant):
 
 
 def get_service_paths(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.ServicePath).offset(skip).limit(limit).all()
+    return db.query(models.ServicePath).order_by(models.ServicePath.path.asc()).offset(skip).limit(limit).all()
 
 
 def get_tenant_service_paths(
@@ -83,7 +83,7 @@ def get_tenant_service_paths(
     if name:
         db_service_paths = db_service_paths.filter(
             models.ServicePath.path.startswith(name))
-    return db_service_paths.offset(skip).limit(limit).all()
+    return db_service_paths.order_by(models.ServicePath.path.asc()).offset(skip).limit(limit).all()
 
 
 def get_db_service_path(db: Session, tenant: str, service_path: str):
@@ -105,12 +105,12 @@ def get_tenant_service_path_by_path(db: Session, tenant_id: str, path: str):
         return db.query(
             models.ServicePath).filter(
             models.ServicePath.tenant_id == tenant_id).filter(
-                models.ServicePath.path.like(queryPath)).all()
+                models.ServicePath.path.like(queryPath)).order_by(models.ServicePath.path.asc()).all()
     else:
         return db.query(
             models.ServicePath).filter(
             models.ServicePath.tenant_id == tenant_id).filter(
-                models.ServicePath.path == path).all()
+                models.ServicePath.path == path).order_by(models.ServicePath.path.asc()).all()
 
 
 def get_tenant_service_path(db: Session, service_path_id: str, tenant_id: str):
