@@ -61,7 +61,7 @@ setup(
         "requests==2.28.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
         'rfc3987==1.3.8',
         "scramp==1.4.1; python_version >= '3.6'",
-        "setuptools==62.1.0; python_version >= '3.7'",
+        "setuptools==65.5.1; python_version >= '3.7'",
         "six==1.16.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
         "sniffio==1.2.0; python_version >= '3.5'",
         'sqlalchemy==1.4.36',
