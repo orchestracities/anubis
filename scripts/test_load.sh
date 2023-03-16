@@ -37,7 +37,7 @@ echo ""
 echo "Run load test with Anubis in front of Orion"
 echo "==============================================================="
 
-echo "GET http://localhost:8000/v2/entities/urn:ngsi-ld:AirQualityObserved:demo" | vegeta attack -header "authorization: Bearer $token" -header "fiware-Service: Tenant1" -header "fiware-servicepath: /" -rate=10 -duration=5s | tee results2.bin | vegeta report
+echo "GET http://localhost:8000/v2/entities/urn:ngsi-ld:AirQualityObserved:demo" | vegeta attack -header "authorization: Bearer $token" -header "fiware-Service: Tenant1" -header "fiware-servicepath: /" -rate=130 -duration=10s | tee results2.bin | vegeta report
 
 sleep 1
 
@@ -45,7 +45,7 @@ echo ""
 echo "Run load test without Anubis in front of Orion"
 echo "==============================================================="
 
-echo "GET http://localhost:1026/v2/entities/urn:ngsi-ld:AirQualityObserved:demo" | vegeta attack -header "fiware-Service: Tenant1" -header "fiware-servicepath: /" -rate=10 -duration=5s | tee results1.bin | vegeta report
+echo "GET http://localhost:1026/v2/entities/urn:ngsi-ld:AirQualityObserved:demo" | vegeta attack -header "fiware-Service: Tenant1" -header "fiware-servicepath: /" -rate=130 -duration=10s | tee results1.bin | vegeta report
 
 echo ""
 echo "Delete urn:ngsi-ld:AirQualityObserved:demo entity in ServicePath / for Tenant1"

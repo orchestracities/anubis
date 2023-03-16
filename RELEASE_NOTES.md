@@ -5,11 +5,18 @@
 ### New features
 
 - Add drop all for models
+- Push model for policies, plus scheduler for pushing on the hour
+- /me endpoint for policies shows foaf:Agent type policies when no token
+  provided
 
 ### Bug fixes
 
 - Fix method name for retrieving agent types
 - Updated user policy path (#183)
+- Fix demo script configuration to UI 0.6 changes
+- Fix potential issue in LUA script for policy creation on entity creation
+- Added counter header in responses to policy GETs
+- Fixed issues with /me endpoint not retrieving policies correctly
 
 ### Documentation
 
