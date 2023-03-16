@@ -31,7 +31,7 @@
     "delay": "^5.0.0",
     "express": "^4.18.1",
     "express-jsdoc-swagger": "^1.8.0",
-    "libp2p": "0.37.3-05e8e7e",
+    "libp2p": "0.38.0",
     "libp2p-gossipsub": "^0.13.0",
     "logops": "^2.1.2",
     "peer-id": "^0.16.0",

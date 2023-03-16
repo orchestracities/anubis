@@ -30,6 +30,13 @@ check_policy {
   request.action in ["GET"]
   not current_path[3]
 }
+check_policy {
+	current_path := split(path, "/")
+	current_path[1] == "v1"
+	current_path[2] == "policies"
+  method in ["GET"]
+  current_path[3] == "me"
+}
 
 # Check policy when trying to get an entity acl resource
 check_policy {
@@ -38,7 +45,7 @@ check_policy {
 	current_path[2] == "policies"
   request.action in ["GET", "PUT", "PATCH", "DELETE"]
   policy_id := current_path[3]
-  e := data[_][_][_]
+  e := policies[_][_][_]
   match_policy_id_or_wildcard(e, policy_id)
   e.resource_type == "entity"
   control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/entities/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
@@ -63,7 +70,7 @@ check_policy {
 	current_path[2] == "policies"
   request.action in ["GET", "PUT", "PATCH", "DELETE"]
   policy_id := current_path[3]
-  e := data[_][_][_]
+  e := policies[_][_][_]
   match_policy_id_or_wildcard(e, policy_id)
   e.resource_type == "entity_type"
   control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/types/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
@@ -88,7 +95,7 @@ check_policy {
 	current_path[2] == "policies"
   request.action in ["GET", "PUT", "PATCH", "DELETE"]
   policy_id := current_path[3]
-  e := data[_][_][_]
+  e := policies[_][_][_]
   match_policy_id_or_wildcard(e, policy_id)
   e.resource_type == "subscriptions"
   control_request = {"user":request.user, "action": "CONTROL", "resource":concat("", ["/v2/subscription/",e.resource]), "tenant":request.tenant, "service_path":request.service_path}
@@ -137,20 +144,19 @@ path_matches_policy(entry, request) {
 
 # Set the header link for the policies
 header_link = link {
-  current_path := split(request.resource, "/")
+  current_path := split(path, "/")
   current_path[2] == "policies"
-  current_path[3]
   not current_path[3] == ""
   link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,current_path[3],"policy"])
 }
 header_link = link {
-  current_path := split(request.resource, "/")
+  current_path := split(path, "/")
   current_path[2] == "policies"
   current_path[3] == ""
   link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
 }
 header_link = link {
-  current_path := split(request.resource, "/")
+  current_path := split(path, "/")
   current_path[2] == "policies"
   not current_path[3]
   link := sprintf("<%s/me?resource=%s&&type=%s>; rel=\"acl\"", [api_uri,"*","policy"])
