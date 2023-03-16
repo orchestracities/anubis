@@ -27,6 +27,10 @@
 - Update libraries version in setup.py
 - Update github action versions
 
+### Updated dependencies
+
+- libp2p updated to 0.38.0
+
 ### Technical debt
 
 ## 0.6
