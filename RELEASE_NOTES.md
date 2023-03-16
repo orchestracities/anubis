@@ -30,6 +30,7 @@
 ### Updated dependencies
 
 - libp2p updated to 0.38.0
+- Certifi updated to 2022.12.7
 
 ### Technical debt
 

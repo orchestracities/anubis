@@ -42,7 +42,7 @@ setup(
         "anyio==3.5.0; python_full_version >= '3.6.2'",
         "asgiref==3.5.1; python_version >= '3.7'",
         'asn1crypto==1.5.1',
-        'certifi==2021.10.8',
+        'certifi==2022.12.7',
         "charset-normalizer==2.0.12; python_version >= '3'",
         "click==8.1.3; python_version >= '3.7'",
         'databases==0.6.0',
