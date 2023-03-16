@@ -28,6 +28,13 @@
 - Update libraries version in setup.py
 - Update github action versions
 
+### Updated dependencies
+
+- libp2p updated to 0.38.0
+- Certifi updated to 2022.12.7
+- Setuptools updated to 65.5.1
+- Starlette updated to 0.25.0
+
 ### Technical debt
 
 ## 0.6
