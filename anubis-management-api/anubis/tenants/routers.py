@@ -1,8 +1,10 @@
 from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Response, Header
 from . import operations, schemas
+from ..policies import operations as policy_operations
 from ..dependencies import get_db
 from sqlalchemy.orm import Session
+from ..rego import serialize as r_serialize
 import os
 import requests
 import json
@@ -162,6 +164,29 @@ def create_tenant(
 
     tenant_id = operations.create_tenant(
         db=db, tenant=tenant, tenant_id=db_tenant_id).id
+
+    if os.environ.get('OPA_ENDPOINT'):
+        opa_url = os.environ.get('OPA_ENDPOINT', 'http://127.0.0.1:8181')
+        db_service_path = operations.get_db_service_path(
+            db, tenant.name, '/')
+        db_service_path_id = list(map(operations.compute_id, db_service_path))
+        db_policies, counter = policy_operations.get_policies_by_service_path(
+            db,
+            tenant=tenant.name,
+            service_path_id=db_service_path_id)
+        policies = r_serialize(db, db_policies)
+        policies = json.loads(policies)
+        res = requests.put(
+            opa_url +
+            "/v1/data/" +
+            tenant.name +
+            "/policies",
+            json=policies)
+        if res.status_code != 204:
+            raise HTTPException(
+                status_code=res.status_code,
+                detail="Failed to update policies in OPA")
+
     response.headers["Tenant-ID"] = tenant_id
     response.status_code = status.HTTP_201_CREATED
     return response

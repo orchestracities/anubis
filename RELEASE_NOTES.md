@@ -5,12 +5,18 @@
 ### New features
 
 - Add drop all for models
+- Push model for policies, plus scheduler for pushing on the hour
+- /me endpoint for policies shows foaf:Agent type policies when no token
+  provided
 
 ### Bug fixes
 
 - Fix method name for retrieving agent types
 - Updated user policy path (#183)
 - Fix demo script configuration to UI 0.6 changes
+- Fix potential issue in LUA script for policy creation on entity creation
+- Added counter header in responses to policy GETs
+- Fixed issues with /me endpoint not retrieving policies correctly
 
 ### Documentation
 
@@ -20,6 +26,11 @@
 
 - Update libraries version in setup.py
 - Update github action versions
+
+### Updated dependencies
+
+- libp2p updated to 0.38.0
+- Certifi updated to 2022.12.7
 
 ### Technical debt
 

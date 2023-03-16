@@ -12,6 +12,9 @@ import anubis.default as default
 import logging
 import requests
 import urllib
+import json
+
+defaultLimit = 1000
 
 
 auth_scheme = OptionalHTTPBearer()
@@ -35,14 +38,13 @@ def serialize_policy(policy: models.Policy):
         agent=agents)
 
 
-# def compute_policy_id(policy: models.Policy):
-#    return policy.id
-
-
 @router.get("/access-modes",
             response_model=List[schemas.Mode],
             summary="List supported Access Modes")
-def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_modes(
+        skip: int = 0,
+        limit: int = defaultLimit,
+        db: Session = Depends(get_db)):
     modes = operations.get_modes(db, skip=skip, limit=limit)
     return modes
 
@@ -52,7 +54,7 @@ def read_modes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
             summary="List supported Agent Types")
 def read_agent_types(
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     types = operations.get_agent_types(db, skip=skip, limit=limit)
     return types
@@ -217,14 +219,13 @@ policies_not_json_responses = {
     },
 }
 
-# TODO if no token, we should return policies for foaf:Agent!
-
 
 @router.get("/me",
             response_model=List[schemas.Policy],
             responses=policies_not_json_responses,
             summary="List policies for a given Tenant and Service Path that apply to me")
 def my_policies(
+        response: Response,
         token: str = Depends(auth_scheme),
         fiware_service: Optional[str] = Header(
             None),
@@ -238,7 +239,7 @@ def my_policies(
         resource_type: Optional[str] = None,
         agent_type: Optional[str] = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     """
     Policies can be filtered by:
@@ -254,33 +255,47 @@ def my_policies(
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
     """
     user_info = parse_auth_token(token)
+    agent_type = None
+    if user_info and user_info['is_super_admin']:
+        agent_type = None
+    elif user_info and user_info['tenants'] and fiware_service in user_info['tenants'] and "roles" in user_info['tenants'][fiware_service] and "tenant-admin" in user_info['tenants'][fiware_service]["roles"]:
+        agent_type = None
     if not user_info:
-        raise HTTPException(
-            status_code=403,
-            detail='missing access token, cannot identify user'
-        )
-    if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
-        raise HTTPException(
-            status_code=422,
-            detail='agent_type {} is not a valid agent type. Valid types are {} or {}'.format(
-                agent_type,
-                default.DEFAULT_AGENTS,
-                default.DEFAULT_AGENT_TYPES))
+        agent_type = "foaf:Agent"
+    else:
+        agent_type = "acl:agent:" + user_info["email"]
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_service_path_id = list(map(so.compute_id, db_service_path))
-    db_policies = operations.get_policies_by_service_path(
+    db_policies, counter = operations.get_policies_by_service_path(
         db,
         tenant=fiware_service,
         service_path_id=db_service_path_id,
         mode=mode,
         agent=agent,
-        agent_type=agent_type,
+        agent_type="foaf:Agent",
         resource=resource,
         resource_type=resource_type,
         skip=skip,
         limit=limit,
-        user_info=user_info)
+        user_info=None)
+    # Maybe do this for groups and roles too?
+    if user_info:
+        db_policies_user, counter_user = operations.get_policies_by_service_path(
+            db,
+            tenant=fiware_service,
+            service_path_id=db_service_path_id,
+            mode=mode,
+            agent=agent,
+            agent_type=agent_type,
+            resource=resource,
+            resource_type=resource_type,
+            skip=skip,
+            limit=limit,
+            user_info=user_info)
+        db_policies = db_policies + db_policies_user
+        counter = counter + counter_user
+    response.headers["Counter"] = str(counter)
     if accept == 'text/turtle':
         return Response(
             content=w_serialize(
@@ -307,6 +322,7 @@ def my_policies(
             responses=policies_not_json_responses,
             summary="List policies for a given Tenant and Service Path")
 def read_policies(
+        response: Response,
         token: str = Depends(auth_scheme),
         fiware_service: Optional[str] = Header(
             None),
@@ -320,7 +336,7 @@ def read_policies(
         resource_type: Optional[str] = None,
         agent_type: Optional[str] = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = defaultLimit,
         db: Session = Depends(get_db)):
     """
     Policies can be filtered by:
@@ -336,14 +352,10 @@ def read_policies(
     such as: `/Path1/SubPath1` or `/Path1/SubPath1/SubSubPath1`.
     """
     user_info = parse_auth_token(token)
-    owner = None
     if user_info and user_info['is_super_admin']:
-        owner = None
+        user_info = None
     elif user_info and user_info['tenants'] and fiware_service in user_info['tenants'] and "roles" in user_info['tenants'][fiware_service] and "tenant-admin" in user_info['tenants'][fiware_service]["roles"]:
-        owner = None
-    elif user_info and user_info['email']:
-        owner = user_info['email']
-    # we don't filter policies in case super admin or tenant admin
+        user_info = None
     if agent_type and agent_type not in default.DEFAULT_AGENTS and agent_type not in default.DEFAULT_AGENT_TYPES:
         raise HTTPException(
             status_code=422,
@@ -354,7 +366,7 @@ def read_policies(
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_service_path_id = list(map(so.compute_id, db_service_path))
-    db_policies = operations.get_policies_by_service_path(
+    db_policies, counter = operations.get_policies_by_service_path(
         db,
         tenant=fiware_service,
         service_path_id=db_service_path_id,
@@ -364,8 +376,8 @@ def read_policies(
         resource=resource,
         resource_type=resource_type,
         skip=skip,
-        limit=limit,
-        owner=owner)
+        limit=limit)
+    response.headers["Counter"] = str(counter)
     if accept == 'text/turtle':
         return Response(
             content=w_serialize(
@@ -454,7 +466,7 @@ def create_policy(
     policies = []
     for agent in policy.agent:
         for mode in policy.mode:
-            db_policies = operations.get_policies_by_service_path(
+            db_policies, counter = operations.get_policies_by_service_path(
                 db=db,
                 tenant=fiware_service,
                 service_path_id=db_service_path_id,
@@ -508,6 +520,7 @@ def create_policy(
                 urllib.parse.quote(
                     policy.access_to)))
         logging.error(e)
+    update_opa_policies(db, fiware_service, db_service_path_id)
     return response
 
 
@@ -539,7 +552,7 @@ def update(
     policies = []
     for agent in policy.agent:
         for mode in policy.mode:
-            db_policies = operations.get_policies_by_service_path(
+            db_policies, counter = operations.get_policies_by_service_path(
                 db=db,
                 tenant=fiware_service,
                 service_path_id=db_service_path_id,
@@ -581,6 +594,7 @@ def update(
                 urllib.parse.quote(
                     policy.access_to)))
         logging.error(e)
+    update_opa_policies(db, fiware_service, db_service_path_id)
     return response
 
 
@@ -599,6 +613,7 @@ def delete_policy(
     db_service_path = so.get_db_service_path(
         db, fiware_service, fiware_servicepath)
     db_policy = operations.get_policy(db, policy_id=policy_id)
+    db_service_path_id = list(map(so.compute_id, db_service_path))
     if not db_policy:
         raise HTTPException(status_code=404, detail="Policy not found")
     if db_service_path[0].id != db_policy.service_path_id:
@@ -631,4 +646,27 @@ def delete_policy(
                 urllib.parse.quote(
                     db_policy.access_to)))
         logging.error(e)
+    update_opa_policies(db, fiware_service, db_service_path_id)
     return response
+
+
+def update_opa_policies(db, fiware_service, db_service_path_id):
+    if os.environ.get('OPA_ENDPOINT'):
+        opa_url = os.environ.get('OPA_ENDPOINT')
+        db_policies, counter = operations.get_policies_by_service_path(
+            db,
+            tenant=fiware_service,
+            service_path_id=db_service_path_id)
+        policies = r_serialize(db, db_policies)
+        policies = json.loads(policies)
+        # Not currently handling service paths
+        res = requests.put(
+            opa_url +
+            "/v1/data/" +
+            fiware_service +
+            "/policies",
+            json=policies)
+        if res.status_code != 204:
+            raise HTTPException(
+                status_code=res.status_code,
+                detail="Failed to update policies in OPA")

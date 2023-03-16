@@ -54,8 +54,11 @@ jwks_request(url) = http.send({
     "force_cache_duration_seconds": 3600
 })
 
-# Grab data from API
-data = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware-service": request.tenant, "fiware-servicepath": request.service_path}}).body
+# Policies pull method
+# policies = http.send({"method": "get", "url": api_uri, "headers": {"accept": "text/rego", "fiware-service": request.tenant, "fiware-servicepath": request.service_path}}).body
+
+# Policies push method
+policies = data[request.tenant]["policies"]
 
 # The user/subject
 subject := p {
@@ -158,7 +161,7 @@ default user_permitted(request) = false
 # User permissions
 user_permitted(request) {
   is_token_valid
-  entry := data.user_permissions[request.user][_]
+  entry := policies.user_permissions[request.user][_]
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -168,7 +171,7 @@ user_permitted(request) {
 # Default User permissions
 user_permitted(request) {
   is_token_valid
-  entry := data.default_user_permissions[request.user][_]
+  entry := policies.default_user_permissions[request.user][_]
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -179,7 +182,7 @@ user_permitted(request) {
 user_permitted(request) {
   is_token_valid
 	token.payload.tenants[request.tenant]
-  entry := data.group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
+  entry := policies.group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -190,7 +193,7 @@ user_permitted(request) {
 user_permitted(request) {
   is_token_valid
 	token.payload.tenants[request.tenant]
-  entry := data.default_group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
+  entry := policies.default_group_permissions[token.payload.tenants[request.tenant].groups[_]][_]
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -201,7 +204,7 @@ user_permitted(request) {
 user_permitted(request) {
   is_token_valid
   token.payload.tenants[request.tenant]
-  entry := data.role_permissions[token.payload.tenants[request.tenant].roles[_]][_]
+  entry := policies.role_permissions[token.payload.tenants[request.tenant].roles[_]][_]
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -212,7 +215,7 @@ user_permitted(request) {
 user_permitted(request) {
   is_token_valid
   token.payload.tenants[request.tenant]
-  entry := data.default_role_permissions[token.payload.tenants[tenant_i].roles[_]][_]
+  entry := policies.default_role_permissions[token.payload.tenants[tenant_i].roles[_]][_]
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
   entry.tenant == request.tenant
@@ -223,7 +226,7 @@ user_permitted(request) {
 user_permitted(request) {
   is_token_valid
   some role
-  entry := data.role_permissions[role][_]
+  entry := policies.role_permissions[role][_]
   role == "AuthenticatedAgent"
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
@@ -235,7 +238,7 @@ user_permitted(request) {
 user_permitted(request) {
   is_token_valid
   some role
-  entry := data.default_role_permissions[role][_]
+  entry := policies.default_role_permissions[role][_]
   role == "AuthenticatedAgent"
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)
@@ -246,7 +249,7 @@ user_permitted(request) {
 # Agent special permission
 user_permitted(request) {
   some role
-  entry := data.role_permissions[role][_]
+  entry := policies.role_permissions[role][_]
   role == "Agent"
   method_matches_action(entry, request)
   path_matches_policy(entry, request)
@@ -257,7 +260,7 @@ user_permitted(request) {
 # Default Agent special permission
 user_permitted(request) {
   some role
-  entry := data.default_role_permissions[role][_]
+  entry := policies.default_role_permissions[role][_]
   role == "Agent"
   method_matches_action(entry, request)
 	path_matches_policy(entry, request)

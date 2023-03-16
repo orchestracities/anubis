@@ -129,3 +129,27 @@ else
 fi
 
 echo ""
+
+echo "Can I read my policies without token?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" 'http://localhost:8090/v1/policies/me'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't read policies"
+  exit 1
+fi
+
+echo "Can I read my policies with the token?"
+echo "==============================================================="
+export response=`curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" -H "fiware-service: Tenant1" -H "fiware-servicepath: /" 'http://localhost:8090/v1/policies/me'`
+if [ $response == "200" ]
+then
+  echo "PASSED"
+else
+  echo "ERROR: Can't read policies"
+  exit 1
+fi
+
+echo ""

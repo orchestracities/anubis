@@ -35,6 +35,8 @@ services:
       - KEYCLOACK_ENABLED=True
       - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
       - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
+      - OPA_ENDPOINT=http://ext_authz-opa-service:8181
+      - HOURLY_OPA_POLICIES_REFRESH=True
     ports:
       - "8085:8000"
     volumes:
@@ -49,6 +51,7 @@ services:
       - AUTH_API_URI=http://policy-api:8000/v1/policies/
       - VALID_ISSUERS=http://keycloak:8080/realms/default
       - VALID_AUDIENCE=ngsi;configuration
+      - GOGC=2000
     ports:
       - "9191:9191"
       - "8282:8282"
@@ -66,9 +69,24 @@ services:
       - /etc/rego/common.rego
       - /etc/rego/context_broker_policy.rego
       - /etc/rego/anubis_management_api_policy.rego
+      #- /etc/rego/nop.rego
       - /etc/rego/audit.rego
     networks:
       - envoymesh
+
+  opa_init_script:
+    image: alpine:3.17.1
+    environment:
+      - AUTH_API_URI=http://policy-api:8000
+      - OPA_ENDPOINT=http://ext_authz-opa-service:8181
+    volumes:
+      - ./scripts/init_opa.sh:/etc/init_opa.sh
+    entrypoint: sh /etc/init_opa.sh
+    networks:
+      - envoymesh
+    depends_on:
+      - ext_authz-opa-service
+      - policy-api
 
   mongo:
     image: mongo:4.4
@@ -109,7 +127,7 @@ services:
     image: fiware/orion-ld:${ORION_VERSION:-1.1.1}
     ports:
       - "1026:1026"
-    command: -logLevel error -dbhost mongo
+    command: -logLevel error -dbhost mongo -corsOrigin __ALL
     depends_on:
       - mongo
     healthcheck:
@@ -121,7 +139,7 @@ services:
       - envoymesh
 
   management-ui:
-    image: orchestracities/management-ui
+    image: orchestracities/management-ui:master
     volumes:
       - .env:/usr/share/nginx/.env
     ports:
@@ -131,7 +149,7 @@ services:
 
   configuration-api:
     env_file: .env
-    image: orchestracities/configuration-api
+    image: orchestracities/configuration-api:master
     ports:
       - "4000:4000"
     networks:
