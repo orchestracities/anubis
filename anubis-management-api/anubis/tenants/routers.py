@@ -170,7 +170,7 @@ def create_tenant(
         db_service_path = operations.get_db_service_path(
             db, tenant.name, '/')
         db_service_path_id = list(map(operations.compute_id, db_service_path))
-        db_policies = policy_operations.get_policies_by_service_path(
+        db_policies, counter = policy_operations.get_policies_by_service_path(
             db,
             tenant=tenant.name,
             service_path_id=db_service_path_id)

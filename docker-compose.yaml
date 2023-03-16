@@ -36,6 +36,7 @@ services:
       - TENANT_ADMIN_ROLE_ID=9dc79aa8-d42f-4720-8de0-fe79a00a46b7
       - KEYCLOACK_ADMIN_ENDPOINT=http://keycloak:8080/admin/realms/default
       - OPA_ENDPOINT=http://ext_authz-opa-service:8181
+      - HOURLY_OPA_POLICIES_REFRESH=True
     ports:
       - "8085:8000"
     volumes:
@@ -126,7 +127,7 @@ services:
     image: fiware/orion-ld:${ORION_VERSION:-1.1.1}
     ports:
       - "1026:1026"
-    command: -logLevel error -dbhost mongo
+    command: -logLevel error -dbhost mongo -corsOrigin __ALL
     depends_on:
       - mongo
     healthcheck:
@@ -138,7 +139,7 @@ services:
       - envoymesh
 
   management-ui:
-    image: orchestracities/management-ui
+    image: orchestracities/management-ui:master
     volumes:
       - .env:/usr/share/nginx/.env
     ports:
@@ -148,7 +149,7 @@ services:
 
   configuration-api:
     env_file: .env
-    image: orchestracities/configuration-api
+    image: orchestracities/configuration-api:master
     ports:
       - "4000:4000"
     networks:
