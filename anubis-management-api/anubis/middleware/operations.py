@@ -40,7 +40,8 @@ def get_resources(
     if owner:
         db_policies = db_policies.join(
             pm.Policy.agent).filter(pm.Agent.iri == owner)
-    return db_policies.order_by(pm.Policy.id.asc()).offset(skip).limit(limit).all()
+    return db_policies.order_by(
+        pm.Policy.id.asc()).offset(skip).limit(limit).all()
 
 
 def get_policies(
@@ -65,4 +66,5 @@ def get_policies(
     if service_path:
         db_policies = db_policies.join(pm.Policy.service_path).filter(
             tm.ServicePath.path == service_path)
-    return db_policies.order_by(tm.Policy.id.asc()).offset(skip).limit(limit).all()
+    return db_policies.order_by(
+        tm.Policy.id.asc()).offset(skip).limit(limit).all()
