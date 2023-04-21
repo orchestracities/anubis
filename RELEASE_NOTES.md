@@ -8,6 +8,7 @@
 - Push model for policies, plus scheduler for pushing on the hour
 - /me endpoint for policies shows foaf:Agent type policies when no token
   provided
+- Query servicepaths by path and not just ID
 
 ### Bug fixes
 
