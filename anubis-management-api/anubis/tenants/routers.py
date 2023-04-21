@@ -350,7 +350,7 @@ def read_service_path(
         db, service_path_id=service_path_id, tenant_id=tenant_id)
     if not service_path:
         service_path = operations.get_tenant_single_service_path_by_path(
-           db, tenant_id=tenant_id, path="/" + service_path_id)
+            db, tenant_id=tenant_id, path="/" + service_path_id)
     if not service_path:
         raise HTTPException(status_code=404, detail="Service Path not found")
     return service_path
