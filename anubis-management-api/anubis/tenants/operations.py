@@ -119,6 +119,15 @@ def get_tenant_service_path_by_path(db: Session, tenant_id: str, path: str):
                 models.ServicePath.path.asc()).all()
 
 
+def get_tenant_single_service_path_by_path(
+        db: Session, tenant_id: str, path: str):
+    return db.query(
+        models.ServicePath).filter(
+        models.ServicePath.tenant_id == tenant_id).filter(
+        models.ServicePath.path == path).order_by(
+            models.ServicePath.path.asc()).first()
+
+
 def get_tenant_service_path(db: Session, service_path_id: str, tenant_id: str):
     return db.query(
         models.ServicePath).filter(

@@ -41,7 +41,7 @@ def test_service_paths(test_db):
     response = client.get("/v1/tenants/" + tenant_id + "/service_paths/")
     body = response.json()
     assert response.status_code == 200
-    assert body[0]["path"] == "/"
+    assert body["path"] == "/"
 
     response = client.post(
         "/v1/tenants/" + tenant_id + "/service_paths",
@@ -59,26 +59,32 @@ def test_service_paths(test_db):
     service_path_id = response.headers["Service-Path-ID"]
     assert service_path_id
 
-    response = client.get("/v1/tenants/" + tenant_id + "/service_paths/")
+    response = client.get("/v1/tenants/" + tenant_id + "/service_paths")
     body = response.json()
     assert response.status_code == 200
     assert len(body) == 3
 
-    response = client.get(
-        "/v1/tenants/" +
-        tenant_id +
-        "/service_paths/?name=/foobar/barbar")
+    response = client.get("/v1/tenants/test/service_paths/")
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 1
+    assert body["path"] == "/"
+    assert len(body["children"]) == 1
 
     response = client.get(
         "/v1/tenants/" +
         tenant_id +
-        "/service_paths/?name=/foobar")
+        "/service_paths/foobar/barbar")
     body = response.json()
     assert response.status_code == 200
-    assert len(body) == 2
+    assert body["path"] == "/foobar/barbar"
+
+    response = client.get(
+        "/v1/tenants/" +
+        tenant_id +
+        "/service_paths/foobar")
+    body = response.json()
+    assert response.status_code == 200
+    assert body["path"] == "/foobar"
 
     response = client.get(
         "/v1/tenants/" +
