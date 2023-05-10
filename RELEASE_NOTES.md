@@ -4,6 +4,22 @@
 
 ### New features
 
+### Bug fixes
+
+### Documentation
+
+- Doc adjustements
+
+### Updated dependencies
+
+### Continuous Integration
+
+### Technical debt
+
+## 0.7.1
+
+### New features
+
 - Add drop all for models
 - Push model for policies, plus scheduler for pushing on the hour
 - /me endpoint for policies shows foaf:Agent type policies when no token
