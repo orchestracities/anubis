@@ -112,7 +112,7 @@ Verify that all services are up and running:
         server: uvicorn
         policy-id: a0be6113-2339-40d7-9e85-56f93372f279
         Transfer-Encoding: chunked
-  
+
     The field `policy-id` contains the id of the policy created,
     use it in the following request.
 
@@ -217,8 +217,14 @@ Verify that all services are up and running:
 1. Obtain a valid `access_token` from keycloak
 
         :::bash
-        $ export token=`curl -s -d "client_id=ngsi&grant_type=password&username=admin&password=admin" -X POST --header "Host: keycloak:8080" 'http://localhost:8080/auth/realms/default/protocol/openid-connect/token' | \
-        jq -j '.access_token'`
+        $ export json=$( curl -sS --location --request POST 'http://localhost:8080/realms/default/protocol/openid-connect/token' \
+        --header 'Content-Type: application/x-www-form-urlencoded' \
+        --data-urlencode 'username=admin@mail.com' \
+        --data-urlencode 'password=admin' \
+        --data-urlencode 'grant_type=password' \
+        --data-urlencode 'client_id=configuration')
+
+        $ export token=$( jq -r ".access_token" <<<"$json" )
 
 1. Use the token to create an entity
 
