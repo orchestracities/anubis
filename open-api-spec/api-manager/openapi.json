@@ -2220,6 +2220,10 @@
             "title": "Access To",
             "type": "string"
           },
+          "constraint": {
+            "title": "Constraint",
+            "type": "string"
+          },
           "resource_type": {
             "title": "Resource Type",
             "type": "string"
@@ -2256,6 +2260,10 @@
           },
           "access_to": {
             "title": "Access To",
+            "type": "string"
+          },
+          "constraint": {
+            "title": "Constraint",
             "type": "string"
           },
           "resource_type": {
