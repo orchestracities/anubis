@@ -33,6 +33,7 @@ def serialize_policy(policy: models.Policy):
     return schemas.Policy(
         id=policy.id,
         access_to=policy.access_to,
+        constraint=policy.constraint,
         resource_type=policy.resource_type,
         mode=modes,
         agent=agents)

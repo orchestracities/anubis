@@ -79,10 +79,10 @@ fiware_servicepath := p {
 request = {"user":subject, "action": method, "resource":path, "tenant":fiware_service, "service_path":fiware_servicepath}
 
 # Compute link
-default header_link = ""
+header_link = ""
 
 # Auth defaults to false
-default allow = {
+allow = {
     "allowed": false,
 }
 
@@ -112,15 +112,15 @@ is_token_valid {
 	issuer = valid_iss[_]
 }
 
+# Token valid when testing (default is false)
+default testing = false
+is_token_valid {
+  testing
+}
+
 # Test for valid audiences in token
 valid_audience(aud_entry) {
 	token.payload.azp = aud_entry
-}
-
-# Token valid when testing (default is false)
-testing = false
-is_token_valid {
-  testing
 }
 
 # Check if service path in policy is equal to the request path

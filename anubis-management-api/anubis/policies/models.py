@@ -37,6 +37,7 @@ class Policy(Base):
     access_to = Column(String, index=True)
     resource_type = Column(String, index=True)
     mode = relationship("Mode", secondary=policy_to_mode)
+    constraint = Column(String, index=True)
     service_path = relationship(ServicePath)
     service_path_id = Column(
         String,

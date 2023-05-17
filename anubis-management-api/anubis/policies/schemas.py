@@ -26,6 +26,7 @@ class Mode(ModeBase):
 class PolicyBase(BaseModel):
     id: Optional[str] = None
     access_to: str
+    constraint: Optional[str] = None
     resource_type: str
     mode: List[str] = []
     agent: List[str] = []
@@ -66,6 +67,13 @@ class PolicyBase(BaseModel):
     def valid_iri(cls, access_to):
         parse(access_to)
         return access_to
+
+    @validator('constraint')
+    def valid_constraint(cls, constraint):
+        if not constraint:
+            return None
+        parse(constraint)
+        return constraint
 
     @validator('resource_type')
     def valid_resource_type(cls, resource_type, values):

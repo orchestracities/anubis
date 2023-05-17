@@ -161,25 +161,25 @@ service_path_data = {
 }
 
 test_policy_permissions_all {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v1/policies/", "tenant":"Tenant1", "service_path":"/"} with input.parsed_body as {"access_to":"test","resource_type":"entity"} with data as policy_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v1/policies/", "tenant":"Tenant1", "service_path":"/"} with input.parsed_body as {"access_to":"test","resource_type":"entity"} with policies as policy_data with bearer_token as bearer_token with testing as true
 }
 
 test_policy_permissions_one {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/policies/test", "tenant":"Tenant1", "service_path":"/"} with data as policy_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/policies/test", "tenant":"Tenant1", "service_path":"/"} with policies as policy_data with bearer_token as bearer_token with testing as true
 }
 
 test_tenant_permissions_all {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/tenants", "tenant":"Tenant1", "service_path":"/"} with data as tenant_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/tenants", "tenant":"Tenant1", "service_path":"/"} with policies as tenant_data with bearer_token as bearer_token with testing as true
 }
 
 test_tenant_permissions_one {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"PUT", "resource":"/v1/tenants/Tenant1", "tenant":"Tenant1", "service_path":"/"} with data as tenant_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"PUT", "resource":"/v1/tenants/Tenant1", "tenant":"Tenant1", "service_path":"/"} with policies as tenant_data with bearer_token as bearer_token with testing as true
 }
 
 test_service_path_permissions_all {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/tenants/Tenant1/service_paths", "tenant":"Tenant1", "service_path":"/"} with data as service_path_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v1/tenants/Tenant1/service_paths", "tenant":"Tenant1", "service_path":"/"} with policies as service_path_data with bearer_token as bearer_token with testing as true
 }
 
 test_service_path_permissions_one {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"PUT", "resource":"/v1/tenants/Tenant1/service_paths/foo/bar", "tenant":"Tenant1", "service_path":"/"} with data as service_path_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"PUT", "resource":"/v1/tenants/Tenant1/service_paths/foo/bar", "tenant":"Tenant1", "service_path":"/"} with policies as service_path_data with bearer_token as bearer_token with testing as true
 }

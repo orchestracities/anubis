@@ -241,6 +241,7 @@ def create_policy(
     db_policy = models.Policy(
         id=pid,
         access_to=policy.access_to,
+        constraint=policy.constraint,
         resource_type=policy.resource_type,
         service_path_id=service_path_id)
     db.add(db_policy)
@@ -266,7 +267,7 @@ def update_policy(
         policy_id: str,
         policy: schemas.PolicyCreate):
     db.query(models.Policy).filter(models.Policy.id == policy_id). update(
-        {"access_to": policy.access_to, "resource_type": policy.resource_type})
+        {"access_to": policy.access_to, "resource_type": policy.resource_type, "constraint": policy.constraint})
     db.commit()
     db.query(models.policy_to_mode).filter(
         models.policy_to_mode.c.policy_id == policy_id). delete()
