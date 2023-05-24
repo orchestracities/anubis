@@ -266,8 +266,13 @@ def update_policy(
         db: Session,
         policy_id: str,
         policy: schemas.PolicyCreate):
-    db.query(models.Policy).filter(models.Policy.id == policy_id). update(
-        {"access_to": policy.access_to, "resource_type": policy.resource_type, "constraint": policy.constraint})
+    db.query(
+        models.Policy).filter(
+        models.Policy.id == policy_id). update(
+            {
+                "access_to": policy.access_to,
+                "resource_type": policy.resource_type,
+                "constraint": policy.constraint})
     db.commit()
     db.query(models.policy_to_mode).filter(
         models.policy_to_mode.c.policy_id == policy_id). delete()
