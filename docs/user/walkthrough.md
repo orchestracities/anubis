@@ -815,6 +815,7 @@ Simple healthcheck endpoint
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
 | access_to | string |  | Yes |
+| constraint | string |  | No |
 | resource_type | string |  | Yes |
 | mode | [ string ] |  | No |
 | agent | [ string ] |  | No |
@@ -825,6 +826,7 @@ Simple healthcheck endpoint
 | ---- | ---- | ----------- | -------- |
 | id | string |  | No |
 | access_to | string |  | Yes |
+| constraint | string |  | No |
 | resource_type | string |  | Yes |
 | mode | [ string ] |  | No |
 | agent | [ string ] |  | No |

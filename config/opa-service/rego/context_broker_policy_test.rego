@@ -23,6 +23,37 @@ user_data = {
   }
 }
 
+user_data_constraint = {
+"user_permissions": {
+    "admin@mail.com": [
+      {
+        "action": "acl:Read",
+        "resource": "test",
+        "resource_type": "entity",
+        "tenant": "Tenant1",
+        "service_path": "/",
+        "constraint": "acl-oc:ResourceName acl:operator:hasPart test"
+      },
+      {
+        "action": "acl:Read",
+        "resource": "foo",
+        "resource_type": "entity",
+        "tenant": "Tenant1",
+        "service_path": "/",
+        "constraint": "acl-oc:ResourceName acl:operator:eq foo"
+      },
+      {
+        "action": "acl:Read",
+        "resource": "6",
+        "resource_type": "entity",
+        "tenant": "Tenant1",
+        "service_path": "/",
+        "constraint": "acl-oc:ResourceName acl:operator:gt 5"
+      }
+    ]
+  }
+}
+
 group_data = {
 "group_permissions": {
     "/Group1": [
@@ -94,43 +125,63 @@ default_data = {
 }
 
 test_user_permissions {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as user_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with policies as user_data with bearer_token as bearer_token with testing as true
+}
+
+test_user_permissions_contraint_1 {
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with policies as user_data_constraint with bearer_token as bearer_token with testing as true
+}
+
+test_user_permissions_contraint_2 {
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/foo", "tenant":"Tenant1", "service_path":"/"} with policies as user_data_constraint with bearer_token as bearer_token with testing as true
+}
+
+test_user_permissions_contraint_3 {
+  not check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/foobar", "tenant":"Tenant1", "service_path":"/"} with policies as user_data_constraint with bearer_token as bearer_token with testing as true
+}
+
+test_user_permissions_contraint_4 {
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/6", "tenant":"Tenant1", "service_path":"/"} with policies as user_data_constraint with bearer_token as bearer_token with testing as true
+}
+
+test_user_permissions_contraint_4 {
+  not check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/5", "tenant":"Tenant1", "service_path":"/"} with policies as user_data_constraint with bearer_token as bearer_token with testing as true
 }
 
 test_user_permissions_unathorized {
-  not allow.allowed with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as user_data with bearer_token as bearer_token with testing as true
+  not check_policy with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with policies as user_data with bearer_token as bearer_token with testing as true
 }
 
 test_user_permissions_entity_type {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v2/types/test", "tenant":"Tenant1", "service_path":"/"} with data as user_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v2/types/test", "tenant":"Tenant1", "service_path":"/"} with policies as user_data with bearer_token as bearer_token with testing as true
 }
 
 test_group_permissions {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as group_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"POST", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with policies as group_data with bearer_token as bearer_token with testing as true
 }
 
 test_group_permissions_unathorized {
-  not allow.allowed with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test2", "tenant":"Tenant1", "service_path":"/"} with data as group_data with bearer_token as bearer_token with testing as true
+  not check_policy with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test2", "tenant":"Tenant1", "service_path":"/"} with policies as group_data with bearer_token as bearer_token with testing as true
 }
 
 test_role_permissions {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as role_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with policies as role_data with bearer_token as bearer_token with testing as true
 }
 
 test_role_permissions_unathorized {
-  not allow.allowed with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test2", "tenant":"Tenant1", "service_path":"/"} with data as role_data with bearer_token as bearer_token with testing as true
+  not check_policy with request as {"user":"admin@mail.com", "action":"PATCH", "resource":"/v2/entities/test2", "tenant":"Tenant1", "service_path":"/"} with policies as role_data with bearer_token as bearer_token with testing as true
 }
 
 test_authenticated_agent_permissions {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as authenticated_agent_data with bearer_token as bearer_token with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with policies as authenticated_agent_data with bearer_token as bearer_token with testing as true
 }
 
 test_foaf_agent_permissions {
-  allow.allowed with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with data as foaf_agent_data with testing as true
+  check_policy with request as {"user":"admin@mail.com", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/"} with policies as foaf_agent_data with testing as true
 }
 
 test_default_agent_permissions {
-  allow.allowed with request as {"user":"foobar", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/test/foobar"} with data as default_data with testing as true
+  check_policy with request as {"user":"foobar", "action":"GET", "resource":"/v2/entities/test", "tenant":"Tenant1", "service_path":"/test/foobar"} with policies as default_data with testing as true
 }
 
 # test_api {
